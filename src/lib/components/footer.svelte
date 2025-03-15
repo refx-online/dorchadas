@@ -43,6 +43,7 @@
                             <h3 class="font-semibold mb-1">{appName}</h3>
                             <p class="text-gray-300 text-sm">
                                 {__('A community-driven osu! private server.', $userLanguage)}
+                                using <a href="https://github.com/osuAkatsuki/bancho.py" class="text-blue-500 hover:underline" target="_blank">bancho.py</a> instance
                             </p>
                         </div>
                         
@@ -69,6 +70,7 @@
                             <h3 class="font-semibold mb-1">{__('Info', $userLanguage)}</h3>
                             <ul class="space-y-0.5">
                                 <li><a href="/rules" class="hover:text-primary-400 transition-colors">{__('Rules', $userLanguage)}</a></li>
+                                <li><a href="/bbcode" class="hover:text-primary-400 transition-colors">{__('BBCode', $userLanguage)}</a></li>
                             </ul>
                         </div>
                     </div>

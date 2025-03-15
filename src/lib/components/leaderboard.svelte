@@ -13,6 +13,12 @@
 	export let currentMode: string;
 	export let currentType: string;
 	export let currentSort: 'acc' | 'pp' | 'plays' | 'tscore' | string;
+
+	function isInactive(latestActivity: number): boolean {
+		const month = 30 * 24 * 60 * 60;
+		return (Math.floor(Date.now() / 1000) - latestActivity) > month;
+	}
+
 </script>
 
 <div class="table-container table-extracompact !rounded-none px-5 pb-3">
@@ -56,7 +62,7 @@
 				{#if leaderboardData && leaderboardData.length > 0}
 					{#each leaderboardData as user, rank}
 						{#key user}
-							<tr class="!bg-surface-700 hover:!bg-surface-600 transition-colors h-8">
+							<tr class="hover:!bg-surface-500 transition-colors h-8 {isInactive(user.latest_activity) ? '!bg-surface-600' : '!bg-surface-700'}">
 								<td
 									class="!text-xs !font-semibold text-center table-cell-fit content-center w-[1%] whitespace-nowrap !rounded-s-lg"
 									>#{rank + (page - 1) * usersPerPage + 1}</td
@@ -73,8 +79,9 @@
 									{/if}
 									{#key user}
 										<a
-											href="/u/{user.player_id}?mode=${currentMode}&type=${currentType}"
-											class="text-xs text-primary-400 font-semibold"
+											href="/u/{user.player_id}?mode={currentMode}&type={currentType}"
+											class="text-xs font-semibold {isInactive(user.latest_activity) ? 
+											'text-surface-400' : 'text-primary-400'}"
 										>
 											{user.name}
 										</a>

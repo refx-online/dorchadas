@@ -8,6 +8,9 @@ import type {
 	PlayerMostPlayed,
 	PlayerScores,
 	PlayerStatus,
+	ppProfileHistory,
+	rankProfileHistory,
+	peakrankProfileHistory,
 	User
 } from './types';
 
@@ -147,7 +150,7 @@ export const pinScore = async (
     }
 };
 
-export async function sendDiscordWebhookLog(logType:string, message: string) {
+export async function sendDiscordWebhookLog(logType: string, message: string, avatarUrl?: string) {
     try {
         const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_LOG_URL;
         if (!webhookUrl) {
@@ -155,15 +158,21 @@ export async function sendDiscordWebhookLog(logType:string, message: string) {
             return;
         }
 
+        const payload: Record<string, any> = {
+            content: message,
+            username: logType
+        };
+
+        if (avatarUrl) {
+            payload.avatar_url = avatarUrl;
+        }
+
         const response = await fetch(webhookUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                content: message,
-                username: logType
-            })
+            body: JSON.stringify(payload)
         });
 
         if (!response.ok) {
@@ -182,6 +191,40 @@ export const getScoresInfo = async (
 		if (!requestedPlayerData.ok) return undefined;
 		return (await requestedPlayerData.json()) as getScoreInfo;
 	} catch {
+		return undefined;
+	}
+};
+
+type ProfileHistoryResponse = ppProfileHistory | rankProfileHistory | peakrankProfileHistory;
+
+export const getPPProfileHistory = async (
+	scope: 'pp' | 'rank' | 'peak',
+	uid: number | undefined,
+	mode: number
+): Promise<ProfileHistoryResponse | undefined> => {
+	if (!uid) return undefined;
+
+	try {
+		const requestedPlayerData = await fetch(
+			`${apiUrl}/v1/get_player_history?scope=${scope}&id=${uid}&mode=${mode}`
+		);
+
+		if (!requestedPlayerData.ok) return undefined;
+
+		const data = await requestedPlayerData.json();
+
+		switch (scope) {
+			case 'pp':
+				return data as ppProfileHistory;
+			case 'rank':
+				return data as rankProfileHistory;
+			case 'peak':
+				return data as peakrankProfileHistory;
+			default:
+				return undefined;
+		}
+	} catch (error) {
+		console.error('Error fetching profile history:', error);
 		return undefined;
 	}
 };

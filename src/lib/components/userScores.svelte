@@ -97,153 +97,142 @@
 </script>
 
 <div class="relative flex flex-col gap-1">
-	<p
-		class="text-sm font-bold w-max ms-2 before:-ms-2 before:content-[''] before:h-[.65em] before:mt-[.45em] before:absolute before:w-[3px] before:rounded-lg before:bg-primary-400"
-	>
-		{__(title, $userLanguage)}
-	</p>
-	<div class="flex flex-col gap-1 justify-center">
-		<div class="flex flex-col gap-1 transition-all{loading ? ' blur-sm' : ' blur-none'}">
-			{#if scores}
-				{#each scores.scores as score, idx}
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
+    <p
+        class="text-sm font-bold w-max ms-2 before:-ms-2 before:content-[''] before:h-[.65em] before:mt-[.45em] before:absolute before:w-[3px] before:rounded-lg before:bg-primary-400"
+    >
+        {__(title, $userLanguage)}
+    </p>
+    <div class="flex flex-col gap-1 justify-center">
+        <div class="flex flex-col gap-1 transition-all{loading ? ' blur-sm' : ' blur-none'}">
+            {#if scores}
+                {#each scores.scores as score, idx}
+                    <!-- svelte-ignore a11y-click-events-have-key-events -->
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
-					<div class="flex flex-row gap-2 items-center">
-						<div
-							class="relative w-full flex flex-col md:flex-row items-stretch md:items-center justify-between gap-1 p-2 py-1 bg-surface-500 rounded-lg hover:scale-[1.005] active:scale-[0.995] transition-transform cursor-pointer"
-							on:click={() =>
-								goto(`/beatmaps/${score.beatmap.id}?mode=${currentMode}&type=${currentType}`)}
-							transition:scale={{ start: 0.99, duration: 200 * (idx - (amount - scoreAmount) + 1) }}
-						>
-							<div
-								class="absolute h-full w-full top-0 left-0 bg-no-repeat bg-center blur-[3px] opacity-5"
-								style="background-image: url('https://assets.ppy.sh/beatmaps/{score.beatmap
-									.set_id}/covers/cover@2x.jpg');"
-							></div>
-							<div class="flex flex-row gap-2 items-center justify-center z-10">
-								<div
-									class="w-10 md:w-8 text-center !text-4xl md:!text-2xl font-bold grade grade-{score.grade.toLowerCase()}"
-								>
-									{score.grade.replaceAll('XH', 'SS').replaceAll('X', 'SS').replaceAll('SH', 'S')}
-								</div>
-								<div class="flex flex-col w-full truncate">
-									    <div class="flex flex-col lg:flex-row lg:items-center lg:gap-1 mb-1">
-											<div class="text-sm font-bold truncate max-w-full" title={score.beatmap.title}>
-												{score.beatmap.title.length > 30 
-													? score.beatmap.title.slice(0, 30) + '...' 
-													: score.beatmap.title}
-											</div>
-											<div class="text-xs font-semibold truncate max-w-full" title={score.beatmap.artist}>
-												by {score.beatmap.artist.length > 20 
-													? score.beatmap.artist.slice(0, 20) + '...' 
-													: score.beatmap.artist}
-											</div>
-										</div>
-										<div class="flex flex-col lg:flex-row lg:gap-3">
-											<span class="text-xs font-semibold text-yellow-600 truncate max-w-full" title={score.beatmap.version}>
-												{score.beatmap.version.length > 25 
-													? score.beatmap.version.slice(0, 25) + '...' 
-													: score.beatmap.version}
-											</span>
-										<Popup placement="right">
-											<div class="text-xs font-semibold text-surface-300">
-												<Time timestamp={dayjs(score.play_time).locale($userLanguage)} relative />
-											</div>
-											<svelte:fragment slot="popup">
-												<div
-													class="hidden md:block card variant-filled-surface px-2 py-1 text-xs z-[9999]"
-												>
-													{new Date(score.play_time).toUTCString()}
-												</div>
-											</svelte:fragment>
-										</Popup>
-									</div>
-								</div>
-							</div>
-							<div
-								class="flex flex-col md:flex-row gap-1 md:justify-start items-center mt-2 md:mt-0 md:items-center"
-							>
-								<div class="flex flex-row gap-1 md:gap-0 items-center">
-									{#each parseModsInt(score.mods) as mod}
-										<div class="tooltip" aria-label={mod.name}>
-											<img
-												src="/mods/{mod.short_name.toLowerCase()}.png"
-												class="w-8 md:w-7 h-6 md:h-5"
-												alt={mod.name}
-											/>
-										</div>
-									{/each}
-								</div>
-								<div class="flex flex-col items-center md:items-start ms-3">
-									<div class="flex flex-row gap-3">
-										<span class="min-w-12 text-sm font-bold text-yellow-500"
-											>{removeTrailingZeroes(score.acc)}%</span
-										>
-										{#if scoresType == 'best'}
-											<span class="min-w-12 text-sm font-bold"
-												>{Math.round(score.pp * Math.pow(0.95, idx))}pp</span
-											>
-										{/if}
-									</div>
-									{#if scoresType == 'best'}
-										<span class="text-xs font-semibold">
-											{__('weighted {{val}}%', $userLanguage, {
-												val: Math.round(Math.pow(0.95, idx) * 100)
-											})}
-										</span>
-									{/if}
-								</div>
-								<div
-									class="min-w-[80px] flex flex-row items-center justify-center text-primary-400 py-1 font-bold bg-black/50 rounded-lg"
-								>
-									{Math.round(score.pp)}<span class="text-primary-300 text-xs">pp</span>
-								</div>
-							</div>
-						</div>
-						<div class="relative">
-							<button
-								class="btn variant-soft-surface cursor-pointer rounded-lg p-2 px-3 justify-center items-center"
-								on:click={() => toggleMenu(idx)}
-								title={__('More Options', $userLanguage)}
-							>
-								<MoreVertical class="pointer-events-none" />
-							</button>
-							{#if openMenuIndex === idx}
-								<div 
-									class="absolute z-20 right-0 top-full mt-1 bg-surface-600 rounded-lg shadow-lg border border-surface-400"
-									use:clickOutside={() => openMenuIndex = null}
-								>
-									{#if currentUserId === userId}
-										<button
-											class="flex items-center w-full px-4 py-2 text-sm hover:bg-surface-500 text-start"
-											on:click={() => handlePinScore(score)}
-										>
-											<Heart
-												class="mr-2" 
-												fill={score.pinned === 1 ? 'currentColor' : 'none'} 
-												stroke={score.pinned === 1 ? 'none' : 'currentColor'}
-											/>
-											{score.pinned === 1 ? __('Unpin Score', $userLanguage) : __('Pin Score', $userLanguage)}
-										</button>
-									{/if}
-									
-									{#if score.status > 0 && score.grade != "F"}
-										<a
-											href="{apiUrl}/v1/get_play?id={score.id}"
-											class="flex items-center w-full px-4 py-2 text-sm hover:bg-surface-500 text-start"
-											title={__('Download Replay', $userLanguage)}
-										>
-											<Download class="mr-2" />
-											{__('Download Replay', $userLanguage)}
-										</a>
-									{/if}
-								</div>
-							{/if}
-						</div>
-					</div>
-				{/each}
-			{/if}
-		</div>
+                    <div class="relative z-0 group" class:z-50={openMenuIndex === idx}>
+                        <div
+                            class="relative w-full flex flex-col md:flex-row items-stretch md:items-center justify-between gap-1 p-2 py-1 bg-surface-500 rounded-lg hover:scale-[1.005] active:scale-[0.995] transition-transform cursor-pointer group"
+                            transition:scale={{ start: 0.99, duration: 200 * (idx - (amount - scoreAmount) + 1) }}
+                        >
+                            <div
+                                class="absolute h-full w-full top-0 left-0 bg-no-repeat bg-center blur-[3px] opacity-5"
+                                style="background-image: url('https://assets.ppy.sh/beatmaps/{score.beatmap.set_id}/covers/cover@2x.jpg');"
+                            ></div>
+                            <div class="flex flex-row gap-2 items-center justify-center z-10 flex-grow"
+                                on:click={() => goto(`/beatmaps/${score.beatmap.id}?mode=${currentMode}&type=${currentType}`)}>
+                                <div class="w-10 md:w-8 text-center !text-4xl md:!text-2xl font-bold grade grade-{score.grade.toLowerCase()}">
+                                    {score.grade.replaceAll('XH', 'SS').replaceAll('X', 'SS').replaceAll('SH', 'S')}
+                                </div>
+                                <div class="flex flex-col w-full truncate">
+                                    <div class="flex flex-col lg:flex-row lg:items-center lg:gap-1 mb-1">
+                                        <div class="text-sm font-bold truncate max-w-full" title={score.beatmap.title}>
+                                            {score.beatmap.title.length > 30 
+                                                ? score.beatmap.title.slice(0, 30) + '...' 
+                                                : score.beatmap.title}
+                                        </div>
+                                        <div class="text-xs font-semibold truncate max-w-full" title={score.beatmap.artist}>
+                                            by {score.beatmap.artist.length > 20 
+                                                ? score.beatmap.artist.slice(0, 20) + '...' 
+                                                : score.beatmap.artist}
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col lg:flex-row lg:gap-3">
+                                        <span class="text-xs font-semibold text-yellow-600 truncate max-w-full" title={score.beatmap.version}>
+                                            {score.beatmap.version.length > 25 
+                                                ? score.beatmap.version.slice(0, 25) + '...' 
+                                                : score.beatmap.version}
+                                        </span>
+                                        <Popup placement="right">
+                                            <div class="text-xs font-semibold text-surface-300">
+                                                <Time timestamp={dayjs(score.play_time).locale($userLanguage)} relative />
+                                            </div>
+                                            <svelte:fragment slot="popup">
+                                                <div class="hidden md:block card variant-filled-surface px-2 py-1 text-xs z-[9999]">
+                                                    {new Date(score.play_time).toUTCString()}
+                                                </div>
+                                            </svelte:fragment>
+                                        </Popup>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col md:flex-row gap-1 md:justify-start items-center mt-2 md:mt-0 md:items-center">
+                                <div class="flex flex-row gap-1 md:gap-0 items-center">
+                                    {#each parseModsInt(score.mods) as mod}
+                                        <div class="tooltip" aria-label={mod.name}>
+                                            <img
+                                                src="/mods/{mod.short_name.toLowerCase()}.png"
+                                                class="w-8 md:w-7 h-6 md:h-5"
+                                                alt={mod.name}
+                                            />
+                                        </div>
+                                    {/each}
+                                </div>
+                                <div class="flex flex-col items-center md:items-start ms-3">
+                                    <div class="flex flex-row gap-3">
+                                        <span class="min-w-12 text-sm font-bold text-yellow-500">{removeTrailingZeroes(score.acc)}%</span>
+                                        {#if scoresType == 'best'}
+                                            <span class="min-w-12 text-sm font-bold">{Math.round(score.pp * Math.pow(0.95, idx))}pp</span>
+                                        {/if}
+                                    </div>
+                                    {#if scoresType == 'best'}
+                                        <span class="text-xs font-semibold">
+                                            {__('weighted {{val}}%', $userLanguage, {
+                                                val: Math.round(Math.pow(0.95, idx) * 100)
+                                            })}
+                                        </span>
+                                    {/if}
+                                </div>
+                                <div class="min-w-[80px] flex flex-row items-center justify-center text-primary-400 py-1 font-bold bg-black/50 rounded-lg">
+                                    {Math.round(score.pp)}<span class="text-primary-300 text-xs">pp</span>
+                                </div>
+                                <!-- ts pmo -->
+                                <div class="flex flex-col md:flex-row gap-1 md:justify-start items-center mt-2 md:mt-0 md:items-center">
+                                    <div class="relative ml-2">
+                                        <button
+                                            class="btn variant-soft-surface cursor-pointer rounded-lg p-2 justify-center items-center"
+                                            on:click|stopPropagation={() => toggleMenu(idx)}
+                                            title={__('More Options', $userLanguage)}
+                                        >
+                                            <MoreVertical class="pointer-events-none" />
+                                        </button>
+                                        {#if openMenuIndex === idx}
+                                            <div 
+                                                class="absolute z-[9999] right-0 top-full mt-1 bg-surface-600 rounded-lg shadow-lg border border-surface-400 w-max"
+                                                use:clickOutside={() => openMenuIndex = null}
+                                            >
+                                                {#if currentUserId === userId}
+                                                    <button
+                                                        class="flex items-center w-full px-4 py-2 text-sm hover:bg-surface-500 text-start whitespace-nowrap"
+                                                        on:click|stopPropagation={() => handlePinScore(score)}
+                                                    >
+                                                        <Heart
+                                                            class="mr-2" 
+                                                            fill={score.pinned === 1 ? 'currentColor' : 'none'} 
+                                                            stroke={score.pinned === 1 ? 'none' : 'currentColor'}
+                                                        />
+                                                        {score.pinned === 1 ? __('Unpin Score', $userLanguage) : __('Pin Score', $userLanguage)}
+                                                    </button>
+                                                {/if}
+                                                {#if score.status > 0 && score.grade != "F"}
+                                                    <a
+                                                        href="{apiUrl}/v1/get_play?id={score.id}"
+                                                        class="flex items-center w-full px-4 py-2 text-sm hover:bg-surface-500 text-start whitespace-nowrap"
+                                                        title={__('Download Replay', $userLanguage)}
+                                                        on:click|stopPropagation
+                                                    >
+                                                        <Download class="mr-2" />
+                                                        {__('Download Replay', $userLanguage)}
+                                                    </a>
+                                                {/if}
+                                            </div>
+                                        {/if}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {/each}
+            {/if}
+        </div>
 		<button
 			class="flex flex-row text-center justify-center items-center btn w-48 mx-auto variant-filled-surface px-4 py-1 mt-2 text-[0.7rem] leading-5"
 			on:click={loadMoreScores}
@@ -255,7 +244,7 @@
 				</div>
 			{:else if scores.scores.length >= 5 && !loading || scores}
 				<ChevronDown class="pointer-events-none text-surface-400" size={16} />
-				<span class="uppercase font-semibold">{__('show more', $userLanguage)}</span>
+				<span class="font-semibold">{__('show more', $userLanguage)}</span>
 				<ChevronDown class="pointer-events-none text-surface-400" size={16} />
 			{/if}
 		</button>

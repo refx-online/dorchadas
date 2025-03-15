@@ -6,7 +6,8 @@
 	import Popup from './Popup.svelte';
 	import { avatarUrl } from '$lib/env';
 	import { goto } from '$app/navigation';
-
+	import { Heart } from 'svelte-feathers';
+	
 	export let drawerStore: DrawerStore;
 </script>
 
@@ -33,7 +34,14 @@
 								on:click={() => {
 									goto(`/settings`);
 									drawerStore.close();
-								}}>{__('settings', $userLanguage)}</button
+								}}>{__('Settings', $userLanguage)}</button
+							>
+							<button
+								class="w-32 btn variant-filled-surface rounded-lg"
+								on:click={() => {
+									goto(`/friends`);
+									drawerStore.close();
+								}}>{__('Friends', $userLanguage)}</button
 							>
 							<a class="w-32 btn variant-filled-surface rounded-lg" href="/logout"
 								>{__('Logout', $userLanguage)}</a
@@ -89,17 +97,7 @@
 			: 'hover:variant-outline-surface '}rounded-lg"
 		on:click={() => drawerStore.close()}
 	>
-		{__('client updater', $userLanguage)}
-	</a>
-	
-	<a
-		href="/donate"
-		class="btn {$page.data.url == '/donate'
-			? 'variant-ghost-surface '
-			: 'hover:variant-outline-surface '}rounded-lg"
-		on:click={() => drawerStore.close()}
-	>
-		{__('Donate', $userLanguage)}
+		{__('Client Updater', $userLanguage)}
 	</a>
 
 	<a
@@ -121,6 +119,18 @@
 	>
 		{__('Top Plays', $userLanguage)}
 	</a>
+
+	{#if $userData}
+		<a
+			href="/nerv"
+			class="btn {$page.data.url == '/nerv'
+				? 'variant-ghost-surface '
+				: 'hover:variant-outline-surface '}rounded-lg"
+			on:click={() => drawerStore.close()}
+		>
+			{__('Nerv', $userLanguage)}
+		</a>
+	{/if}
 
 	<div class="h-full w-full flex flex-row justify-between items-end mt-auto">
 		<div class="md:hidden ms-auto">

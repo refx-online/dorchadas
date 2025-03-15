@@ -66,7 +66,8 @@ export const register = async (opts: {
 		const userIdInsert = await trx('users').insert({
 			name: username,
 			safe_name: safeName,
-			priv: (1 << 1), // i forgot where did kaupec removes the ingame login check on b.py
+			// unrestricted and verified
+			priv: 3, // i forgot where did kaupec removes the ingame login check on b.py
 			pw_bcrypt: hashedPassword,
 			country: countryCode,
 			creation_time: currentTimestamp,
@@ -109,7 +110,7 @@ export const login = async (opts: {
 	return userResult;
 };
 
-export const getUserFromSession = async (sessionToken: string): Promise<DBUser | undefined> => {
+export const getUserFromSession = async (sessionToken?: string): Promise<DBUser | undefined> => {
 	const redisClient = await getRedisClient();
 	const userId = await redisClient.get(`user:session:${sessionToken}`);
 	if (!userId) return undefined;

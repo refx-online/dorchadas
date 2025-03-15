@@ -32,3 +32,12 @@ userLanguage.subscribe((val) => {
 		window.localStorage.setItem('lang', val);
 	}
 });
+
+export const csrfToken = writable<string | null>(null);
+
+export function loadCsrfToken() {
+    const token = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrf_token='))?.split('=')[1] || null;
+    csrfToken.set(token);
+}

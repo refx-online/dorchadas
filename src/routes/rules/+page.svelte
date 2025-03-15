@@ -3,7 +3,7 @@
     import { fade, slide } from 'svelte/transition';
     import { __ } from '$lib/language';
     import { userLanguage } from '$lib/storage';
-
+    import { appName } from '$lib/env';
     let currentPage = 'rules';
 
     function changePage(page) {
@@ -14,6 +14,10 @@
         return __(`${key}`, $userLanguage);
     }
 </script>
+
+<svelte:head>
+    <title>{appName} :: Rules</title>
+</svelte:head>
 
 <div class="content container mx-auto px-4 py-8 relative z-[2]">
     <div class="nav-buttons">
@@ -107,7 +111,7 @@
                 </li>
                 <li>
                     <strong>{t('What is timewarp?')}</strong>
-                    <p>{t('Basically just changed your game speed on maps. with a limit. the limit is 90! (Only works on Shaymi ranking!)')}</p>
+                    <p>{t('Basically just changed your game speed on maps. with a limit. the limit is 90! (Only works on 002 ranking!)')}</p>
                 </li>
                 <li>
                     <strong>{t('What is AR (Approach Rate) Changer?')}</strong>
@@ -115,7 +119,7 @@
                 </li>
                 <li>
                     <strong>{t('What is CS (Circle Size) Changer?')}</strong>
-                    <p>{t('Changes the circle size. Circle will be changed by -1 if you plays with hardrock, -0.77 if you plays without it. Ex. (CS 5 .2 -> 4.2 (HardRock), CS 4 -> 3.23 (Non HardRock)) (Only works on Shaymi ranking!)')}</p>
+                    <p>{t('Changes the circle size. Circle will be changed by -1 if you plays with hardrock, -0.77 if you plays without it. Ex. (CS 5 .2 -> 4.2 (HardRock), CS 4 -> 3.23 (Non HardRock)) (Only works on 002 ranking!)')}</p>
                 </li>
                 <li>
                     <strong>{t('What is HD (Hidden) Remover?')}</strong>

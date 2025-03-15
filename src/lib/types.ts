@@ -46,6 +46,7 @@ export type LBUser = {
 	tscore: number;
 	x_count: number;
 	xh_count: number;
+	latest_activity: number;
 };
 
 export type UserModeStats = {
@@ -350,4 +351,47 @@ export type ScoreInfo = {
     twval: number;
     hdr: number;
     pinned: number;
+};
+
+export interface UserRelationship {
+    followers: number;
+    relationshipStatus: 'none' | 'follower' | 'known' | 'mutual';
+}
+
+// maybe combine these three?
+export type ppProfileHistory = {
+	status: 'success' | string;
+	data: {
+		user_id: number;
+		mode: number;
+		captures: {
+			captured_at: string;
+			pp: number;
+		}[];
+	};
+};
+
+export type rankProfileHistory = {
+	status: "success" | string;
+	data: {
+		user_id: number;
+		mode: number;
+		captures: {
+			captured_at: string;
+			overall: number;
+			country: number;
+		}[];
+	};
+};
+
+export type peakrankProfileHistory = {
+	status: "success" | string;
+	data: {
+		user_id: number;
+		mode: number;
+		captures: {
+			captured_at: string;
+			rank: number;
+		}[];
+	};
 };

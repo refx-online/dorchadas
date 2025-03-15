@@ -10,7 +10,7 @@
 	import { queryParam } from 'sveltekit-search-params';
 	import Edit2 from 'svelte-feathers/Edit2.svelte';
 	import type { Clan, PlayerStatus } from '$lib/types';
-	import { getClan, getPlayerStatus } from '$lib/api';
+	import { getClan, getPlayerStatus, getPPProfileHistory } from '$lib/api';
 	import { userData, userLanguage } from '$lib/storage';
 	import { getCountryName } from '$lib/country';
 	import { numberHumanReadable } from '$lib/stringUtil';
@@ -26,6 +26,18 @@
 	import Check from 'svelte-feathers/Check.svelte';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
+	import PlayCountGraph from '$lib/components/playCountGraph.svelte';
+	import { 
+		Heart, 
+		User, 
+		Users, 
+		UserPlus, 
+		Info, 
+		Layers
+	} from 'svelte-feathers';
+	import DonatorEffect from '$lib/components/donatorEffect.svelte';
+	import ProfileGraph from '$lib/components/profileGraph.svelte';
+	import ProfileComments from '$lib/components/profileComments.svelte';
 
 	export let data;
 	let clan: Clan | undefined;
@@ -226,6 +238,31 @@
 		}
 	};
 
+	const relationshipIcons = {
+		mutual: Heart,
+		follower: UserPlus,
+		known: Users,
+		none: User
+	};
+
+	const relationshipColors = {
+		mutual: 'bg-pink-400 hover:bg-pink-200',
+		follower: 'bg-blue-600 hover:bg-blue-200',
+		known: 'bg-green-800 hover:bg-green-200',
+		none: 'bg-gray-600 hover:bg-gray-200'
+	};
+
+	let aboutSection: HTMLElement;
+    let ranksSection: HTMLElement;
+    let historicalSection: HTMLElement;
+    let commentsSection: HTMLElement;
+	let activeSection = 'about';
+
+    const scroll = (section: HTMLElement, sectionName: string) => {
+		section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        activeSection = sectionName;
+    };
+
 	onMount(async () => {
 		if (data.user?.info.id) {
 			const selectedMode = $queryMode;
@@ -254,8 +291,18 @@
 		<title>{appName} :: player not found</title>
 	{/if}
 </svelte:head>
-<div class="container mx-auto w-full p-5">
-	{#if isStaff($userData?.priv) || (data.user?.info.id && data.user?.info.priv & Privileges.VERIFIED)}
+<div 
+	class="absolute top-0 left-0 w-full h-full bg-no-repeat bg-cover bg-center bg-fixed z-[-1]"
+	style="background-image: url('/u/{data.user?.info.id}/background');">
+</div>
+
+<div class="container mx-auto w-full p-5 min-h-screen relative"> 
+	<!-- 
+		TODO: (data.user?.info.id && isStaff($userData?.priv)) 
+		gotta figure out why priv isnt passed
+		temporary solution using ourPriv.. but its kinda dumb
+	 -->
+	 {#if data.user?.info.id && (isStaff(data.ourPriv) || (data.user?.info.priv & Privileges.VERIFIED && data.user?.info.priv & Privileges.UNRESTRICTED))}
 		<div class="mx-auto card">
 			<div class="w-full flex flex-col">
 				<div class="overflow-hidden rounded-lg">
@@ -372,12 +419,40 @@
 							{/if}
 
 							<span
-								class={privsToGroups(data.user.info.priv)
-									.reverse()
-									.filter((group) => group > Privileges.VERIFIED)
-									.map((group) => 'priv-' + Privileges[group].toLowerCase())
-									.pop()}>{data.user.info.name}</span
+								class={
+									privsToGroups(data.user?.info.priv ?? 0)
+										.reverse()
+										.filter((group) => group > Privileges.VERIFIED)
+										.map((group) => 'priv-' + Privileges[group].toLowerCase())
+										.pop()
+								}
 							>
+							<!-- TODO: rework -->
+							{#if isDonator(data.user?.info.priv ?? 0)}
+								<DonatorEffect 
+									username={data.user?.info.name} 
+									sparkleColor="#ffd700" 
+									gradientColors={['#ff6b6b', '#4ecdc4']}
+								/>
+							{:else}
+								{data.user?.info.name}
+							{/if}
+
+							{#if data.oldUsernames}
+								<Popup placement="top">
+									<Layers class="pointer-events-none" size={20} />
+									<svelte:fragment slot="popup">
+										<div class="card p-2 px-4 rounded-lg variant-filled-surface text-sm">
+											{__('formerly known as:', $userLanguage)} {data.oldUsernames}
+											<div
+												class="arrow border-r border-b border-gray-700 variant-filled-surface"
+											></div>
+										</div>
+									</svelte:fragment>
+								</Popup>
+							{/if}
+							
+							</span>
 						</div>
 						<div class="flex flex-row items-center md:gap-2">
 							<Popup placement="top">
@@ -396,36 +471,12 @@
 								</svelte:fragment>
 							</Popup>
 							<span class="hidden md:block">{getCountryName(data.user.info.country)}</span>
-							<UserRankBadges userPriv={data.user.info.priv}></UserRankBadges>
-						</div>
-					</div>
-					<div class="ms-auto flex flex-row items-center gap-5">
-						<div class="flex flex-col font-semibold text-xs text-end">
-							<Popup placement="top">
-								<div
-									class="hidden md:block relative h-2 w-24 lg:w-52 bg-gray-950 rounded-lg border border-surface-700"
-								>
-									<div
-										class="bg-gradient-to-r from-primary-400 to-primary-600 h-full rounded-lg"
-										style="width: {$levelProgress}%;"
-									></div>
-									<div class="absolute mt-[2px] top-[100%] right-0">
-										{Math.trunc($levelProgress)}%
-									</div>
-								</div>
-								<svelte:fragment slot="popup">
-									<div class="card p-2 px-4 rounded-lg variant-filled-surface font-normal text-xs">
-										{__('progress to next level', $userLanguage)}
-										<div
-											class="arrow border-r border-b border-gray-700 variant-filled-surface"
-										></div>
-									</div>
-								</svelte:fragment>
-							</Popup>
-						</div>
-						<div class="relative inline-flex items-center justify-center h-[50px] w-[50px]">
-							<div class="absolute w-full h-full level-icon level level-{$level}"></div>
-							<span class="absolute text-[20px] font-semibold">{$level}</span>
+							<UserRankBadges
+								userPriv={data.user.info.priv} 
+								userID={data.user.info.id}
+								userRank={$globalRank}
+								userMode={currentMode}!{currentType === 'vanilla' ? '0.0.1' : '0.0.2'} 
+							/> <!-- Ok -->
 						</div>
 					</div>
 				</div>
@@ -447,7 +498,7 @@
 									>
 								</div>
 							</div>
-
+							<ProfileGraph userId={data.user.info.id} mode={currentModeInt}/>
 							<div
 								class="w-full flex flex-col md:flex-row justify-around items-center md:items-end md:justify-normal gap-10"
 							>
@@ -479,12 +530,16 @@
 										<span class="text-xs">{numberHumanReadable($xhGrade)}</span>
 									</div>
 									<div class="flex flex-col items-center justify-center">
-										<span class="text-2xl font-semibold grade grade-x">S</span>
+										<span class="text-2xl font-semibold grade grade-x">SS</span>
 										<span class="text-xs">{numberHumanReadable($xGrade)}</span>
 									</div>
 									<div class="flex flex-col items-center justify-center">
-										<span class="text-2xl font-semibold grade grade-sh">SS</span>
+										<span class="text-2xl font-semibold grade grade-sh">S</span>
 										<span class="text-xs">{numberHumanReadable($shGrade)}</span>
+									</div>
+									<div class="flex flex-col items-center justify-center">
+										<span class="text-2xl font-semibold grade grade-s">S</span>
+										<span class="text-xs">{numberHumanReadable($sGrade)}</span>
 									</div>
 									<div class="flex flex-col items-center justify-center">
 										<span class="text-2xl font-semibold grade grade-a">A</span>
@@ -547,8 +602,129 @@
 						</div>
 					</div>
 				</div>
+				<div class="flex flex-row justify-between gap-2 bg-surface-600 p-7 py-2">
+					<div class="flex items-center gap-5">
+						{#if data.relationships}
+						<div class="flex items-center gap-5">
+							<form 
+								action="?/relationship" 
+								method="POST"
+								use:enhance={() => {
+									return async ({ update }) => {
+										await update({ reset: false });
+									};
+								}}
+								class="relative inline-flex items-center justify-center h-[40px] px-6 text-white text-sm font-semibold rounded-full 
+								shadow-md transition {data.user?.info.id === $userData?.id ? 
+								'bg-gray-600 hover:bg-gray-200 cursor-not-allowed' : 
+								relationshipColors[data.relationships.relationshipStatus]}"
+							>
+							<input type="hidden" name="friendID" value={data.user?.info.id} />
+							<input type="hidden" name="relationshipStatus" value={data.relationships.relationshipStatus} />
+
+							<button type="submit" class="inline-flex items-center">
+								<svelte:component 
+									this={data.user?.info.id === $userData?.id ? User : relationshipIcons[data.relationships.relationshipStatus]} 
+									class="mr-2 text-xl" 
+								/>
+								
+								{data.relationships.followers}
+							</button>
+							</form>
+						</div>
+						{/if}
+					</div>
+					<div class="ms-auto flex items-center gap-5">
+						<div class="flex flex-col font-semibold text-xs text-start">
+							<Popup placement="top">
+								<div
+									class="hidden md:block relative h-2 w-24 lg:w-52 bg-gray-950 rounded-lg border border-surface-700"
+								>
+									<div
+										class="bg-gradient-to-r from-primary-400 to-primary-600 h-full rounded-lg"
+										style="width: {$levelProgress}%;"
+									></div>
+									<div class="absolute mt-[2px] top-[100%] right-0">
+										{Math.trunc($levelProgress)}%
+									</div>
+								</div>
+								<svelte:fragment slot="popup">
+									<div class="card p-2 px-4 rounded-lg variant-filled-surface font-normal text-xs">
+										{__('progress to next level', $userLanguage)}
+										<div
+											class="arrow border-r border-b border-gray-700 variant-filled-surface"
+										></div>
+									</div>
+								</svelte:fragment>
+							</Popup>
+						</div>
+						<div class="relative inline-flex items-center justify-center h-[50px] w-[50px]">
+							<div class="absolute w-full h-full level-icon level level-{$level}"></div>
+							<span class="absolute text-[20px] font-semibold">{$level}</span>
+						</div>
+					</div>
+				</div>
+				<div class="gap-6 bg-surface-800 p-4 sticky top-0 z-10 shadow-lg">
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
+					<div class="flex flex-col gap-2 py-2 px-7">
+						<div class="hidden md:flex flex-row gap-8">
+							<span 
+								class="cursor-pointer text-sm {activeSection === 'about' ? 'text-primary-400' : 'text-surface-200 hover:text-surface-50'}"
+								on:click={() => scroll(aboutSection, 'about')}
+							>
+								{__('me!', $userLanguage)}
+							</span>
+							<span 
+								class="cursor-pointer text-sm {activeSection === 'ranks' ? 'text-primary-400' : 'text-surface-200 hover:text-surface-50'}"
+								on:click={() => scroll(ranksSection, 'ranks')}
+							>
+								{__('Ranks', $userLanguage)}
+							</span>
+							<span 
+								class="cursor-pointer text-sm {activeSection === 'historical' ? 'text-primary-400' : 'text-surface-200 hover:text-surface-50'}"
+								on:click={() => scroll(historicalSection, 'historical')}
+							>
+								{__('Historical', $userLanguage)}
+							</span>
+							<span 
+								class="cursor-pointer text-sm {activeSection === 'comments' ? 'text-primary-400' : 'text-surface-200 hover:text-surface-50'}"
+								on:click={() => scroll(commentsSection, 'comments')}
+							>
+								{__('Comments', $userLanguage)}
+							</span>
+						</div>
+
+						<div class="flex md:hidden overflow-x-auto gap-6">
+							<span 
+								class="cursor-pointer text-sm whitespace-nowrap {activeSection === 'about' ? 'text-primary-400' : 'text-surface-200'}"
+								on:click={() => scroll(aboutSection, 'about')}
+							>
+								{__('me!', $userLanguage)}
+							</span>
+							<span 
+								class="cursor-pointer text-sm whitespace-nowrap {activeSection === 'ranks' ? 'text-primary-400' : 'text-surface-200'}"
+								on:click={() => scroll(ranksSection, 'ranks')}
+							>
+								{__('Ranks', $userLanguage)}
+							</span>
+							<span 
+								class="cursor-pointer text-sm whitespace-nowrap {activeSection === 'historical' ? 'text-primary-400' : 'text-surface-200'}"
+								on:click={() => scroll(historicalSection, 'historical')}
+							>
+								{__('Historical', $userLanguage)}
+							</span>
+							<span 
+								class="cursor-pointer text-sm whitespace-nowrap {activeSection === 'comments' ? 'text-primary-400' : 'text-surface-200'}"
+								on:click={() => scroll(commentsSection, 'comments')}
+							>
+								{__('Comments', $userLanguage)}
+							</span>
+						</div>
+					</div>
+				</div>
 				<div class="flex flex-col gap-2 bg-surface-800 p-7 py-2">
-					<div class="card !bg-surface-700 w-full py-3 p-6 relative">
+					<div class="card !bg-surface-700 w-full py-3 p-6 relative" bind:this={aboutSection}>
 						<div class="flex flex-col gap-5">
 							<div class="flex justify-between items-center">
 								<p
@@ -566,6 +742,12 @@
 										</button>
 									{:else}
 										<div class="absolute top-2 right-2 flex gap-2">
+											<button 
+												class="btn btn-icon variant-filled-surface h-10 w-10" 
+												on:click={() => (window.location.href = '/bbcode')}
+											>
+												<Info class="pointer-events-none" size={20} />
+											</button>
 											<button 
 												class="btn btn-icon variant-filled-surface h-10 w-10"
 												on:click={handleEditToggle}
@@ -616,7 +798,7 @@
 							{/if}
 						</div>
 					</div>
-					<div class="card !bg-surface-700 w-full py-3 p-6">
+					<div class="card !bg-surface-700 w-full py-3 p-6" bind:this={ranksSection}>
 						<div class="flex flex-col gap-5">
 							<p
 								class="text-lg font-bold underline underline-offset-4 decoration-2 decoration-primary-400"
@@ -627,7 +809,7 @@
 								{#key currentModeInt}
 									<!-- this implementation actually weird .. .. -->
 									<UserScores
-										title="pinned scores"
+										title="Pinned Scores"
 										{currentMode}
 										{currentType}
 										userId={data.user.info.id}
@@ -647,7 +829,7 @@
 									/>
 
 									<UserScores
-										title="first place scores"
+										title="First Place Scores"
 										{currentMode}
 										{currentType}
 										userId={data.user.info.id}
@@ -669,13 +851,23 @@
 							</div>
 						</div>
 					</div>
-					<div class="card !bg-surface-700 w-full py-3 p-6">
+					<div class="card !bg-surface-700 w-full py-3 p-6" bind:this={historicalSection}>
 						<div class="flex flex-col gap-5">
 							<p
 								class="text-lg font-bold underline underline-offset-4 decoration-2 decoration-primary-400"
 							>
 								{__('Historical', $userLanguage)}
 							</p>
+							{#if data.playCountGraph}
+								<div class="card !bg-surface-700 w-full py-3 p-6">
+									<div class="flex flex-col gap-5">
+									<p class="text-lg font-bold decoration-2 decoration-primary-400 ">
+										{__('Play History', $userLanguage)}
+									</p>
+									<PlayCountGraph playCountGraph={data.playCountGraph} />
+									</div>
+								</div>
+							{/if}
 							<div class="relative flex flex-col gap-5">
 								{#key currentModeInt}
 									<UserMostPlayed
@@ -687,6 +879,17 @@
 									/>
 								{/key}
 							</div>
+						</div>
+					</div>
+					<div class="card !bg-surface-700 w-full py-3 p-6" bind:this={commentsSection}>
+						<div class="flex flex-col gap-5">
+							<p
+								class="text-lg font-bold underline underline-offset-4 decoration-2 decoration-primary-400"
+							>
+								{__('Comments', $userLanguage)}
+							</p>
+							
+							<ProfileComments userId={data.user.info.id} />
 						</div>
 					</div>
 				</div>

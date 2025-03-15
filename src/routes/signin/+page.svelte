@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { env } from '$env/dynamic/public';
-	import { appName } from '$lib/env';
+	import { appName, discordUrl } from '$lib/env';
 	import { __ } from '$lib/language';
 	import { userData, userLanguage } from '$lib/storage';
 	import {
@@ -55,7 +55,7 @@
 		if (loginRequest.ok) {
 			userData.set(loginResponse.user);
 			const t: ToastSettings = {
-				message: __('Welcome back, {{val}}!', $userLanguage, {
+				message: __('Welcome aboard, {{val}}!', $userLanguage, {
 					val: $userData?.username ?? loginData.username
 				}),
 				classes: '!bg-surface-800 !text-surface-200 !border-surface-700 !border'
@@ -118,8 +118,8 @@
 							: ''}"
 						bind:value={loginData.username}
 					/>
-					<a href="/login" class="text-pink-700 me-auto mb-7"
-						>{__('Forgot email?', $userLanguage)}</a
+					<a href={discordUrl} class="text-pink-700 me-auto mb-7"
+						>{__('Forgot username?', $userLanguage)}</a
 					>
 					<div class="w-full flex flex-row justify-between mt-auto mb-14">
 						<button

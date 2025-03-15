@@ -3,7 +3,7 @@
 // sowwy
 // atleast it works
 import { error } from '@sveltejs/kit';
-import { getMySQLDatabase } from '../../../hooks.server';
+import { pinScore } from '$lib/db';
 
 export const POST = async ({ request }) => {
     const { scoreid, isPinned, currentUserId, userId } = await request.json();
@@ -13,17 +13,7 @@ export const POST = async ({ request }) => {
     }
 
     try {
-        const mysqlDB = await getMySQLDatabase();
-        if (!mysqlDB) {
-            error(500, 'Database connection failed');
-        }
-
-        await mysqlDB.raw(
-            isPinned 
-                ? "UPDATE scores SET pinned = 0 WHERE id = ?" 
-                : "UPDATE scores SET pinned = 1 WHERE id = ?", 
-            [scoreid]
-        );
+        await pinScore(scoreid, isPinned)
 
         return new Response(JSON.stringify({ success: true }), {
             headers: { 'Content-Type': 'application/json' }

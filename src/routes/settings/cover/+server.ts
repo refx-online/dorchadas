@@ -27,9 +27,9 @@ export const POST = async ({ request, cookies }) => {
             return error(400, 'Invalid file type. Only JPEG and PNG are allowed.');
         }
 
-        const maxFileSize = 2 * 1024 * 1024;
+        const maxFileSize = 5 * 1024 * 1024;
         if (file.size > maxFileSize) {
-            return error(400, 'File size exceeds the 2 MB limit');
+            return error(400, 'File size exceeds the 5 MB limit');
         }
 
         const fileExtension = file.type === 'image/jpeg' ? 'jpg' : 'png';

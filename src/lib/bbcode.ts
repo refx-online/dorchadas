@@ -12,8 +12,9 @@ export function parseBBCodeToHtml(bbcode: string): string {
     }[c] || c));
     
     // skull
-
-    const conversions: [RegExp, string][] = [
+    // copied from our old frontend
+    // maybe need a bb code page to explain what these means?
+    const conversions: [RegExp, string | ((...args: string[]) => string)][] = [
         [/\[b\]([\s\S]*?)\[\/b\]/g, '<strong>$1</strong>'],
         [/\[i\]([\s\S]*?)\[\/i\]/g, '<em>$1</em>'],
         [/\[u\]([\s\S]*?)\[\/u\]/g, '<u>$1</u>'],
@@ -34,8 +35,6 @@ export function parseBBCodeToHtml(bbcode: string): string {
 
         [/\[code\]([\s\S]*?)\[\/code\]/g, '<pre><code>$1</code></pre>'],
 
-        [/\[centre\]([\s\S]*?)\[\/centre\]/g, '<div class="text-center">$1</div>'],
-
         [/\[heading\]([\s\S]*?)\[\/heading\]/g, '<h2 class="userpage-heading">$1</h2>'],
 
         [/\[notice\]([\s\S]*?)\[\/notice\]/g, '<div class="userpage-notice">$1</div>'],
@@ -49,11 +48,33 @@ export function parseBBCodeToHtml(bbcode: string): string {
 
         [/\[profile\](.*?)\[\/profile\]/g, '<a href="/u/$1" class="userpage-profile-link">$1</a>'],
 
+        // you can use it like this
+        // [spotify][/spotify]
+        //        width,height
+        // [spotify=300,800][/spotify]
+        [/\[spotify(?:=(\d+),(\d+))?\](https?:\/\/open\.spotify\.com\/[^\s\]]+)\[\/spotify\]/g, (match, width, height, url) => {
+            const embedUrl = url.replace("open.spotify.com", "open.spotify.com/embed");
+            const iframeWidth = width || "300";
+            const iframeHeight = height || "380";
+
+            return `<div style="display: inline-block; margin-right: 10px;">
+                        <iframe src="${embedUrl}" width="${iframeWidth}" height="${iframeHeight}" frameborder="0" allow="encrypted-media"></iframe>
+                    </div>`;
+        }],
+
+        [/\[audio\](https?:\/\/[^\s]+)\[\/audio\]/g, '<audio controls><source src="$1" type="audio/mpeg">Your browser does not support the audio element.</audio>'],
+
+        [/\[centre\]([\s\S]*?)\[\/centre\]/g, '<div style="text-align:center;">$1</div>'],
+
         [/\n/g, '<br>']
     ];
 
     conversions.forEach(([pattern, replacement]) => {
-        bbcode = bbcode.replace(pattern, replacement);
+        if (typeof replacement === "string") {
+            bbcode = bbcode.replace(pattern, replacement);
+        } else {
+            bbcode = bbcode.replace(pattern, (...args) => replacement(...args));
+        }
     });
 
     return bbcode;

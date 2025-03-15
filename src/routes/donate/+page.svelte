@@ -7,17 +7,19 @@
     const donationOptions = [
         {
             name: 'kaupec1',
-            description: 'Main Developer',
+            description: 'PP Calculation, Backend Dev',
             kofiLink: 'https://ko-fi.com/kaupec1',
             avatar: avatarUrl + '/3' ,
-            backgroundColor: 'bg-gradient-to-br from-blue-500 to-purple-600'
+            backgroundColor: 'bg-gradient-to-br from-blue-500 to-purple-600',
+            profileUrl: '/u/3'
         },
         {
             name: 'anolet',
-            description: 'Main Developer',
+            description: 'PP Calculation, Frontend, Client, Backend Dev',
             kofiLink: 'https://ko-fi.com/anolet',
             avatar: avatarUrl + '/4',
-            backgroundColor: 'bg-gradient-to-br from-green-500 to-teal-600'
+            backgroundColor: 'bg-gradient-to-br from-green-500 to-teal-600',
+            profileUrl: '/u/4'
         }
     ];
 
@@ -27,6 +29,10 @@
     });
 
 </script>
+
+<svelte:head>
+	<title>{appName} :: Donate</title>
+</svelte:head>
 
 <div class="min-h-screen bg-surface-50 dark:bg-surface-900 relative z-[1] overflow-hidden">
     {#if mounted}
@@ -59,7 +65,13 @@
                                 class="w-20 h-20 rounded-full border-4 border-white/30 mr-6 object-cover"
                             />
                             <div>
-                                <h2 class="text-2xl font-bold text-white">{donor.name}</h2>
+                                <a 
+                                    href={donor.profileUrl} 
+                                    target="_blank" 
+                                    class="text-2xl font-bold text-white hover:underline"
+                                >
+                                    {donor.name}
+                                </a>
                                 <p class="text-white/80">{donor.description}</p>
                             </div>
                         </div>

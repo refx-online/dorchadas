@@ -39,11 +39,13 @@
 	import { appName, avatarUrl, apiUrl } from '$lib/env';
 	import Menu from 'svelte-feathers/Menu.svelte';
 	import Search from 'svelte-feathers/Search.svelte';
+	import Heart from 'svelte-feathers/Heart.svelte';
 	import NavItems from '$lib/components/navItems.svelte';
 	import type { UserData } from '$lib/types';
 	import Popup from '$lib/components/Popup.svelte';
 	import { __, languages } from '$lib/language';
 	import Footer from '$lib/components/footer.svelte';
+    import { elasticOut } from 'svelte/easing';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 	initializeStores();
@@ -87,6 +89,28 @@
 			}
 		}, 500);
 	};
+
+	// nerv's
+	let hoveredIndex = -1;
+	const nervNavItems = [
+		{ title: 'Nerv', icon: '⏾', path: '/nerv', description: 'Dashboard' },
+        { title: 'Ranking', icon: '🎵', path: '/nerv/beatmaps', description: 'Manage beatmap status and ranking' },
+        { title: 'Requests', icon: '🛎️', path: '/nerv/requests', description: 'Manage beatmap requests' },
+
+        { title: 'Stats', icon: '📊', path: '/nerv/stats', description: 'View detailed server statistics' },
+        { title: 'Home', icon: '𐦍', path: '/', description: 'Home' },
+        { title: 'Console', icon: '📝', path: '/nerv/reports', description: 'View user reports and issues' },
+
+        { title: 'Logs', icon: '📋', path: '/nerv/logs', description: 'Server activity logs' },
+		{ title: 'Panel', icon: '</>', path: '/nerv/panel', description: 'More control panel stuff' },
+		{ title: 'Recalculate', icon: '🔑', path: '/nerv/recalculate', description: 'Recalculate scores to fix performance point' },
+    ];
+    
+    function getRandomOffset() {
+        return (Math.random() - 0.5) * 20;
+    }
+
+    $: isNervPath = $page.url.pathname.startsWith('/nerv');
 
 	onMount(() => {
 		const pageMain = document.getElementById('page');
@@ -159,12 +183,55 @@
 	</div>
 {/if}
 
+{#if isNervPath}
+    <div class="honeycomb-nav">
+        <div class="honeycomb-container">
+            {#each nervNavItems as item, i}
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <!-- svelte-ignore a11y-no-static-element-interactions -->
+                <div 
+                    class="honeycomb-item"
+                    class:hovered={hoveredIndex === i}
+                    class:active={$page.url.pathname === item.path}
+                    on:click={() => goto(item.path)}
+                    on:mouseenter={() => hoveredIndex = i}
+                    on:mouseleave={() => hoveredIndex = -1}
+                    style="--delay: {i * 0.1}s"
+                >
+                    {#if hoveredIndex === i}
+                        <div 
+                            class="honeycomb-content"
+                            transition:fly="{{ 
+                                x: getRandomOffset(), 
+                                y: getRandomOffset(),
+                                duration: 400,
+                                easing: elasticOut
+                            }}"
+                        >
+                            <div class="honeycomb-icon">{item.icon}</div>
+                            <div class="honeycomb-title">{item.title}</div>
+                        </div>
+                    {:else}
+                        <div class="honeycomb-content">
+                            <div class="honeycomb-icon">{item.icon}</div>
+                            <div class="honeycomb-title">{item.title}</div>
+                        </div>
+                    {/if}
+                    <svg class="honeycomb-border" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <path d="M50 0 L93.3 25 L93.3 75 L50 100 L6.7 75 L6.7 25 Z" />
+                    </svg>
+                </div>
+            {/each}
+        </div>
+    </div>
+{/if}
+
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-missing-attribute -->
 <AppShell>
 	<svelte:fragment slot="header">
-		{#if ($page.data.url != '/signin' && $page.data.url != '/signup') || $page.status != 200}
+		{#if ($page.data.url != '/signin' && $page.data.url != '/signup' && $page.data.url != '/nerv') || $page.status != 200}
 			<div
 				class="fixed w-full"
 				in:fly={{ y: -15, duration: 200, delay: 200 }}
@@ -176,13 +243,19 @@
 						: 'w-[100%] bg-surface-700 border-surface-700'}  transition-all duration-700 z-[9999]"
 				>
 					<div class="flex p-2 px-4 flex-row justify-between items-center gap-2">
-						<a class="text-xl uppercase cursor-pointer mr-12 flex items-center gap-2" on:click={() => goto('/')}
+						<a class="text-xl cursor-pointer mr-12 flex items-center gap-2" on:click={() => goto('/')}
 							><img src="/favicon.png" alt="tsuki" class="w-8 h-8" />{appName}</a
 						>
 						<div class="hidden md:flex flex-row justify-start items-center gap-2 me-auto">
 							<NavItems {drawerStore} />
 						</div>
 						<div class="flex flex-row gap-5 items-center">
+							<button 
+								class="btn px-2 py-2 rounded-lg variant-ghost-surface hidden md:block"
+								on:click={() => goto('/donate')}
+							>
+								<Heart class="pointer-events-none" size={20} />
+							</button>
 							<div class="hidden md:block">
 								<Popup event="click" placement="bottom">
 									<button class="btn px-2 py-2 rounded-lg variant-ghost-surface">
@@ -245,7 +318,10 @@
 														>{__('Profile', $userLanguage)}</button
 													>
 													<a class="w-32 btn variant-filled-surface rounded-lg" href="/settings"
-														>{__('settings', $userLanguage)}</a
+														>{__('Settings', $userLanguage)}</a
+													>
+													<a class="w-32 btn variant-filled-surface rounded-lg" href="/friends"
+														>{__('Friends', $userLanguage)}</a
 													>
 													<a class="w-32 btn variant-filled-surface rounded-lg" href="/logout"
 														>{__('Logout', $userLanguage)}</a
@@ -306,22 +382,135 @@
     </svelte:fragment>
 </AppShell>
 
-<!-- remove to stop lowercased whole web -->
-<style lang="scss" global>
-	:global(.lowercase-text) {
-		text-transform: lowercase;
-	}
-	:global(.lowercase-text *) {
-		text-transform: lowercase;
-	}
+<style>
+    .honeycomb-nav {
+        position: fixed;
+        bottom: 2rem;
+        left: 2rem;
+        z-index: 1000;
+    }
 
-	:global(.no-lowercase) {
-		text-transform: none !important;
-	}
+    .honeycomb-container {
+        display: grid;
+        grid-template-columns: repeat(3, 60px);
+        grid-template-rows: repeat(3, 70px);
+        gap: 5px;
+        transform: rotate(-30deg);
+    }
 
-	:global(.lowercase-text input),
-	:global(.lowercase-text textarea),
-	:global(.lowercase-text [contenteditable="true"]) {
-		text-transform: none;
-	}
+    .honeycomb-item {
+        position: relative;
+        width: 60px;
+        height: 70px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        opacity: 0;
+        animation: fadeIn 0.5s forwards;
+        animation-delay: var(--delay);
+    }
+
+    .honeycomb-item:nth-child(3n + 2) {
+        transform: translateY(35px);
+    }
+
+    .honeycomb-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(30deg);
+        width: 100%;
+        text-align: center;
+        z-index: 1;
+    }
+
+    .honeycomb-icon {
+        font-size: 1.2em;
+        margin-bottom: 0.2rem;
+    }
+
+    .honeycomb-title {
+        font-size: 0.7em;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .honeycomb-item:hover .honeycomb-title {
+        opacity: 1;
+    }
+
+    .honeycomb-border {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+
+    .honeycomb-border path {
+        fill: rgba(255, 62, 0, 0.1);
+        stroke: #ff3e00;
+        stroke-width: 2;
+        transition: all 0.3s ease;
+    }
+
+    .honeycomb-item:hover .honeycomb-border path {
+        fill: rgba(255, 62, 0, 0.2);
+        stroke-width: 3;
+        filter: drop-shadow(0 0 5px #ff3e00);
+    }
+
+    .honeycomb-item.active .honeycomb-border path {
+        fill: rgba(255, 62, 0, 0.3);
+        stroke-width: 3;
+        filter: drop-shadow(0 0 8px #ff3e00);
+    }
+
+    .honeycomb-item.active .honeycomb-title {
+        opacity: 1;
+    }
+
+    .honeycomb-item.hovered {
+        z-index: 2;
+        transform: scale(1.1);
+    }
+
+    .honeycomb-item.hovered:nth-child(3n + 2) {
+        transform: translateY(35px) scale(1.1);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .honeycomb-nav {
+            bottom: 1rem;
+            left: 1rem;
+        }
+
+        .honeycomb-container {
+            grid-template-columns: repeat(3, 50px);
+            grid-template-rows: repeat(3, 58px);
+        }
+
+        .honeycomb-item {
+            width: 50px;
+            height: 58px;
+        }
+
+        .honeycomb-item:nth-child(3n + 2) {
+            transform: translateY(29px);
+        }
+
+        .honeycomb-item.hovered:nth-child(3n + 2) {
+            transform: translateY(29px) scale(1.1);
+        }
+    }
 </style>

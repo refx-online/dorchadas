@@ -120,7 +120,7 @@
 				</div>
 			{:else}
 				<ChevronDown class="pointer-events-none text-surface-400" size={16} />
-				<span class="uppercase font-semibold">{__('show more', $userLanguage)}</span>
+				<span class="font-semibold">{__('show more', $userLanguage)}</span>
 				<ChevronDown class="pointer-events-none text-surface-400" size={16} />
 			{/if}
 		</button>

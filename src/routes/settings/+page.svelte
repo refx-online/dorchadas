@@ -11,11 +11,11 @@
     import { appName } from '$lib/env';
 
     export let data;
-    export let form;
 
-    let selectedLanguage = $userLanguage;
     let avatarFile: FileList;
     let coverFile: FileList;
+    let bgFile: FileList;
+
     let newUsername = '';
     let usernameError = '';
     let message = '';
@@ -80,8 +80,38 @@
                 message = __('An error occurred while uploading the cover', $userLanguage);
             }
         } catch (err) {
+            // this shit doesnt even catch
             console.error('Error uploading cover:', err);
             message = __('An error occurred while uploading the cover', $userLanguage);
+        } finally {
+            isLoading = false;
+        }
+    }
+
+    async function handleBackgroundUpload() {
+        if (!bgFile?.[0]) return;
+        isLoading = true;
+        message = '';
+
+        try {
+            const formData = new FormData();
+            formData.append('background', bgFile[0]);
+
+            const response = await fetch('/settings/background', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                message = __('Background updated successfully, ctrl + f5 to reload', $userLanguage);
+                await invalidateAll();
+            } else {
+                message = __('An error occurred while uploading the background', $userLanguage);
+            }
+        } catch (err) {
+            // this shit doesnt even catch
+            console.error('Error uploading background:', err);
+            message = __('An error occurred while uploading the background', $userLanguage);
         } finally {
             isLoading = false;
         }
@@ -110,7 +140,6 @@
             await update();
         };
     };
-
 </script>
 
 <svelte:head>
@@ -128,7 +157,7 @@
         <h1 class="text-2xl font-bold mb-6">{__('Settings', $userLanguage)}</h1>
 
         <div class="space-y-6">
-            <!-- Avatar Settings -->
+            <!-- Avatar Settings and cover -->
             {#if data.currentUser}
                 <div class="space-y-4">
                     <h2 class="text-xl font-semibold">{__('Avatar', $userLanguage)}</h2>
@@ -163,7 +192,7 @@
                                 {__('Upload Avatar', $userLanguage)}
                             </button>
                             <p class="text-sm">
-                                {__('maximum size: 2MB. supported formats: JPG, PNG', $userLanguage)}
+                                {__('maximum size: 5MB. supported formats: JPG, PNG', $userLanguage)}
                             </p>
                         </div>
                     </div>
@@ -171,6 +200,14 @@
                 <div class="space-y-4">
                     <h2 class="text-xl font-semibold">{__('Cover Image', $userLanguage)}</h2>
                     <div class="flex items-center space-x-4">
+
+                        <img
+                            src={"u/" + data.currentUser.id + "/cover"}
+                            alt="Cover"
+                            class="w-24 h-24 object-cover"
+                            style="display: {coverFile ? 'none' : 'block'};"
+                        />
+
                         {#if coverFile}
                             <img
                                 src={URL.createObjectURL(coverFile[0])}
@@ -193,11 +230,53 @@
                                 {__('Upload Cover', $userLanguage)}
                             </button>
                             <p class="text-sm">
-                                {__('maximum size: 2MB. supported formats: JPG, PNG', $userLanguage)}
+                                {__('maximum size: 5MB. supported formats: JPG, PNG', $userLanguage)}
                             </p>
                         </div>
                     </div>
                 </div>
+            {/if}
+
+            <!-- Background -->
+            {#if data.currentUser}
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold">{__('Background Image', $userLanguage)}</h2>
+                <div class="flex items-center space-x-4">
+
+                    <img
+                        src={"u/" + data.currentUser.id + "/background"}
+                        alt="bg"
+                        class="w-24 h-24 object-cover"
+                        style="display: {bgFile ? 'none' : 'block'};"
+                    />
+
+                    {#if bgFile}
+                        <img
+                            src={URL.createObjectURL(bgFile[0])}
+                            alt="Selected Background Preview"
+                            class="w-full h-32 object-cover"
+                        />
+                    {/if}
+                    <div class="space-y-2">
+                        <input
+                            type="file"
+                            accept="image/jpeg,image/png"
+                            bind:files={bgFile}
+                            class="input"
+                        />
+                        <button
+                            class="btn variant-filled-primary"
+                            on:click={handleBackgroundUpload}
+                            disabled={!bgFile?.[0]}
+                        >
+                            {__('Upload Background', $userLanguage)}
+                        </button>
+                        <p class="text-sm">
+                            {__('maximum size: 5MB. supported formats: JPG, PNG', $userLanguage)}
+                        </p>
+                    </div>
+                </div>
+            </div>
             {/if}
 
             <!-- Username Change -->
@@ -210,6 +289,7 @@
                         use:enhance={handleUsernameSubmit}
                         class="space-y-4"
                     >
+                    <input type="hidden"/>
                         <div class="space-y-2">
                             <label for="new-username" class="label">
                                 {__('New Username', $userLanguage)}

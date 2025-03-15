@@ -17,7 +17,8 @@ export const mods: { [mod: string]: number } = {
 
 	// other
 	SO: 1 << 12,
-	TD: 1 << 2
+	TD: 1 << 2,
+	V2: 1 << 30
 };
 
 export const modNames: { [mod_short: string]: string } = {
@@ -32,7 +33,8 @@ export const modNames: { [mod_short: string]: string } = {
 	HD: 'Hidden',
 	FL: 'Flashlight',
 	SO: 'Spun Out',
-	TD: 'Touch Device'
+	TD: 'Touch Device',
+	V2: 'ScoreV2'
 };
 
 export const parseModsInt = (modsInt: number) => {

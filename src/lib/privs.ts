@@ -24,7 +24,17 @@ export const isStaff = (playerPriv?: number): boolean =>
 	[
 		Privileges.ADMINISTRATOR,
 		Privileges.DEVELOPER,
-		Privileges.MODERATOR
+		Privileges.MODERATOR,
+		Privileges.NOMINATOR,
+		Privileges.TOURNEY_MANAGER
+	].some(priv => hasPrivilege(playerPriv, priv));
+
+export const isAdmin = (playerPriv?: number): boolean =>
+	playerPriv !== undefined &&
+	[
+		Privileges.ADMINISTRATOR,
+		Privileges.DEVELOPER,
+		Privileges.MODERATOR, // aint even admin
 	].some(priv => hasPrivilege(playerPriv, priv));
 
 /* https://github.com/osuAkatsuki/bancho.py/blob/master/app/constants/privileges.py#L13-L38 */

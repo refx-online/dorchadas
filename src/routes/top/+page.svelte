@@ -1,6 +1,7 @@
 <script lang="ts">
     import { page } from '$app/stores';
     import { goto } from '$app/navigation';
+    import { appName } from '$lib/env.js';
 
     export let data;
 
@@ -42,6 +43,10 @@
         return `https://assets.ppy.sh/beatmaps/${setId}/covers/cover.jpg`;
     }
 </script>
+
+<svelte:head>
+	<title>{appName} :: Top Plays</title>
+</svelte:head>
 
 <div class="min-h-screen bg-surface-900">
     <div class="container mx-auto p-4">
