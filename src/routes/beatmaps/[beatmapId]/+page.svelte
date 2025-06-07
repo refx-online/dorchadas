@@ -4,6 +4,7 @@
 	import { appName, appUrl } from '$lib/env';
 	import { getFormattedTimeFromSeconds } from '$lib/time';
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import ArrowUpRight from 'svelte-feathers/ArrowUpRight.svelte';
 	import Check from 'svelte-feathers/Check.svelte';
 	import CheckCircle from 'svelte-feathers/CheckCircle.svelte';
@@ -44,7 +45,7 @@
 	let currentType = 'vanilla';
 
 	const modes = ['osu', 'taiko', 'catch', 'mania'];
-	const types = ['vanilla', 'relax'];
+	const types = ['vanilla', 'relax', 'autopilot'];
 
 	const refreshLeaderboard = async () => {
 		if (loading && !firstLoad) return;
@@ -70,6 +71,9 @@
 		switch (currentType) {
 			case 'relax':
 				mode += 4;
+				break;
+			case 'autopilot':
+				mode += 8;
 				break;
 		}
 
@@ -98,6 +102,10 @@
 		if (currentType == type) return;
 		currentType = type;
 		refreshLeaderboard();
+	};
+
+	const navigateToDiff = (diffId: number) => {
+		goto(`/beatmaps/${diffId}`);
 	};
 
 	onMount(() => {
@@ -133,6 +141,7 @@
 						style="background-image: url('https://assets.ppy.sh/beatmaps/{data.map
 							.set_id}/covers/cover@2x.jpg');"
 					></div>
+					
 					<div class="grid md:grid-cols-[auto_auto] gap-2">
 						<div class="w-full justify-center md:justify-start flex rounded-lg">
 							<button
@@ -142,16 +151,31 @@
 								on:click={() => setType('vanilla')}
 								disabled={loading || failed}
 							>
-								001
+								Vanilla
 							</button>
 							<button
 								class="w-[100%] md:w-[25%] !scale-100 btn {currentType == 'relax'
 									? 'bg-surface-500'
 									: 'bg-surface-600'} rounded-none"
 								on:click={() => setType('relax')}
-								disabled={loading || failed}
+								disabled={currentMode == 'mania' || loading || failed}
 							>
-								002
+								Relax
+							</button>
+							<button
+								class="w-[100%] md:w-[25%] !scale-100 btn {currentType == 'autopilot'
+									? 'bg-surface-500'
+									: 'bg-surface-600'} rounded-none"
+								on:click={() => setType('autopilot')}
+								disabled={
+									currentMode == 'taiko' ||
+									currentMode == 'catch' ||
+									currentMode == 'mania' ||
+									loading ||
+									failed
+								}
+							>
+								Autopilot
 							</button>
 						</div>
 						<div class="w-full flex rounded-lg">
@@ -193,80 +217,78 @@
 							</button>
 						</div>
 					</div>
-				</div>
-				<!-- <div
-					class="relative h-28 md:h-64 bg-center bg-cover bg-no-repeat"
-					style="background-image: url('https://assets.ppy.sh/beatmaps/{data.map
-						.set_id}/covers/cover@2x.jpg');"
-				>
-					<div
-						class="absolute w-full h-full bg-black/70 flex flex-col justify-center items-center md:gap-1 overflow-hidden"
-					>
-						<p class="text-white text-xl md:text-2xl truncate">
-							{data.map.title}
-						</p>
-						<p class="text-white md:text-lg truncate text-ellipsis">{data.map.artist}</p>
-            <p class="chip variant-filled-primary py-1 mb-1 cursor-default">{data.map.version}</p>
-						<div class="flex flex-row gap-5 items-center bg-black/80 rounded-full p-2 py-1 text-sm">
-							<Popup placement="top">
-								<div class="flex flex-row gap-1 items-center">
-									<Star class="pointer-events-none" size={14} />
-									{data.map.diff.toFixed(2)}
-								</div>
-								<svelte:fragment slot="popup">
-									<div class="card p-2 px-4 rounded-lg variant-filled-surface text-sm">
-										{__('Difficulty Rating', $userLanguage)}
-										<div
-											class="arrow border-r border-b border-gray-700 variant-filled-surface"
-										></div>
+					
+					<!-- Difficulty Selector - Below mode tabs -->
+					{#if data.diffs && data.diffs.length > 1}
+						<div class="flex flex-row items-center gap-2 mt-3 z-10 relative">
+							{#if data.diffs.length <= 9}
+								{#each data.diffs as diff}
+									<Popup placement="bottom">
+										<button
+											class="w-4 h-4 rounded-full transition-all duration-200 hover:scale-110 border-2 {diff.id === data.map.id 
+												? 'bg-white border-white' 
+												: 'bg-gray-500 border-gray-500 hover:bg-gray-400 hover:border-gray-400'}"
+											on:click={() => navigateToDiff(diff.id)}
+										>
+										</button>
+										<svelte:fragment slot="popup">
+											<div class="card p-2 px-3 rounded-lg variant-filled-surface text-sm max-w-48">
+												<div class="font-medium truncate">{diff.version}</div>
+												<div
+													class="arrow border-r border-b border-gray-700 variant-filled-surface"
+												></div>
+											</div>
+										</svelte:fragment>
+									</Popup>
+								{/each}
+							{:else}
+								{#each data.diffs.slice(0, 8) as diff}
+									<Popup placement="bottom">
+										<button
+											class="w-4 h-4 rounded-full transition-all duration-200 hover:scale-110 border-2 {diff.id === data.map.id 
+												? 'bg-white border-white' 
+												: 'bg-gray-500 border-gray-500 hover:bg-gray-400 hover:border-gray-400'}"
+											on:click={() => navigateToDiff(diff.id)}
+										>
+										</button>
+										<svelte:fragment slot="popup">
+											<div class="card p-2 px-3 rounded-lg variant-filled-surface text-sm max-w-48">
+												<div class="font-medium truncate">{diff.version}</div>
+												<div
+													class="arrow border-r border-b border-gray-700 variant-filled-surface"
+												></div>
+											</div>
+										</svelte:fragment>
+									</Popup>
+								{/each}
+								<Popup placement="bottom">
+									<div
+										class="w-4 h-4 rounded-full bg-gray-600 border-2 border-gray-600 flex items-center justify-center cursor-default"
+									>
+										<div class="w-1 h-1 bg-gray-300 rounded-full"></div>
 									</div>
-								</svelte:fragment>
-							</Popup>
-							<Popup placement="top">
-								<div class="flex flex-row gap-1 items-center">
-									<Clock class="pointer-events-none" size={14} />
-									{getFormattedTimeFromSeconds(data.map.total_length)}
-								</div>
-								<svelte:fragment slot="popup">
-									<div class="card p-2 px-4 rounded-lg variant-filled-surface text-sm">
-										{__('Length', $userLanguage)}
-										<div
-											class="arrow border-r border-b border-gray-700 variant-filled-surface"
-										></div>
-									</div>
-								</svelte:fragment>
-							</Popup>
-							<Popup placement="top">
-								<div class="flex flex-row gap-1 items-center">
-									<PlayCircle class="pointer-events-none" size={14} />
-									{data.map.plays.toFixed(0)}
-								</div>
-								<svelte:fragment slot="popup">
-									<div class="card p-2 px-4 rounded-lg variant-filled-surface text-sm">
-										{__('Play Count', $userLanguage)}
-										<div
-											class="arrow border-r border-b border-gray-700 variant-filled-surface"
-										></div>
-									</div>
-								</svelte:fragment>
-							</Popup>
-							<Popup placement="top">
-								<div class="flex flex-row gap-1 items-center">
-									<CheckCircle class="pointer-events-none" size={14} />
-									{data.map.passes.toFixed(0)}
-								</div>
-								<svelte:fragment slot="popup">
-									<div class="card p-2 px-4 rounded-lg variant-filled-surface text-sm">
-										{__('Pass Count', $userLanguage)}
-										<div
-											class="arrow border-r border-b border-gray-700 variant-filled-surface"
-										></div>
-									</div>
-								</svelte:fragment>
-							</Popup>
+									<svelte:fragment slot="popup">
+										<div class="card p-3 rounded-lg variant-filled-surface text-sm min-w-48">
+											<div class="flex flex-col gap-2 max-h-40 overflow-y-auto">
+												{#each data.diffs.slice(8) as diff}
+													<button
+														class="text-left hover:bg-surface-600 px-3 py-2 rounded text-sm truncate transition-colors {diff.id === data.map.id ? 'bg-primary-500 text-white' : 'text-surface-100'}"
+														on:click={() => navigateToDiff(diff.id)}
+													>
+														{diff.version}
+													</button>
+												{/each}
+											</div>
+											<div
+												class="arrow border-r border-b border-gray-700 variant-filled-surface"
+											></div>
+										</div>
+									</svelte:fragment>
+								</Popup>
+							{/if}
 						</div>
-					</div>
-				</div> -->
+					{/if}
+				</div>
 				<div class="relative h-60 w-full">
 					<div
 						class="absolute top-0 left-0 h-full w-full bg-no-repeat bg-cover bg-center opacity-30"
@@ -279,6 +301,7 @@
 						<p class="text-xl md:text-2xl truncate">{data.map.title}</p>
 						<p class="text-lg md:text-xl truncate">{data.map.artist}</p>
 						<div class="bg-primary-500 text-sm rounded py-0.5 px-2 mt-3">{data.map.version}</div>
+
 						<div
 							class="flex flex-row gap-5 items-center bg-black/80 rounded-full p-2 py-1 text-sm mt-3"
 						>
@@ -371,7 +394,7 @@
 					<div class="ms-auto flex flex-row items-center gap-3 z-10">
 						<a
 							class="btn variant-soft-primary text-sm"
-							href="https://osu.direct/api/d/{data.map.set_id}"
+							href="https://osu.refx.online/d/{data.map.set_id}"
 						>
 							<Download class="pointer-events-none md:mr-2" size={18} />
 							<span class="hidden md:block">{__('Download', $userLanguage)}</span>

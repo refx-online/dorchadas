@@ -59,7 +59,7 @@ export const register = async (opts: {
 		countryCode = 'xx';
 	}
 
-	const modeIds = [0, 1, 2, 3, 4, 5, 6, 7];
+	const modeIds = [0, 1, 2, 3, 4, 5, 6, 8];
 	const currentTimestamp = (Date.now() / 1000).toFixed();
 
 	await mysqlDatabase.transaction(async (trx) => {
@@ -67,7 +67,7 @@ export const register = async (opts: {
 			name: username,
 			safe_name: safeName,
 			// unrestricted and verified
-			priv: 3, // i forgot where did kaupec removes the ingame login check on b.py
+			//priv: 3, // i forgot where did kaupec removes the ingame login check on b.py
 			pw_bcrypt: hashedPassword,
 			country: countryCode,
 			creation_time: currentTimestamp,

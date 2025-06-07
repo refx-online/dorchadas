@@ -10,8 +10,8 @@
 	import { userLanguage } from '$lib/storage';
 
 	const modes = ['osu', 'taiko', 'catch', 'mania'];
-	const types = ['vanilla', 'relax'];
-	const sorts = ['pp', 'tscore', 'xp'];
+	const types = ['vanilla', 'relax', 'autopilot'];
+	const sorts = ['pp', 'tscore'];
 
 	let currentLeaderboard: LBUser[] = [];
 	const usersPerPage = 50;
@@ -54,6 +54,9 @@
 		let mode = 0;
 		const urlParams = new URLSearchParams();
 
+		if (currentType == 'relax' && currentMode == 'mania') currentMode = 'osu';
+		if (currentType == 'autopilot' && currentMode != 'osu') currentMode = 'osu';
+
 		queryMode.set(currentMode);
 		queryType.set(currentType);
 		querySort.set(currentSort);
@@ -74,6 +77,9 @@
 		switch (currentType) {
 			case 'relax':
 				mode += 4;
+				break;
+			case 'autopilot':
+				mode += 8;
 				break;
 		}
 
@@ -164,15 +170,6 @@
 				>
 					{__('Total Score', $userLanguage)}
 				</button>
-				<button
-					class="w-[50%] md:w-[100%] !scale-100 btn {currentSort == 'xp'
-						? 'bg-surface-500'
-						: 'bg-surface-600'} rounded-lg md:rounded-l-none"
-					on:click={() => setSort('xp')}
-					disabled={loading || failed}
-				>
-					{__('XP', $userLanguage)}
-				</button>
 			</div>
 			<div class="grid md:grid-cols-[auto_auto] gap-2 p-3">
 				<div class="w-full flex justify-center md:justify-start rounded-lg">
@@ -183,16 +180,31 @@
 						on:click={() => setType('vanilla')}
 						disabled={loading || failed}
 					>
-						001
+						Vanilla
 					</button>
 					<button
 						class="w-[100%] md:w-[25%] !scale-100 btn {currentType == 'relax'
 							? 'bg-surface-500'
 							: 'bg-surface-600'} rounded-none"
 						on:click={() => setType('relax')}
-						disabled={loading || failed}
+						disabled={currentMode == 'mania' || loading || failed}
 					>
-						002
+						Relax
+					</button>
+					<button
+						class="w-[100%] md:w-[25%] !scale-100 btn {currentType == 'autopilot'
+							? 'bg-surface-500'
+							: 'bg-surface-600'} rounded-none"
+						on:click={() => setType('autopilot')}
+						disabled={
+							currentMode == 'taiko' ||
+							currentMode == 'catch' ||
+							currentMode == 'mania' ||
+							loading ||
+							failed
+						}
+					>
+						Autopilot
 					</button>
 				</div>
 				<div class="w-full flex rounded-lg">

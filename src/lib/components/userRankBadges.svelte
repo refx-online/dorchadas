@@ -38,7 +38,7 @@
 	
 	<!-- kselon -->
 	{#if userID === 10}
-		<div class="tooltip text-pink-300" aria-label="Furry">
+		<div class="tooltip text-pink-300" aria-label="Femboy">
 			<PawPrint class="w-4 md:w-6 pointer-events-none" />
 		</div>
 	{/if}
@@ -69,18 +69,6 @@
 	<!-- maybe shouldnt handle it like this? i need to rework this -->
 	{#if userRank === 1}
 		<div class="tooltip text-blue-300 numba1" aria-label="re;fx {userMode} Champion">
-			<Trophy class="w-4 md:w-6 pointer-events-none numba1" />
-		</div>
-	{/if}
-	
-	{#if userID === 4}
-		<div class="tooltip text-blue-600 numba1" aria-label="S1 001!std Champion">
-			<Trophy class="w-4 md:w-6 pointer-events-none numba1" />
-		</div>
-	{/if}
-
-	{#if userID === 214}
-		<div class="tooltip text-red-600 numba1" aria-label="S1 002!std Champion">
 			<Trophy class="w-4 md:w-6 pointer-events-none numba1" />
 		</div>
 	{/if}

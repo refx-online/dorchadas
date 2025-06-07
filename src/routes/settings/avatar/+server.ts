@@ -49,7 +49,7 @@ export const POST = async ({ request, cookies }) => {
         }
 
         const fileExtension = file.type === 'image/jpeg' ? 'jpg' : 'png';
-        const avatarPath = path.join(avatarDirectory, `${user.id}.${fileExtension}`);
+        const avatarPath = path.join(avatarDirectory, `${user.id}.png`);
 
         const buffer = new Uint8Array(await file.arrayBuffer());
         // console.log(avatarPath)

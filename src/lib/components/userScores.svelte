@@ -118,7 +118,7 @@
                                 style="background-image: url('https://assets.ppy.sh/beatmaps/{score.beatmap.set_id}/covers/cover@2x.jpg');"
                             ></div>
                             <div class="flex flex-row gap-2 items-center justify-center z-10 flex-grow"
-                                on:click={() => goto(`/beatmaps/${score.beatmap.id}?mode=${currentMode}&type=${currentType}`)}>
+                                on:click={() => goto(`/scores/${score.id}`)}>
                                 <div class="w-10 md:w-8 text-center !text-4xl md:!text-2xl font-bold grade grade-{score.grade.toLowerCase()}">
                                     {score.grade.replaceAll('XH', 'SS').replaceAll('X', 'SS').replaceAll('SH', 'S')}
                                 </div>

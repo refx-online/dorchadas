@@ -46,6 +46,8 @@
 	import { __, languages } from '$lib/language';
 	import Footer from '$lib/components/footer.svelte';
     import { elasticOut } from 'svelte/easing';
+	import { isRestricted } from '$lib/privs';
+	import { discordUrl } from '$lib/env';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 	initializeStores();
@@ -63,6 +65,12 @@
 	let userSearchResults: { id: number; name: string }[] = [];
 	let userSearchQuery = '';
 	let userSearchTimeout: any;
+
+	let restrictedWarnOpen = true;
+
+	function toggleRestrict() {
+		restrictedWarnOpen = !restrictedWarnOpen;
+	}
 
 	const searchUsers = async () => {
 		if (userSearchTimeout) clearTimeout(userSearchTimeout);
@@ -94,16 +102,6 @@
 	let hoveredIndex = -1;
 	const nervNavItems = [
 		{ title: 'Nerv', icon: '⏾', path: '/nerv', description: 'Dashboard' },
-        { title: 'Ranking', icon: '🎵', path: '/nerv/beatmaps', description: 'Manage beatmap status and ranking' },
-        { title: 'Requests', icon: '🛎️', path: '/nerv/requests', description: 'Manage beatmap requests' },
-
-        { title: 'Stats', icon: '📊', path: '/nerv/stats', description: 'View detailed server statistics' },
-        { title: 'Home', icon: '𐦍', path: '/', description: 'Home' },
-        { title: 'Console', icon: '📝', path: '/nerv/reports', description: 'View user reports and issues' },
-
-        { title: 'Logs', icon: '📋', path: '/nerv/logs', description: 'Server activity logs' },
-		{ title: 'Panel', icon: '</>', path: '/nerv/panel', description: 'More control panel stuff' },
-		{ title: 'Recalculate', icon: '🔑', path: '/nerv/recalculate', description: 'Recalculate scores to fix performance point' },
     ];
     
     function getRandomOffset() {
@@ -179,6 +177,32 @@
 			<p class="text-xs font-light">
 				{__('This is taking longer than expected...', $userLanguage)}
 			</p>
+		</div>
+	</div>
+{/if}
+
+{#if isRestricted($userData?.priv)}
+	<div
+		class="fixed left-4 top-1/2 transform -translate-y-1/2 z-40"
+		in:fly={{ x: -50, duration: 300, delay: 500 }}
+		out:fly={{ x: -50, duration: 300 }}
+	>
+		<div class="restriction-warning-card">
+			<div class="restriction-warning-content">
+				<div class="text-red-400 text-2xl mb-3 text-center">⚠️</div>
+				<h4 class="font-bold text-white text-center mb-2 text-sm">
+					{__('Account Restricted', $userLanguage)}
+				</h4>
+				<p class="text-xs text-gray-300 text-center mb-4 leading-relaxed px-2">
+					{__('Your account is currently restricted. Join our Discord and ping a moderator or admin for assistance.', $userLanguage)}
+				</p>
+				<button
+					class="discord-btn"
+					on:click={() => window.open(discordUrl, '_blank')}
+				>
+					{__('Join Discord', $userLanguage)}
+				</button>
+			</div>
 		</div>
 	</div>
 {/if}
@@ -511,6 +535,81 @@
 
         .honeycomb-item.hovered:nth-child(3n + 2) {
             transform: translateY(29px) scale(1.1);
+        }
+    }
+	.restriction-warning-card { 
+        width: 180px;
+        background: rgba(20, 20, 20, 0.9);
+        border: 1px solid rgba(100, 100, 100, 0.3);
+        border-radius: 12px;
+        padding: 16px;
+        backdrop-filter: blur(10px);
+        box-shadow: 
+            0 8px 32px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+            0 0 0 1px rgba(255, 255, 255, 0.05);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .restriction-warning-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, 
+            rgba(255, 255, 255, 0.1) 0%, 
+            transparent 50%, 
+            rgba(255, 255, 255, 0.05) 100%);
+        pointer-events: none;
+    }
+
+    .restriction-warning-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .discord-btn {
+        background: linear-gradient(135deg, #5865f2, #4752c4);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(88, 101, 242, 0.3);
+        width: 100%;
+    }
+
+    .discord-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(88, 101, 242, 0.4);
+        background: linear-gradient(135deg, #6b73ff, #5865f2);
+    }
+
+    .discord-btn:active {
+        transform: translateY(0px);
+        box-shadow: 0 2px 6px rgba(88, 101, 242, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .restriction-warning-card {
+            width: 160px;
+            padding: 12px;
+        }
+        
+        .discord-btn {
+            padding: 6px 12px;
+            font-size: 10px;
         }
     }
 </style>

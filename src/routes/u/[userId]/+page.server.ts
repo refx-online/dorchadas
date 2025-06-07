@@ -17,11 +17,7 @@ export async function load({ params, cookies }) {
 	const requestedUserId = params.userId;
     const sessionToken = cookies.get('sessionToken');
 
-	if (!isNumber(requestedUserId)) {
-		return;
-	}
-
-	const user = await getPlayer(parseInt(requestedUserId), 'all');
+	const user = await getPlayer(requestedUserId, 'all');
     const ourUser = await getUserFromSession(sessionToken);
 	const userpageData = user?.player?.info.userpage_content ?? '';
     const parsedBBCode = parseBBCodeToHtml(userpageData);

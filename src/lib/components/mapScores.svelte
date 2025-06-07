@@ -13,6 +13,7 @@
 	import Mod from './Mod.svelte';
 	import Popup from './Popup.svelte';
 	import Download from 'svelte-feathers/Download.svelte';
+	import { Eye } from 'svelte-feathers';
 	import { apiUrl } from '$lib/env';
 
 	export let beatmapScores: MapScore[];
@@ -164,11 +165,11 @@
 							</td>
 							<td>
 								<a
-									href="{apiUrl}/v1/get_play?id={score.id}"
+									href="/scores/{score.id}"
 									class="hidden md:flex btn variant-soft-surface cursor-pointer rounded-lg p-2 px-3 justify-center items-center"
-									title={__('Download Replay', $userLanguage)}
+									title={__('Score Info', $userLanguage)}
 								>
-									<Download class="pointer-events-none" />
+									<Eye class="pointer-events-none" />
 								</a>
 							</td>
 						</tr>

@@ -165,7 +165,7 @@
 	});
 
 	const modes = ['osu', 'taiko', 'catch', 'mania'];
-	const types = ['vanilla', 'relax'];
+	const types = ['vanilla', 'relax', 'autopilot'];
 
 	const updateModeInt = async () => {
 		loading = true;
@@ -189,6 +189,9 @@
 		switch (currentType) {
 			case 'relax':
 				mode += 4;
+				break;
+			case 'autopilot':
+				mode += 8;
 				break;
 		}
 		currentModeInt = mode;
@@ -320,16 +323,31 @@
 									on:click={() => setType('vanilla')}
 									disabled={loading || failed}
 								>
-									001
+									Vanilla
 								</button>
 								<button
 									class="w-[100%] md:w-[25%] !scale-100 btn {currentType == 'relax'
 										? 'bg-surface-500'
 										: 'bg-surface-600'} rounded-none"
 									on:click={() => setType('relax')}
-									disabled={loading || failed}
+									disabled={currentMode == 'mania' || loading || failed}
 								>
-									002
+									Relax
+								</button>
+								<button
+									class="w-[100%] md:w-[25%] !scale-100 btn {currentType == 'autopilot'
+										? 'bg-surface-500'
+										: 'bg-surface-600'} rounded-none"
+									on:click={() => setType('autopilot')}
+									disabled={
+										currentMode == 'taiko' ||
+										currentMode == 'catch' ||
+										currentMode == 'mania' ||
+										loading ||
+										failed
+									}
+								>
+									Autopilot
 								</button>
 							</div>
 							<div class="w-full flex rounded-lg">
@@ -507,12 +525,6 @@
 										<span class="text-xs">{__('Performance Points', $userLanguage)}</span>
 										<span class="text-normal font-semibold text-primary-200"
 											>{numberHumanReadable($performancePoints)}</span
-										>
-									</div>
-									<div class="flex flex-col w-[50%] md:w-fit">
-										<span class="text-xs">{__('XP', $userLanguage)}</span>
-										<span class="text-normal font-semibold text-primary-200"
-											>{numberHumanReadable($experiencePoints)}</span
 										>
 									</div>
 									<div class="flex flex-col w-[50%] md:w-fit">

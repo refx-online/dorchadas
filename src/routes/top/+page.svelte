@@ -6,7 +6,7 @@
     export let data;
 
     const modes = ['osu', 'taiko', 'catch', 'mania'];
-    const types = ['vanilla', 'relax'];
+    const types = ['vanilla', 'relax', 'autopilot'];
 
     let currentType = $page.url.searchParams.get('type') || 'vanilla';
     let currentMode = $page.url.searchParams.get('mode') || 'osu';
@@ -24,6 +24,8 @@
             case 'mania': modeNum = 3; break;
         }
         if (type === 'relax') modeNum += 4;
+        if (type === 'autopilot') modeNum += 8;
+        
         return modeNum;
     }
 
@@ -33,9 +35,9 @@
         goto(`/top?mode=${modeNum}&page=1`);
     }
 
-    function toggleType() {
-        currentType = currentType === 'vanilla' ? 'relax' : 'vanilla';
-        const modeNum = getModeNumber(currentMode, currentType);
+    function changeType(newType: string) {
+        currentType = newType;
+        const modeNum = getModeNumber(currentMode, newType);
         goto(`/top?mode=${modeNum}&page=1`);
     }
 
@@ -54,16 +56,23 @@
             <button 
                 class="px-4 py-1 rounded text-sm font-medium transition-colors
                        {currentType === 'vanilla' ? 'bg-zinc-500 text-white' : 'bg-surface-900 text-zinc-400 hover:bg-zinc-700'}"
-                on:click={toggleType}
+                on:click={() => changeType('vanilla')}
             >
-                001
+                Vanilla
             </button>
             <button 
                 class="px-4 py-1 rounded text-sm font-medium transition-colors
                        {currentType === 'relax' ? 'bg-zinc-500 text-white' : 'bg-surface-900 text-zinc-400 hover:bg-zinc-700'}"
-                on:click={toggleType}
+                on:click={() => changeType('relax')}
             >
-                002
+                Relax
+            </button>
+            <button 
+                class="px-4 py-1 rounded text-sm font-medium transition-colors
+                       {currentType === 'autopilot' ? 'bg-zinc-500 text-white' : 'bg-surface-900 text-zinc-400 hover:bg-zinc-700'}"
+                on:click={() => changeType('autopilot')}
+            >
+                Autopilot
             </button>
         </div>
 
@@ -104,7 +113,7 @@
                     </div>
         
                     <div class="p-2">
-                        <a href="/beatmaps/{score.map_id}" class="block hover:text-blue-400">
+                        <a href="/scores/{score.scoreid}" class="block hover:text-blue-400">
                             <div class="text-zinc-200 text-sm truncate">{score.artist} -</div>
                             <div class="text-zinc-200 text-sm truncate">{score.title}</div>
                             <div class="text-zinc-400 text-xs">[{score.version}]</div>

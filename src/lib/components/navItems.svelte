@@ -91,13 +91,13 @@
 	</a>
 
 	<a
-		href="https://github.com/refx-online/refxUpdater/releases/tag/v0.0.1"
-		class="btn {$page.data.url == 'https://github.com/refx-online/refxUpdater/releases/tag/v0.0.1'
+		href="/patcher"
+		class="btn {$page.data.url == '/patcher'
 			? 'variant-ghost-surface '
 			: 'hover:variant-outline-surface '}rounded-lg"
 		on:click={() => drawerStore.close()}
 	>
-		{__('Client Updater', $userLanguage)}
+		{__('Patcher', $userLanguage)}
 	</a>
 
 	<a
@@ -119,18 +119,6 @@
 	>
 		{__('Top Plays', $userLanguage)}
 	</a>
-
-	{#if $userData}
-		<a
-			href="/nerv"
-			class="btn {$page.data.url == '/nerv'
-				? 'variant-ghost-surface '
-				: 'hover:variant-outline-surface '}rounded-lg"
-			on:click={() => drawerStore.close()}
-		>
-			{__('Nerv', $userLanguage)}
-		</a>
-	{/if}
 
 	<div class="h-full w-full flex flex-row justify-between items-end mt-auto">
 		<div class="md:hidden ms-auto">

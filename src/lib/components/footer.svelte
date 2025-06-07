@@ -71,6 +71,7 @@
                             <ul class="space-y-0.5">
                                 <li><a href="/rules" class="hover:text-primary-400 transition-colors">{__('Rules', $userLanguage)}</a></li>
                                 <li><a href="/bbcode" class="hover:text-primary-400 transition-colors">{__('BBCode', $userLanguage)}</a></li>
+                                <li><a href="/welcome" class="hover:text-primary-400 transition-colors">{__('How to connect', $userLanguage)}</a></li>
                             </ul>
                         </div>
                     </div>

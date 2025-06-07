@@ -315,7 +315,40 @@ export type TopScore = {
 
 export type getScoreInfo = {
 	status: 'success' | string;
-	score: ScoreInfo[];
+	score: {
+		id: number;
+		map_md5: string;
+		score: number;
+		xp_gained: number;
+		pp: number;
+		acc: number;
+		max_combo: number;
+		mods: number;
+		n300: number;
+		n100: number;
+		n50: number;
+		nmiss: number;
+		ngeki: number;
+		nkatu: number;
+		grade: string;
+		status: number;
+		mode: number;
+		play_time: string;
+		time_elapsed: number;
+		client_flags: number;
+		userid: number;
+		perfect: number;
+		online_checksum: string;
+		aim_value: number;
+		ar_value: number;
+		aim: number;
+		arc: number;
+		cs: number;
+		tw: number;
+		twval: number;
+		hdr: number;
+		pinned: number;
+	};
 }
 
 export type ScoreInfo = {

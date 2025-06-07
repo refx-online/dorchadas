@@ -16,7 +16,7 @@ export const POST = async ({ request, cookies }) => {
         }
 
         const formData = await request.formData();
-        const file = formData.get('cover') as File;
+        const file = formData.get('background') as File;
 
         if (!file) {
             return error(400, 'No file uploaded');
@@ -33,27 +33,27 @@ export const POST = async ({ request, cookies }) => {
         }
 
         const fileExtension = file.type === 'image/jpeg' ? 'jpg' : 'png';
-        const coverDirectory = path.join(process.cwd(), '.data', 'cover');
+        const bgDirectory = path.join(process.cwd(), '.data', 'background');
 
         try {
-            await mkdir(coverDirectory, { recursive: true });
+            await mkdir(bgDirectory, { recursive: true });
         } catch (mkdirError) {
-            console.error('Failed to create cover directory:', mkdirError);
-            return error(500, 'Failed to create cover directory');
+            console.error('Failed to create background directory:', mkdirError);
+            return error(500, 'Failed to create background directory');
         }
 
-        const existingCoverPath = path.join(coverDirectory, `${user.id}.png`);
+        const existingBgPath = path.join(bgDirectory, `${user.id}.${fileExtension}`);
         try {
-            await unlink(existingCoverPath);
+            await unlink(existingBgPath);
         } catch (err: unknown) {
             if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
-                console.error(`Failed to delete existing cover: ${existingCoverPath}`, err);
+                console.error(`Failed to delete existing cover: ${existingBgPath}`, err);
             }
         }
 
-        const coverPath = path.join(coverDirectory, `${user.id}.${fileExtension}`);
+        const backgroundPath = path.join(bgDirectory, `${user.id}.png`);
         const buffer = new Uint8Array(await file.arrayBuffer());
-        await writeFile(coverPath, buffer);
+        await writeFile(backgroundPath, buffer);
 
         return json({
             success: true,
@@ -62,7 +62,7 @@ export const POST = async ({ request, cookies }) => {
             }
         });
     } catch (err) {
-        console.error('Cover upload error:', err);
-        return error(500, 'Failed to upload cover');
+        console.error('Background upload error:', err);
+        return error(500, 'Failed to upload Background');
     }
 };

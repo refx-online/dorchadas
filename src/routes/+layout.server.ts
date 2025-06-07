@@ -1,5 +1,5 @@
 import { getUserFromSession } from '$lib/user';
-import { getRedisClient } from '../hooks.server';
+import { getRedisClient, getMySQLDatabase } from '../hooks.server';
 import dayjs from 'dayjs';
 
 export async function load({ url, cookies }) {
@@ -22,7 +22,8 @@ export async function load({ url, cookies }) {
 				url: url.pathname,
 				currentUser: {
 					id: user.id,
-					username: user.name
+					username: user.name,
+					priv: user.priv
 				}
 			};
 		}

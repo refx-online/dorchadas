@@ -34,6 +34,28 @@ export const getBeatmap = async (beatmapId: number): Promise<MapInfo | undefined
 	}
 };
 
+export const getScoresInfo = async (
+	scoreId: number
+): Promise<getScoreInfo | undefined> => {
+	try {
+		const requestedPlayerData = await fetch(`${apiUrl}/v1/get_score_info?id=${scoreId}`);
+		if (!requestedPlayerData.ok) return undefined;
+		return (await requestedPlayerData.json()) as getScoreInfo;
+	} catch {
+		return undefined;
+	}
+};
+
+export const getBeatmapMd5 = async (hash: string): Promise<MapInfo | undefined> => {
+	try {
+		const requestedMapData = await fetch(`${apiUrl}/v1/get_map_info?md5=${hash}`);
+		if (!requestedMapData.ok) return undefined;
+		return (await requestedMapData.json()) as MapInfo;
+	} catch {
+		return undefined;
+	}
+};
+
 export const getBeatmapScores = async (opts: {
 	beatmapMd5: string;
 	mode: number;
@@ -109,15 +131,19 @@ export const getPlayerStatus = async (uid: number): Promise<PlayerStatus | undef
 };
 
 export const getPlayer = async (
-	uid: number,
+	uid: number | string,
 	scope: 'all' | 'info' | 'stats'
 ): Promise<User | undefined> => {
 	try {
-		const requestedPlayerData = await fetch(
-			`${apiUrl}/v1/get_player_info?id=${uid}&scope=${scope}`
-		);
-		if (!requestedPlayerData.ok) return undefined;
-		return (await requestedPlayerData.json()) as User;
+		if (typeof uid === 'number' || /^\d+$/.test(uid)) {
+			const byId = await fetch(`${apiUrl}/v1/get_player_info?id=${uid}&scope=${scope}`);
+			if (byId.ok) return (await byId.json()) as User;
+		}
+
+		const byName = await fetch(`${apiUrl}/v1/get_player_info?name=${encodeURIComponent(uid)}&scope=${scope}`);
+		if (byName.ok) return (await byName.json()) as User;
+
+		return undefined;
 	} catch {
 		return undefined;
 	}
@@ -182,18 +208,6 @@ export async function sendDiscordWebhookLog(logType: string, message: string, av
         console.error('Error sending Discord webhook:', error);
     }
 }
-
-export const getScoresInfo = async (
-	scoreId: number
-): Promise<getScoreInfo | undefined> => {
-	try {
-		const requestedPlayerData = await fetch(`${apiUrl}/v1/get_score_info?id=${scoreId}`);
-		if (!requestedPlayerData.ok) return undefined;
-		return (await requestedPlayerData.json()) as getScoreInfo;
-	} catch {
-		return undefined;
-	}
-};
 
 type ProfileHistoryResponse = ppProfileHistory | rankProfileHistory | peakrankProfileHistory;
 
