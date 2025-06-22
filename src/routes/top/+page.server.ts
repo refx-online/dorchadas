@@ -24,13 +24,7 @@ export async function load({ url }) {
     const totalPages = Math.ceil(totalScores / limit);
 
     return {
-        scores: scores?.map(score => {
-            const parse = parseModsInt(score.mods);
-            return {
-                ...score,
-                mods: parse.map(mod => `/mods/${mod.short_name.toLowerCase()}.png`) // why did i even
-            };
-        }),
+        scores,
         mode,
         page,
         totalPages

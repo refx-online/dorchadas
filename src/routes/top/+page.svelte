@@ -2,6 +2,8 @@
     import { page } from '$app/stores';
     import { goto } from '$app/navigation';
     import { appName } from '$lib/env.js';
+    import { parseModsInt } from '$lib/mods';
+    import Mod from '$lib/components/Mod.svelte';
 
     export let data;
 
@@ -122,9 +124,9 @@
                             <span class="w-10 md:w-8 text-center !text-4xl md:!text-2xl font-bold grade grade-{score.grade.toLowerCase()}">
                                 {score.grade.replaceAll('XH', 'SS').replaceAll('X', 'SS').replaceAll('SH', 'S')}
                             </span>
-                            <div class="flex gap-1">
-                                {#each score.mods as mod, i}
-                                    <img src={mod} alt="{score.mods[i]}" class="w-8 md:w-7 h-6 md:h-5" />
+                            <div class="flex flex-row gap-0.5">
+                                {#each parseModsInt(score.mods, score.mods_json) as mod}
+                                    <Mod {mod} size={16} tooltip={true} showSettings={true} />
                                 {/each}
                             </div>
                         </div>

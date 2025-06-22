@@ -321,6 +321,7 @@ export type TopScore = {
     country: string;
     username: string;
     map_id: number;
+	mods_json: ModJsonEntry[];
 };
 
 export type getScoreInfo = {

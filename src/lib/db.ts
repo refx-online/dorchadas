@@ -50,11 +50,13 @@ export const getTopScores = async (opts: {
         const scores = await mysqlDB.raw(`
             SELECT s.status, s.id as scoreid, s.userid, s.pp, s.mods, s.grade, 
                    m.set_id, m.title, m.version, m.artist, 
-                   u.country, u.name as username,
-                   m.id as map_id
+                   u.country, u.name as username, 
+                   m.id as map_id, 
+                   ls.mods_json 
             FROM scores s 
             LEFT JOIN users u ON u.id = s.userid 
             LEFT JOIN maps m ON m.md5 = s.map_md5 
+            LEFT JOIN lazer_scores ls ON ls.score_id = s.id 
             WHERE s.mode = ? 
             AND u.priv & 1 
             AND m.status IN (2, 3) 
