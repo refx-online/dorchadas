@@ -1,6 +1,6 @@
 import type { User } from 'svelte-feathers';
 import { getMySQLDatabase } from '../hooks.server';
-import type { DBClan, TopScore, UserRelationship } from './types';
+import type { DBClan, TopScore, UserRelationship, UsersLog } from './types';
 
 export const getClans = async (opts: {
 	mode: number;
@@ -186,6 +186,20 @@ export const getUserRelationships = async (requestedUserId: string, ourUser: any
     }
 
     return relationships;
+};
+
+export const getUsersLog = async (userId: number): Promise<UsersLog[]> => {
+    const mysqlDB = await getMySQLDatabase();
+    if (!mysqlDB) return [];
+
+    const logs = await mysqlDB<UsersLog>('users_log')
+        .where('user_id', userId)
+        .orderBy('timestamp', 'desc')
+        .limit(10);
+
+    if (!logs) return [];
+
+    return logs;
 };
 
 export const pinScore = async (scoreID: number, isPinned: boolean): Promise<void> => {

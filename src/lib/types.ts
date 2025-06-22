@@ -142,13 +142,21 @@ export type MapInfo = {
 	};
 };
 
+export type ModSetting = Record<string, any>;
+
+export type ModJsonEntry = {
+  acronym: string;
+  settings: ModSetting;
+};
+
 export type MapScore = {
 	map_md5: string;
 	score: number;
 	pp: number;
 	acc: number;
 	max_combo: number;
-	mods: number;
+	mods: number | null;
+	mods_json?: ModJsonEntry[];
 	n300: number;
 	n100: number;
 	n50: number;
@@ -163,7 +171,7 @@ export type MapScore = {
 	userid: number;
 	perfect: number;
 	player_name: string;
-  player_country: string;
+    player_country: string;
 	country?: string; // Deprecated
 	clan_id: number;
 	clan_name: string;
@@ -172,47 +180,48 @@ export type MapScore = {
 };
 
 export type PlayerScore = {
-	id: number;
-	score: number;
-	pp: number;
-	acc: number;
-	max_combo: number;
-	mods: number;
-	n300: number;
-	n100: number;
-	n50: number;
-	nmiss: number;
-	ngeki: number;
-	nkatu: number;
-	grade: string;
-	status: number;
-	mode: number;
-	play_time: string;
-	time_elapsed: number;
-	perfect: number;
-	pinned: number;
-	beatmap: {
-		md5: string;
-		id: number;
-		set_id: number;
-		artist: string;
-		title: string;
-		version: string;
-		creator: string;
-		last_update: string;
-		total_length: number;
-		max_combo: number;
-		status: number;
-		plays: number;
-		passes: number;
-		mode: number;
-		bpm: number;
-		cs: number;
-		od: number;
-		ar: number;
-		hp: number;
-		diff: number;
-	};
+  id: number;
+  score: number;
+  pp: number;
+  acc: number;
+  max_combo: number;
+  mods: number | null;
+  mods_json?: ModJsonEntry[]
+  n300: number;
+  n100: number;
+  n50: number;
+  nmiss: number;
+  ngeki: number;
+  nkatu: number;
+  grade: string;
+  status: number;
+  mode: number;
+  play_time: string;
+  time_elapsed: number;
+  perfect: number;
+  pinned: number;
+  beatmap: {
+    md5: string;
+    id: number;
+    set_id: number;
+    artist: string;
+    title: string;
+    version: string;
+    creator: string;
+    last_update: string;
+    total_length: number;
+    max_combo: number;
+    status: number;
+    plays: number;
+    passes: number;
+    mode: number;
+    bpm: number;
+    cs: number;
+    od: number;
+    ar: number;
+    hp: number;
+    diff: number;
+  };
 };
 
 export type MapScores = {
@@ -252,6 +261,7 @@ export type PlayerMostPlayed = {
 export type Mod = {
 	name: string;
 	short_name: string;
+	settings?: Record<string, any>;
 };
 
 export type PlayerCounts = {
@@ -389,6 +399,15 @@ export type ScoreInfo = {
 export interface UserRelationship {
     followers: number;
     relationshipStatus: 'none' | 'follower' | 'known' | 'mutual';
+}
+
+export interface UsersLog {
+	id: number;
+	user_id: number;
+	type: 'submit' | 'update' | 'rank' | 'lost';
+	type_id: number;
+	rank_val: number;
+	timestamp: number;
 }
 
 // maybe combine these three?

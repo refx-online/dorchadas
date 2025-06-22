@@ -10,7 +10,8 @@ import {
     getPlayCountResults, 
     addFriend, 
     removeFriend,
-    getOldUsername } from '$lib/db';
+    getOldUsername, 
+    getUsersLog} from '$lib/db';
 import { fail, redirect } from '@sveltejs/kit';
 
 export async function load({ params, cookies }) {
@@ -34,6 +35,8 @@ export async function load({ params, cookies }) {
     const playCountGraph = await getPlayCountResults(requestedUserId);
     const relationships = await getUserRelationships(requestedUserId, ourUser);
     const oldUsernames = await getOldUsername(requestedUserId, user?.player?.info.name);
+    const usersLog = await getUsersLog(parseInt(requestedUserId));
+
     const ourPriv = ourUser?.priv;
 
 	return {
@@ -43,7 +46,8 @@ export async function load({ params, cookies }) {
         playCountGraph,
         relationships: relationships,
         oldUsernames,
-        ourPriv
+        ourPriv,
+        usersLog
 	};
 }
 

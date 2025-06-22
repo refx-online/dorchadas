@@ -158,7 +158,7 @@
 							</td>
 							<td class="w-[1%] whitespace-nowrap !rounded-e-lg content-center text-start">
 								<div class="flex flex-row gap-0.5">
-									{#each parseModsInt(score.mods) as mod}
+									{#each parseModsInt(score.mods, score.mods_json) as mod}
 										<Mod {mod} size={18} tooltip={true}></Mod>
 									{/each}
 								</div>

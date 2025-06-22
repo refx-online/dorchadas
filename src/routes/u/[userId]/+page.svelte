@@ -38,6 +38,7 @@
 	import DonatorEffect from '$lib/components/donatorEffect.svelte';
 	import ProfileGraph from '$lib/components/profileGraph.svelte';
 	import ProfileComments from '$lib/components/profileComments.svelte';
+	import RecentAct from '$lib/components/recentAct.svelte';
 
 	export let data;
 	let clan: Clan | undefined;
@@ -736,6 +737,12 @@
 					</div>
 				</div>
 				<div class="flex flex-col gap-2 bg-surface-800 p-7 py-2">
+					<div class="card !bg-surface-700 w-full p-6">
+						<RecentAct 
+							usersLog={data.usersLog || []} 
+							userName={data.user?.info.name || ''} 
+						/>
+					</div>
 					<div class="card !bg-surface-700 w-full py-3 p-6 relative" bind:this={aboutSection}>
 						<div class="flex flex-col gap-5">
 							<div class="flex justify-between items-center">

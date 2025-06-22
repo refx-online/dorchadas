@@ -90,8 +90,7 @@
                 <div class="col-span-1 md:col-span-4 variant-glass-surface rounded-2xl p-6">
                     <h2 class="text-xl md:text-2xl font-bold text-white mb-4">{appName}</h2>
                     <p class="text-white/80">
-                        we are an another <strong>osu!</strong> private server that has custom performance calculation!
-                        pp system is inflated, just like the indonesian economy. go wild.
+                        now serving lazer
                     </p>
                 </div>
 

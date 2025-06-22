@@ -17,6 +17,7 @@
 	import Time, { dayjs } from 'svelte-time';
 	import { pinScore } from '$lib/api';
 	import { Heart } from 'svelte-feathers';
+    import Mod from './Mod.svelte';
 
 	export let title: string;
 	export let userId: number;
@@ -53,6 +54,9 @@
 		switch (currentType) {
 			case 'relax':
 				mode += 4;
+				break;
+            case 'autopilot':
+				mode += 8;
 				break;
 		}
 
@@ -156,14 +160,8 @@
                             </div>
                             <div class="flex flex-col md:flex-row gap-1 md:justify-start items-center mt-2 md:mt-0 md:items-center">
                                 <div class="flex flex-row gap-1 md:gap-0 items-center">
-                                    {#each parseModsInt(score.mods) as mod}
-                                        <div class="tooltip" aria-label={mod.name}>
-                                            <img
-                                                src="/mods/{mod.short_name.toLowerCase()}.png"
-                                                class="w-8 md:w-7 h-6 md:h-5"
-                                                alt={mod.name}
-                                            />
-                                        </div>
+                                    {#each parseModsInt(score.mods, score.mods_json) as mod}
+                                        <Mod {mod} size={20} tooltip={true} showSettings={true}></Mod>
                                     {/each}
                                 </div>
                                 <div class="flex flex-col items-center md:items-start ms-3">

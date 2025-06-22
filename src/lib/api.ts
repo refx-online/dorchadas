@@ -11,7 +11,8 @@ import type {
 	ppProfileHistory,
 	rankProfileHistory,
 	peakrankProfileHistory,
-	User
+	User,
+	UsersLog
 } from './types';
 
 export const getClan = async (clanId: number): Promise<Clan | undefined> => {
@@ -34,6 +35,70 @@ export const getBeatmap = async (beatmapId: number): Promise<MapInfo | undefined
 	}
 };
 
+export const getBeatmapMd5 = async (hash: string): Promise<MapInfo | undefined> => {
+	try {
+		const requestedMapData = await fetch(`${apiUrl}/v1/get_map_info?md5=${hash}`);
+		if (!requestedMapData.ok) return undefined;
+		return (await requestedMapData.json()) as MapInfo;
+	} catch {
+		return undefined;
+	}
+};
+
+// disgusting
+export const getArtistTitleMap = async (log: UsersLog): Promise<string> => {
+	try {
+		if (log.type === 'rank' || log.type === 'lost') {
+			const scoreRes = await fetch(`${apiUrl}/v1/get_score_info?id=${log.type_id}`);
+			if (!scoreRes.ok) return '';
+
+			const scoreData = await scoreRes.json();
+			const mapMd5 = scoreData?.score?.map_md5;
+			if (!mapMd5) return '';
+
+			const mapRes = await fetch(`${apiUrl}/v1/get_map_info?md5=${mapMd5}`);
+			if (!mapRes.ok) return '';
+
+			const mapData = await mapRes.json();
+			return mapData?.map
+				? `${mapData.map.artist} - ${mapData.map.title} [${mapData.map.version}]`
+				: '';
+		}
+
+		if (log.type === 'submit' || log.type === 'update') {
+			const mapRes = await fetch(`${apiUrl}/v1/get_map_info?id=${log.type_id}`);
+			if (!mapRes.ok) return '';
+
+			const mapData = await mapRes.json();
+			return mapData?.map
+				? `${mapData.map.artist} - ${mapData.map.title}`
+				: '';
+		}
+
+		return '';
+	} catch {
+		return '';
+	}
+};
+
+export const batchFetchTitles = async (logs: UsersLog[]): Promise<Record<number, string>> => {
+	const results: Record<number, string> = {};
+	
+	const promises = logs.map(async (log) => {
+		try {
+			const title = await getArtistTitleMap(log);
+			if (title) {
+				results[log.type_id] = title;
+			}
+		} catch (error) {
+			console.error(`Failed to fetch title for log ${log.id}:`, error);
+		}
+	});
+	
+	await Promise.allSettled(promises);
+	return results;
+};
+
 export const getScoresInfo = async (
 	scoreId: number
 ): Promise<getScoreInfo | undefined> => {
@@ -41,16 +106,6 @@ export const getScoresInfo = async (
 		const requestedPlayerData = await fetch(`${apiUrl}/v1/get_score_info?id=${scoreId}`);
 		if (!requestedPlayerData.ok) return undefined;
 		return (await requestedPlayerData.json()) as getScoreInfo;
-	} catch {
-		return undefined;
-	}
-};
-
-export const getBeatmapMd5 = async (hash: string): Promise<MapInfo | undefined> => {
-	try {
-		const requestedMapData = await fetch(`${apiUrl}/v1/get_map_info?md5=${hash}`);
-		if (!requestedMapData.ok) return undefined;
-		return (await requestedMapData.json()) as MapInfo;
 	} catch {
 		return undefined;
 	}
