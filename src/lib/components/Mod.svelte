@@ -41,7 +41,7 @@
 		const settingsArray = [];
 		for (const [key, value] of Object.entries(settings)) {
 			if (key === 'speed_change' || key === 'clock_rate') {
-				settingsArray.push(`${(value * 100).toFixed(0)}%`);
+				settingsArray.push(`${value}x rate`);
 			} else if (key === 'circle_size' || key === 'cs') {
 				settingsArray.push(`CS${value}`);
 			} else if (key === 'approach_rate' || key === 'ar') {
@@ -64,7 +64,7 @@
 		const settingsArray = [];
 		for (const [key, value] of Object.entries(settings)) {
 			if (key === 'speed_change' || key === 'clock_rate') {
-				settingsArray.push(`Speed: ${(value * 100).toFixed(1)}%`);
+				settingsArray.push(`${value}x rate`);
 			} else if (key === 'circle_size' || key === 'cs') {
 				settingsArray.push(`Circle Size: ${value}`);
 			} else if (key === 'approach_rate' || key === 'ar') {
@@ -183,7 +183,8 @@
 		position: absolute;
 		bottom: -2px;
 		right: -2px;
-		background: rgba(0, 0, 0, 0.9);
+		background: rgba(0, 0, 0, 0.95);
+		backdrop-filter: blur(2px);
 		color: white;
 		padding: 1px 3px;
 		border-radius: 2px;
@@ -191,8 +192,10 @@
 		white-space: nowrap;
 		pointer-events: none;
 		z-index: 10;
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		font-weight: 500;
+		border: 1px solid rgba(255, 255, 255, 0.3);
+		font-weight: 600;
+		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 	}
 
 	.mod-settings:empty {

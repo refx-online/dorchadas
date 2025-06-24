@@ -359,6 +359,7 @@ export type getScoreInfo = {
 		twval: number;
 		hdr: number;
 		pinned: number;
+		mods_json?: ModJsonEntry[];
 	};
 }
 

@@ -124,9 +124,9 @@
 
 								{#if data.score.mods > 0}
 									<div class="flex flex-wrap justify-center gap-1 sm:gap-2 backdrop-blur-sm bg-black/30 rounded-lg p-2 sm:p-3 border border-gray-600/20 shadow-lg">
-										{#each parseModsInt(data.score.mods) as mod}
+										{#each parseModsInt(data.score.mods, data.score.mods_json) as mod}
 											<div class="transform hover:scale-105 transition-transform duration-200">
-												<Mod {mod} size={22} tooltip={true}></Mod>
+												<Mod {mod} size={22} tooltip={true} showSettings={true}></Mod>
 											</div>
 										{/each}
 									</div>
