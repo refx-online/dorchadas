@@ -6,7 +6,7 @@
 	import Popup from './Popup.svelte';
 	import { avatarUrl } from '$lib/env';
 	import { goto } from '$app/navigation';
-	import { Heart } from 'svelte-feathers';
+	import { githubUrl } from '$lib/env';
 	
 	export let drawerStore: DrawerStore;
 </script>
@@ -118,6 +118,14 @@
 		on:click={() => drawerStore.close()}
 	>
 		{__('Top Plays', $userLanguage)}
+	</a>
+
+	<a
+		href={`${githubUrl}/osu?tab=readme-ov-file#from-cli`}
+		class="btn hover:variant-outline-surface rounded-lg"
+		on:click={() => drawerStore.close()}
+	>
+		{__('Lazer', $userLanguage)}
 	</a>
 
 	<div class="h-full w-full flex flex-row justify-between items-end mt-auto">
