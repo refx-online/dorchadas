@@ -81,10 +81,14 @@ export const parseModsInt = (
 	}
 	
 	// since its stable
-	activatedMods.push({
-		name: "Classic",
-		short_name: "CL"
-	});
+	// we can assume that if modsInt is not null, 
+	// then they're not playing on lazer (duh)
+	if (modsInt) {
+		activatedMods.push({
+			name: "Classic",
+			short_name: "CL"
+		});
+	}
 	
 	return activatedMods;
 };
