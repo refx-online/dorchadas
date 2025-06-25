@@ -6,6 +6,7 @@ import { csrf } from '$lib/csrf';
 
 const { knex } = knex_pkg;
 
+
 let mysqlDatabase: knex_pkg.Knex | undefined;
 let redisClient:
 	| redis.RedisClientType<
@@ -15,8 +16,12 @@ let redisClient:
 	  >
 	| undefined;
 
-export const getMySQLDatabase = async (): Promise<knex_pkg.Knex> => {
-	if (mysqlDatabase) return mysqlDatabase;
+let mysqlConnected = false;
+let redisConnected = false;
+
+export const getMySQLDatabase = async (): Promise<knex_pkg.Knex | null> => {
+	if (mysqlDatabase && mysqlConnected) return mysqlDatabase;
+	
 	try {
 		console.log(chalk.gray('Connecting to MySQL database...'));
 		const tempMysqlDatabase = knex({
@@ -30,10 +35,13 @@ export const getMySQLDatabase = async (): Promise<knex_pkg.Knex> => {
 		});
 		await tempMysqlDatabase.raw('SELECT 1 + 1 as connection_test;');
 		console.log(chalk.green('Connected to MySQL database!'));
+		mysqlConnected = true;
+
 		return (mysqlDatabase = tempMysqlDatabase);
-	} catch {
-		console.log(chalk.red('Could not connect to database, check your environment variables!'));
-		process.exit(1);
+	} catch (error) {
+		console.log(chalk.red('Could not connect to MySQL database:'), error);
+		mysqlConnected = false;
+		return null;
 	}
 };
 
@@ -42,9 +50,10 @@ export const getRedisClient = async (): Promise<
 		redis.RedisDefaultModules & redis.RedisModules,
 		redis.RedisFunctions,
 		redis.RedisScripts
-	>
+	> | null
 > => {
-	if (redisClient) return redisClient;
+	if (redisClient && redisConnected) return redisClient;
+	
 	const redisUser = env.REDIS_USER ?? undefined;
 	const redisPassword = env.REDIS_PASSWORD ?? undefined;
 	const redisHost = env.REDIS_HOST ?? '127.0.0.1';
@@ -53,8 +62,9 @@ export const getRedisClient = async (): Promise<
 
 	//do regex check if redisDb is a valid number
 	if (/^\d+$/.test(redisDb.toString()) === false) {
-		console.log(chalk.red('Invalid Redis DB!'));
-		process.exit(1);
+		console.log(chalk.red('Invalid Redis DB number!'));
+		console.log(chalk.yellow('Application will continue without Redis functionality'));
+		return null;
 	}
 
 	let redisUrl = 'redis://';
@@ -67,34 +77,115 @@ export const getRedisClient = async (): Promise<
 
 	try {
 		console.log(chalk.gray('Connecting to Redis...'));
-		const tempRedisClient = await redis
-			.createClient({
-				url: redisUrl,
-				database: parseInt(redisDb)
-			})
-			.on('error', (error) => {
-				if (error.code === 'ECONNREFUSED') {
-					console.log(chalk.red('Could not connect to Redis!'));
-					process.exit(1);
-				} else {
-					console.log(chalk.red('Unknown Redis error!'));
-					process.exit(1);
-				}
-			})
-			.connect();
+		const tempRedisClient = redis.createClient({
+			url: redisUrl,
+			database: parseInt(redisDb)
+		});
 
-		try {
-			await tempRedisClient.ping();
-			console.log(chalk.green('Connected to Redis!'));
-			return (redisClient = tempRedisClient);
-		} catch {
-			console.log(chalk.red('Could not connect to Redis!'));
-			process.exit(1);
-		}
-	} catch {
-		console.log(chalk.red('Could not connect to database, check your environment variables!'));
-		process.exit(1);
+		tempRedisClient.on('error', (error) => {
+			console.log(chalk.red('Redis connection error:'), error);
+			redisConnected = false;
+		});
+
+		tempRedisClient.on('disconnect', () => {
+			console.log(chalk.yellow('Redis disconnected'));
+			redisConnected = false;
+		});
+
+		tempRedisClient.on('reconnecting', () => {
+			console.log(chalk.gray('Attempting to reconnect to Redis...'));
+		});
+
+		await tempRedisClient.connect();
+		await tempRedisClient.ping();
+		
+		console.log(chalk.green('Connected to Redis!'));
+		redisConnected = true;
+		return (redisClient = tempRedisClient);
+	} catch (error) {
+		console.log(chalk.red('Could not connect to Redis:'), error);
+		console.log(chalk.yellow('Application will continue without Redis functionality'));
+		redisConnected = false;
+		return null;
 	}
+};
+
+export const isMySQLConnected = (): boolean => mysqlConnected;
+export const isRedisConnected = (): boolean => redisConnected;
+
+export const safeMySQLQuery = async <T>(
+	queryFn: (db: knex_pkg.Knex) => Promise<T>,
+	fallback?: T
+): Promise<T | null> => {
+	try {
+		const db = await getMySQLDatabase();
+		if (!db) {
+			console.log(chalk.yellow('MySQL not available, skipping query'));
+			return fallback ?? null;
+		}
+		return await queryFn(db);
+	} catch (error) {
+		console.log(chalk.red('MySQL query failed:'), error);
+		mysqlConnected = false;
+		return fallback ?? null;
+	}
+};
+
+export const safeRedisOperation = async <T>(
+	operationFn: (client: redis.RedisClientType) => Promise<T>,
+	fallback?: T
+): Promise<T | null> => {
+	try {
+		const client = await getRedisClient();
+		if (!client) {
+			console.log(chalk.yellow('Redis not available, skipping operation'));
+			return fallback ?? null;
+		}
+		return await operationFn(client);
+	} catch (error) {
+		console.log(chalk.red('Redis operation failed:'), error);
+		redisConnected = false;
+		return fallback ?? null;
+	}
+};
+
+export const attemptMySQLReconnection = async (): Promise<boolean> => {
+	if (mysqlConnected) return true;
+	
+	console.log(chalk.gray('Attempting MySQL reconnection...'));
+	const db = await getMySQLDatabase();
+	return db !== null;
+};
+
+export const attemptRedisReconnection = async (): Promise<boolean> => {
+	if (redisConnected) return true;
+	
+	console.log(chalk.gray('Attempting Redis reconnection...'));
+	const client = await getRedisClient();
+	return client !== null;
+};
+
+export const initializeConnections = async (): Promise<void> => {
+	console.log(chalk.blue('Initializing database connections...'));
+	
+	const [mysqlResult, redisResult] = await Promise.allSettled([
+		getMySQLDatabase(),
+		getRedisClient()
+	]);
+
+	if (mysqlResult.status === 'fulfilled' && mysqlResult.value) {
+		console.log(chalk.green('✓ MySQL connection initialized'));
+	} else {
+		console.log(chalk.yellow('⚠ MySQL connection failed'));
+	}
+
+	if (redisResult.status === 'fulfilled' && redisResult.value) {
+		console.log(chalk.green('✓ Redis connection initialized'));
+	} else {
+		console.log(chalk.yellow('⚠ Redis connection failed'));
+	}
+
+	console.log(chalk.blue('Application startup complete'));
 };
 
 // i to be honest hate to put all of the endpoint but it is what it is

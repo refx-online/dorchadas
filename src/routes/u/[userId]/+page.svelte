@@ -494,7 +494,7 @@
 								userPriv={data.user.info.priv} 
 								userID={data.user.info.id}
 								userRank={$globalRank}
-								userMode={currentMode}!{currentType === 'vanilla' ? '0.0.1' : '0.0.2'} 
+								userMode={currentMode}!{currentType} 
 							/> <!-- Ok -->
 						</div>
 					</div>
