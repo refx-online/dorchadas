@@ -2,6 +2,7 @@
 	import { Chart, registerables } from 'chart.js';
 	import { getPPProfileHistory } from '$lib/api';
 	import type { ppProfileHistory, rankProfileHistory, peakrankProfileHistory } from '$lib/types';
+	import { onMount } from 'svelte';
 
 	Chart.register(...registerables);
 
@@ -14,9 +15,20 @@
 	let rankHistory: rankProfileHistory | undefined;
 	let peakRankHistory: peakrankProfileHistory | undefined;
 	let chart: Chart | null = null;
-	let query: 'pp' | 'rank' | 'peak' = 'pp';
+	let query: 'pp' | 'rank' | 'peak' = 'rank';
+	let mounted = false;
+	let currentMode = mode;
 
-	// this gave me migrane
+	function filterRecentCaptures(captures: any[]): any[] {
+		const now = new Date().getTime();
+		const maxAge = 89 * 24 * 60 * 60 * 1000;
+		
+		return captures.filter(capture => {
+			const captureTime = new Date(capture.captured_at).getTime();
+			return (now - captureTime) <= maxAge;
+		});
+	}
+
 	function timeAgo(date: string, allDates: string[]): string {
 		const currentTime = new Date().getTime();
 		const inputTime = new Date(date).getTime();
@@ -40,7 +52,13 @@
 	}
 	
 	async function loadChart() {
+		if (!mounted || !chartElement) {
+			return;
+		}
+
 		try {
+			console.log('Loading chart with mode:', mode);
+			
 			if (query === 'pp') {
 				let pp = await getPPProfileHistory(query, userId, mode);
 				ppHistory = pp;
@@ -65,7 +83,14 @@
 				return;
 			}
 
-			const sortedCaptures = captures.sort((a, b) => 
+			const filteredCaptures = filterRecentCaptures(captures);
+
+			if (!filteredCaptures.length) {
+				error = 'No recent data';
+				return;
+			}
+
+			const sortedCaptures = filteredCaptures.sort((a, b) => 
 				new Date(a.captured_at).getTime() - new Date(b.captured_at).getTime()
 			);
 
@@ -80,7 +105,7 @@
 			}));
 
 			const peakDataPoints = query === 'rank' && peakRankHistory?.data.captures 
-				? peakRankHistory.data.captures.map((c, index) => ({
+				? filterRecentCaptures(peakRankHistory.data.captures).map((c, index) => ({
 					x: index,
 					y: c.rank,
 					label: timeAgo(c.captured_at, allDates),
@@ -158,9 +183,14 @@
 							mode: 'index',
 							intersect: false,
 							displayColors: false,
-							backgroundColor: 'rgba(0, 0, 0, 0.7)',
+							backgroundColor: 'rgba(15, 15, 23, 0.95)',
+							borderColor: 'rgba(129, 140, 248, 0.3)',
+							borderWidth: 1,
 							titleAlign: 'center',
 							bodyAlign: 'center',
+							titleColor: '#f8fafc',
+							bodyColor: '#e2e8f0',
+							cornerRadius: 8,
 							callbacks: {
 								label: (context) => {
 									if (query === 'pp') {
@@ -222,8 +252,23 @@
 		}
 	}
 
-	$: if (userId && typeof mode === 'number') {
+	onMount(() => {
+		mounted = true;
+		currentMode = mode;
+		if (userId && typeof mode === 'number') {
+			error = null;
+			loadChart();
+		}
+	});
+
+	$: if (mounted && userId && typeof mode === 'number' && currentMode !== mode) {
+		console.log('Mode changed from', currentMode, 'to', mode); // Debug log
+		currentMode = mode;
 		error = null;
+		loadChart();
+	}
+
+	$: if (mounted && userId && typeof mode === 'number' && query) {
 		loadChart();
 	}
 </script>
@@ -232,12 +277,12 @@
 	<div class="flex gap-2 justify-end">
 		<button 
 			class="px-2 py-1 text-sm rounded {query === 'pp' ? 'bg-indigo-500' : 'bg-surface-200'}"
-			on:click={() => { query = 'pp'; loadChart(); }}>
+			on:click={() => { query = 'pp'; }}>
 			pp
 		</button>
 		<button 
 			class="px-2 py-1 text-sm rounded {query === 'rank' ? 'bg-indigo-500' : 'bg-surface-200'}"
-			on:click={() => { query = 'rank'; loadChart(); }}>
+			on:click={() => { query = 'rank'; }}>
 			Rank
 		</button>
 	</div>

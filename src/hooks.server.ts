@@ -93,7 +93,8 @@ export const getRedisClient = async (): Promise<
 		});
 
 		tempRedisClient.on('reconnecting', () => {
-			console.log(chalk.gray('Attempting to reconnect to Redis...'));
+			// actually dont log since itll fill up the console
+			// console.log(chalk.gray('Attempting to reconnect to Redis...'));
 		});
 
 		await tempRedisClient.connect();
@@ -136,7 +137,7 @@ export const safeRedisOperation = async <T>(
 	fallback?: T
 ): Promise<T | null> => {
 	try {
-		const client = await getRedisClient();
+		const client = await getRedisClient() as any;
 		if (!client) {
 			console.log(chalk.yellow('Redis not available, skipping operation'));
 			return fallback ?? null;
