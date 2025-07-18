@@ -166,7 +166,7 @@
 	});
 
 	const modes = ['osu', 'taiko', 'catch', 'mania'];
-	const types = ['vanilla', 'relax', 'autopilot'];
+	const types = ['vanilla', 'relax', 'autopilot', 'cheat', 'cheatcheat'];
 
 	const updateModeInt = async () => {
 		loading = true;
@@ -193,6 +193,12 @@
 				break;
 			case 'autopilot':
 				mode += 8;
+				break;
+			case 'cheat':
+				mode = 12;
+				break;
+			case 'cheatcheat':
+				mode = 16;
 				break;
 		}
 		currentModeInt = mode;
@@ -349,6 +355,36 @@
 									}
 								>
 									Autopilot
+								</button>
+								<button
+									class="w-[100%] md:w-[25%] !scale-100 btn {currentType == 'cheat'
+										? 'bg-surface-500'
+										: 'bg-surface-600'} rounded-none"
+									on:click={() => setType('cheat')}
+									disabled={
+										currentMode == 'taiko' ||
+										currentMode == 'catch' ||
+										currentMode == 'mania' ||
+										loading ||
+										failed
+									}
+								>
+									Cheat
+								</button>
+								<button
+									class="w-[100%] md:w-[25%] !scale-100 btn {currentType == 'cheatcheat'
+										? 'bg-surface-500'
+										: 'bg-surface-600'} rounded-none"
+									on:click={() => setType('cheatcheat')}
+									disabled={
+										currentMode == 'taiko' ||
+										currentMode == 'catch' ||
+										currentMode == 'mania' ||
+										loading ||
+										failed
+									}
+								>
+									CheatCheat
 								</button>
 							</div>
 							<div class="w-full flex rounded-lg">

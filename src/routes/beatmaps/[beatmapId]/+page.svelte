@@ -45,7 +45,7 @@
 	let currentType = 'vanilla';
 
 	const modes = ['osu', 'taiko', 'catch', 'mania'];
-	const types = ['vanilla', 'relax', 'autopilot'];
+	const types = ['vanilla', 'relax', 'autopilot', 'cheat', 'cheatcheat'];
 
 	const refreshLeaderboard = async () => {
 		if (loading && !firstLoad) return;
@@ -74,6 +74,12 @@
 				break;
 			case 'autopilot':
 				mode += 8;
+				break;
+			case 'cheat':
+				mode = 12;
+				break;
+			case 'cheatcheat':
+				mode = 16;
 				break;
 		}
 
@@ -176,6 +182,36 @@
 								}
 							>
 								Autopilot
+							</button>
+							<button
+								class="w-[100%] md:w-[25%] !scale-100 btn {currentType == 'cheat'
+									? 'bg-surface-500'
+									: 'bg-surface-600'} rounded-none"
+								on:click={() => setType('cheat')}
+								disabled={
+									currentMode == 'taiko' ||
+									currentMode == 'catch' ||
+									currentMode == 'mania' ||
+									loading ||
+									failed
+								}
+							>
+								Cheat
+							</button>
+							<button
+								class="w-[100%] md:w-[25%] !scale-100 btn {currentType == 'cheatcheat'
+									? 'bg-surface-500'
+									: 'bg-surface-600'} rounded-none"
+								on:click={() => setType('cheatcheat')}
+								disabled={
+									currentMode == 'taiko' ||
+									currentMode == 'catch' ||
+									currentMode == 'mania' ||
+									loading ||
+									failed
+								}
+							>
+								CheatCheat
 							</button>
 						</div>
 						<div class="w-full flex rounded-lg">
@@ -394,7 +430,7 @@
 					<div class="ms-auto flex flex-row items-center gap-3 z-10">
 						<a
 							class="btn variant-soft-primary text-sm"
-							href="https://osu.refx.online/d/{data.map.set_id}"
+							href="https://osu.remeliah.cyou/d/{data.map.set_id}"
 						>
 							<Download class="pointer-events-none md:mr-2" size={18} />
 							<span class="hidden md:block">{__('Download', $userLanguage)}</span>

@@ -8,7 +8,7 @@
     export let data;
 
     const modes = ['osu', 'taiko', 'catch', 'mania'];
-    const types = ['vanilla', 'relax', 'autopilot'];
+    const types = ['vanilla', 'relax', 'autopilot', 'cheat', 'cheatcheat'];
 
     let currentType = $page.url.searchParams.get('type') || 'vanilla';
     let currentMode = $page.url.searchParams.get('mode') || 'osu';
@@ -27,6 +27,8 @@
         }
         if (type === 'relax') modeNum += 4;
         if (type === 'autopilot') modeNum += 8;
+        if (type === 'cheat') modeNum = 12;
+        if (type === 'cheatcheat') modeNum = 16;
         
         return modeNum;
     }
@@ -75,6 +77,20 @@
                 on:click={() => changeType('autopilot')}
             >
                 Autopilot
+            </button>
+            <button 
+                class="px-4 py-1 rounded text-sm font-medium transition-colors
+                       {currentType === 'cheat' ? 'bg-zinc-500 text-white' : 'bg-surface-900 text-zinc-400 hover:bg-zinc-700'}"
+                on:click={() => changeType('cheat')}
+            >
+                Cheat
+            </button>
+            <button 
+                class="px-4 py-1 rounded text-sm font-medium transition-colors
+                       {currentType === 'cheatcheat' ? 'bg-zinc-500 text-white' : 'bg-surface-900 text-zinc-400 hover:bg-zinc-700'}"
+                on:click={() => changeType('cheatcheat')}
+            >
+                CheatCheat
             </button>
         </div>
 

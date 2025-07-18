@@ -62,9 +62,9 @@
 		if (!type_id) return '#';
 		
 		if (type === 'rank' || type === 'lost') {
-			return `https://refx.online/scores/${type_id}`;
+			return `https://remeliah.cyou/scores/${type_id}`;
 		} else if (type === 'submit' || type === 'update') {
-			return `https://refx.online/b/${type_id}`;
+			return `https://remeliah.cyou/b/${type_id}`;
 		}
 		return '#';
 	}
