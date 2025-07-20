@@ -42,6 +42,17 @@ export const actions: Actions = {
             }
         }
 
+        if (field === 'priv' && typeof value === 'string') {
+            const privValue = Number(value);
+            if (isNaN(privValue) || privValue < 0) {
+                return { success: false, error: 'Invalid privilege value' };
+            }
+            const maxPriv = Object.values(Privileges).reduce((sum, priv) => sum | priv, 0);
+            if (privValue > maxPriv) {
+                return { success: false, error: 'Privilege value exceeds maximum allowed' };
+            }
+        }
+
         const mysqlDatabase = await getMySQLDatabase();
         const user = await mysqlDatabase<DBUser>('users')
             .select('name', 'id')
@@ -56,6 +67,14 @@ export const actions: Actions = {
                     [field]: value,
                     safe_name: value.toLowerCase().replace(/[^a-z0-9]/g, '_')
                 })
+                .catch(err => {
+                    console.error('updateUser error:', err);
+                    throw err;
+                });
+        } else if (field === 'priv') {
+            await mysqlDatabase<DBUser>('users')
+                .where('id', userId)
+                .update({ [field]: Number(value) })
                 .catch(err => {
                     console.error('updateUser error:', err);
                     throw err;
@@ -289,8 +308,9 @@ export const actions: Actions = {
 
             await trx('scores').where('userid', userId).del();
         });
+        const modes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16];
 
-        for (let mode = 0; mode <= 7; mode++) {
+        for (const mode of modes) {
             await redis.zRem(`bancho:leaderboard:${mode}`, String(userId));
             await redis.zRem(`bancho:leaderboard:${mode}:${user.geoloc?.country?.acronym}`, String(userId));
         }        

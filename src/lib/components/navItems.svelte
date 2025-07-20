@@ -128,6 +128,14 @@
 		{__('Lazer', $userLanguage)}
 	</a>
 
+	<a
+		href="/refxUpdater.exe"
+		class="btn hover:variant-outline-surface rounded-lg"
+		on:click={() => drawerStore.close()}
+	>
+		{__('refxUpdater', $userLanguage)}
+	</a>
+
 	<div class="h-full w-full flex flex-row justify-between items-end mt-auto">
 		<div class="md:hidden ms-auto">
 			<Popup event="click" placement="bottom">

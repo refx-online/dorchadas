@@ -19,7 +19,7 @@ export const POST = async ({ request }) => {
             headers: { 'Content-Type': 'application/json' }
         });
     } catch (err) {
-        console.error('Pin score error:', err);
+        console.error(err);
         error(500, 'Failed to update score');
     }
 };

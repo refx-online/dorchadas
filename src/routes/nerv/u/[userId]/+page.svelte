@@ -137,6 +137,30 @@
         
     };
 
+    const getPrivilegesList = () => {
+        return [
+            { key: 'UNRESTRICTED', value: Privileges.UNRESTRICTED, label: 'Unrestricted' },
+            { key: 'VERIFIED', value: Privileges.VERIFIED, label: 'Verified' },
+            { key: 'WHITELISTED', value: Privileges.WHITELISTED, label: 'Whitelisted' },
+            { key: 'SUPPORTER', value: Privileges.SUPPORTER, label: 'Supporter' },
+            { key: 'PREMIUM', value: Privileges.PREMIUM, label: 'Premium' },
+            { key: 'ALUMNI', value: Privileges.ALUMNI, label: 'Alumni' },
+            { key: 'TOURNEY_MANAGER', value: Privileges.TOURNEY_MANAGER, label: 'Tourney Manager' },
+            { key: 'NOMINATOR', value: Privileges.NOMINATOR, label: 'Nominator' },
+            { key: 'MODERATOR', value: Privileges.MODERATOR, label: 'Moderator' },
+            { key: 'ADMINISTRATOR', value: Privileges.ADMINISTRATOR, label: 'Administrator' },
+            { key: 'DEVELOPER', value: Privileges.DEVELOPER, label: 'Developer' }
+        ];
+    };
+
+    const togglePrivilege = (privilegeValue) => {
+        if (editValues['priv'] & privilegeValue) {
+            editValues['priv'] &= ~privilegeValue;
+        } else {
+            editValues['priv'] |= privilegeValue;
+        }
+    };
+
     onMount(() => {
         EDITABLE_FIELDS.forEach(field => {
             editValues[field.key] = data.user[field.key];
@@ -365,12 +389,75 @@
             </div>
         {/each}
 
-        <!-- Read-only fields -->
         <div class="info-item" transition:fade>
-            <span class="info-label">Privileges</span>
-            <div class="info-value">{formatPrivileges(data.user.priv)}</div>
+            <div class="info-header">
+                <span class="info-label">Privileges</span>
+                <button 
+                    class="edit-button"
+                    on:click={() => toggleEdit('priv')}
+                >
+                    {editMode['priv'] ? '✓' : '✎'}
+                </button>
+            </div>
+            
+            {#if editMode['priv']}
+                <form
+                    method="POST"
+                    action="?/updateUser"
+                    use:enhance={() => {
+                        return async ({ result }) => {
+                            if (result.type === 'success') {
+                                data.user['priv'] = editValues['priv'];
+                                editMode['priv'] = false;
+                                addNotification('Privileges updated successfully');
+                            } else {
+                                addNotification(result.error || 'Failed to update field', 'error');
+                            }
+                        };
+                    }}
+                >
+                    <input type="hidden" name="userId" value={data.user.id} />
+                    <input type="hidden" name="field" value="priv" />
+                    <input type="hidden" name="value" value={editValues['priv']} />
+                    
+                    <div class="privileges-grid">
+                        {#each getPrivilegesList() as privilege}
+                            <label class="privilege-checkbox">
+                                <input
+                                    type="checkbox"
+                                    checked={editValues['priv'] & privilege.value}
+                                    on:change={() => togglePrivilege(privilege.value)}
+                                />
+                                <span class="privilege-label">{privilege.label}</span>
+                            </label>
+                        {/each}
+                    </div>
+                    
+                    <div class="privilege-value">
+                        Current value: {editValues['priv']}
+                    </div>
+                    
+                    <div class="button-group">
+                        <button 
+                            type="submit" 
+                            class="save-button"
+                        >
+                            Save
+                        </button>
+                        <button 
+                            type="button" 
+                            class="cancel-button"
+                            on:click={() => toggleEdit('priv')}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            {:else}
+                <div class="info-value">{formatPrivileges(data.user.priv)} ({data.user.priv})</div>
+            {/if}
         </div>
-
+        <!-- Read-only fields -->
         <div class="info-item" transition:fade>
             <span class="info-label">Member Since</span>
             <div class="info-value">{formatDate(data.user.creation_time)}</div>
@@ -688,6 +775,44 @@
         background: rgba(255, 62, 0, 0.3);
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(255, 62, 0, 0.2);
+    }
+
+    .privileges-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+
+    .privilege-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 4px;
+        background: rgba(255, 62, 0, 0.05);
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .privilege-checkbox:hover {
+        background: rgba(255, 62, 0, 0.1);
+    }
+
+    .privilege-checkbox input[type="checkbox"] {
+        accent-color: #ff3e00;
+    }
+
+    .privilege-label {
+        font-size: 0.9em;
+        user-select: none;
+    }
+
+    .privilege-value {
+        font-size: 0.9em;
+        opacity: 0.7;
+        margin: 0.5rem 0;
+        text-align: center;
     }
 
     @media (max-width: 768px) {
