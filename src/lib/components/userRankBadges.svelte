@@ -30,14 +30,14 @@
 
 	<!-- Individual user badges -->
 	<!-- kaupec || ano -->
-	{#if userID === 3 || userID === 4}
+	{#if userID === 16 || userID === 4}
 		<div class="tooltip text-yellow-300" aria-label="Owner">
 			<Omega class="w-4 md:w-6 pointer-events-none" />
 		</div>
 	{/if}
 	
 	<!-- kselon -->
-	{#if userID === 10}
+	{#if userID === 13}
 		<div class="tooltip text-pink-300" aria-label="Femboy">
 			<PawPrint class="w-4 md:w-6 pointer-events-none" />
 		</div>

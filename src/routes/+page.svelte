@@ -17,6 +17,7 @@
 			pp: number;
 			name: string;
 			id: number;
+            score_id: number;
 		}>;
 	};
 
@@ -49,6 +50,19 @@
 			currentAccountIndex = currentAccountIndex === 0 ? data.recentAccounts.length - 1 : currentAccountIndex - 1;
 		}
 	};
+
+    const modeNames: { [key: number]: string } = {
+        0: 'vn!std',
+        1: 'vn!taiko',
+        2: 'vn!catch',
+        3: 'vn!mania',
+        4: 'rx!std',
+        5: 'rx!taiko',
+        6: 'rx!catch',
+        8: 'ap!std',
+        12: 'cheat!std',
+        16: 'cheatcheat!std',
+    };
 
 	onMount(() => {
 		// funney number coun ter aahha
@@ -90,7 +104,8 @@
                 <div class="col-span-1 md:col-span-4 variant-glass-surface rounded-2xl p-6">
                     <h2 class="text-xl md:text-2xl font-bold text-white mb-4">{appName}</h2>
                     <p class="text-white/80">
-                        now serving lazer
+                        a rich-feature osu! private server. we serve stable - our custom client - aeris - even lazer.
+                        huge codebase rewrite is work in progress!
                     </p>
                 </div>
 
@@ -172,11 +187,11 @@
                                         class="w-8 h-8 rounded-full mr-3 object-cover"
                                     />
                                     <div class="flex-grow">
-                                        <a href={`/u/${score.id}`} class="text-sm font-semibold text-white hover:text-primary-400 transition-colors">
+                                        <a href={`/scores/${score.score_id}`} class="text-sm font-semibold text-white hover:text-primary-400 transition-colors">
                                             {score.name}
                                         </a>
                                         <p class="text-xs text-white/60">
-                                            {['01;std', '01;taiko', '01;catch', '01;mania', '02!std', '02!taiko', '02!catch', '02!mania'][score.mode]}
+                                            {modeNames[score.mode]};
                                         </p>
                                     </div>
                                     <span class="text-secondary-400 font-bold text-sm">
