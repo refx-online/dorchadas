@@ -144,8 +144,7 @@
 				<div class="relative p-3 bg-surface-600 rounded-t-lg">
 					<div
 						class="absolute h-full w-full top-0 left-0 bg-no-repeat bg-top blur opacity-10"
-						style="background-image: url('https://assets.ppy.sh/beatmaps/{data.map
-							.set_id}/covers/cover@2x.jpg');"
+						style="background-image: url('https://b.remeliah.cyou/cover/{data.map.set_id}');"
 					></div>
 					
 					<div class="grid md:grid-cols-[auto_auto] gap-2">

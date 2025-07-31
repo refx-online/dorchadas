@@ -64,8 +64,8 @@
 		if (type === 'rank' || type === 'lost') {
 			return `https://remeliah.cyou/scores/${type_id}`;
 		} else if (type === 'submit' || type === 'update') {
-			return `https://remeliah.cyou/b/${type_id}`;
-		}
+			return `https://remeliah.cyou/beatmaps/${type_id}`;
+		} // TODO: changename
 		return '#';
 	}
 

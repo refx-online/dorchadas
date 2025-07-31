@@ -129,7 +129,7 @@
 	</a>
 
 	<a
-		href={`${githubUrl}/refxUpdater`}
+		href={`${githubUrl}/refxUpdater/actions/runs/16594520473`}
 		class="btn hover:variant-outline-surface rounded-lg"
 		on:click={() => drawerStore.close()}
 	>
