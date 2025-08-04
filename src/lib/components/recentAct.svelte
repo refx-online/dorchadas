@@ -60,9 +60,9 @@
 		if (!type_id) return '#';
 		
 		if (type === 'rank' || type === 'lost') {
-			return `https://${appUrl}/scores/${type_id}`;
+			return `${appUrl}/scores/${type_id}`;
 		} else if (type === 'submit' || type === 'update') {
-			return `https://${appUrl}/beatmaps/${type_id}`;
+			return `${appUrl}/beatmaps/${type_id}`;
 		} // TODO: changename
 		return '#';
 	}

@@ -88,10 +88,10 @@
 								</p>
 								<div class="bg-surface-900 border border-surface-600 rounded p-3 text-sm font-mono">
 									<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-										<span class="text-surface-300 break-all">-devserver ${appUrl}</span>
+										<span class="text-surface-300 break-all">-devserver remeliah.cyou</span>
 										<button 
 											class="text-xs bg-surface-600 hover:bg-surface-700 px-2 py-1 rounded self-start sm:self-auto flex-shrink-0"
-											on:click={() => navigator.clipboard.writeText(`-devserver ${appUrl}`)}
+											on:click={() => navigator.clipboard.writeText(`-devserver remeliah.cyou`)}
 										>
 											Copy
 										</button>

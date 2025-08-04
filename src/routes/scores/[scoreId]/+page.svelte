@@ -1,5 +1,10 @@
 <script lang="ts">
-	import { appName, appUrl } from '$lib/env';
+	import { 
+		appName, 
+		appUrl, 
+		apiUrl, 
+		avatarUrl 
+	} from '$lib/env';
 
 	import Download from 'svelte-feathers/Download.svelte';
 	import Star from 'svelte-feathers/Star.svelte';
@@ -191,7 +196,7 @@
 					<div class="flex items-center gap-3 sm:gap-4">
 						<div class="w-12 h-12 sm:w-16 sm:h-16 bg-gray-600 rounded-full overflow-hidden flex-shrink-0">
 							<img 
-								src="https://a.${appUrl}/{data.score.userid}" 
+								src="{avatarUrl}/{data.score.userid}" 
 								alt="{data.player?.name} avatar"
 								class="w-full h-full object-cover"
 							/>
@@ -202,7 +207,7 @@
 					</div>
 					<div class="flex gap-3 w-full sm:w-auto">
 						<a 
-							href="https://api.${appUrl}/v1/get_play?id={data.score.id}" 
+							href="{apiUrl}/v1/get_play?id={data.score.id}" 
 							class="bg-gray-600 hover:bg-gray-700 text-white px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 flex-1 sm:flex-initial"
 						>
 							<Download size={16} />
