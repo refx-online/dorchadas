@@ -273,3 +273,61 @@ export const getOldUsername = async (userID: number, currUsername?: string): Pro
 
     return usernames;
 };
+
+export const batchFetchTitles = async (logs: UsersLog[]): Promise<Record<number, string>> => {
+	const results: Record<number, string> = {};
+	
+	try {
+		const mysqlDB = await getMySQLDatabase();
+		if (!mysqlDB) return results;
+
+		const scoreLogIds = logs
+			.filter(log => log.type === 'rank' || log.type === 'lost')
+			.map(log => log.type_id);
+		
+		const mapLogIds = logs
+			.filter(log => log.type === 'submit' || log.type === 'update')
+			.map(log => log.type_id);
+
+		if (scoreLogIds.length > 0) {
+			const scoreResults = await mysqlDB('scores')
+				.select('id', 'map_md5')
+				.whereIn('id', scoreLogIds);
+
+			const mapMd5s = scoreResults.map(score => score.map_md5);
+			
+			if (mapMd5s.length > 0) {
+				const mapResults = await mysqlDB('maps')
+					.select('md5', 'artist', 'title', 'version')
+					.whereIn('md5', mapMd5s);
+
+				const mapLookup = mapResults.reduce((acc, map) => {
+					acc[map.md5] = map;
+					return acc;
+				}, {} as Record<string, any>);
+
+				scoreResults.forEach(score => {
+					const mapInfo = mapLookup[score.map_md5];
+					if (mapInfo) {
+						results[score.id] = `${mapInfo.artist} - ${mapInfo.title} [${mapInfo.version}]`;
+					}
+				});
+			}
+		}
+
+		if (mapLogIds.length > 0) {
+			const mapResults = await mysqlDB('maps')
+				.select('id', 'artist', 'title')
+				.whereIn('id', mapLogIds);
+
+			mapResults.forEach(map => {
+				results[map.id] = `${map.artist} - ${map.title}`;
+			});
+		}
+
+	} catch (error) {
+		console.error('Failed to batch fetch titles:', error);
+	}
+
+	return results;
+};

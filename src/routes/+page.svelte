@@ -242,7 +242,7 @@
                         <iframe 
                             src="https://discord.com/widget?id={env.PUBLIC_DISCORD_SERVER_ID}&theme=dark" 
                             width="100%" 
-                            height="300" 
+                            height="320" 
                             frameborder="0"
                             title="disc"
                             sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"

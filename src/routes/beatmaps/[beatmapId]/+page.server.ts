@@ -6,6 +6,7 @@ export async function load({ params }) {
 	if (!/^\d+$/.test(beatmapId)) return {};
 
 	const db = await getMySQLDatabase();
+	if (!db) return {};
 
 	const beatmapRow = await db('maps')
 		.select('set_id')

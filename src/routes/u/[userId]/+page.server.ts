@@ -11,14 +11,18 @@ import {
     addFriend, 
     removeFriend,
     getOldUsername, 
-    getUsersLog} from '$lib/db';
+    getUsersLog,
+    batchFetchTitles
+} from '$lib/db';
 import { fail, redirect } from '@sveltejs/kit';
 
 export async function load({ params, cookies }) {
-	const requestedUserId = params.userId;
+	const requestedUserId = params.userId; // now can be name too!
     const sessionToken = cookies.get('sessionToken');
 
 	const user = await getPlayer(requestedUserId, 'all');
+    if (!user || !user.player) return {};
+
     const ourUser = await getUserFromSession(sessionToken);
 	const userpageData = user?.player?.info.userpage_content ?? '';
     const parsedBBCode = parseBBCodeToHtml(userpageData);
@@ -32,10 +36,11 @@ export async function load({ params, cookies }) {
 
 	const clan = user?.player?.info.clan_id ? await getClan(user.player.info.clan_id) : undefined;
 
-    const playCountGraph = await getPlayCountResults(requestedUserId);
-    const relationships = await getUserRelationships(requestedUserId, ourUser);
-    const oldUsernames = await getOldUsername(requestedUserId, user?.player?.info.name);
-    const usersLog = await getUsersLog(parseInt(requestedUserId));
+    const playCountGraph = await getPlayCountResults(user?.player?.info.id.toString()); // deadass why the fuck do i put the param to str instead of num
+    const relationships = await getUserRelationships(user?.player?.info.id.toString(), ourUser);
+    const oldUsernames = await getOldUsername(user?.player?.info.id, user?.player?.info.name);
+    const usersLog = await getUsersLog(user?.player?.info.id);
+    const logTitles = await batchFetchTitles(usersLog); // map / score titles
 
     const ourPriv = ourUser?.priv;
 
@@ -47,7 +52,8 @@ export async function load({ params, cookies }) {
         relationships: relationships,
         oldUsernames,
         ourPriv,
-        usersLog
+        usersLog,
+        logTitles
 	};
 }
 

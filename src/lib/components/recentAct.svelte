@@ -5,18 +5,15 @@
 	import { __ } from '$lib/language';
 	import { userLanguage } from '$lib/storage';
 	import { Trophy, Upload, Edit, TrendingDown, ChevronDown } from 'lucide-svelte';
-	import { getArtistTitleMap } from '$lib/api';
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
 	import type { UsersLog } from '$lib/types';
-	import { batchFetchTitles } from '$lib/api';
 
 	dayjs.extend(relativeTime);
 	
 	export let usersLog: UsersLog[] = [];
 	export let userName = '';
+	export let beatmapTitles: Record<number, string> = {};
 
-	let beatmapTitles: Record<number, string> = {};
-	let isLoading = true;
 	let showAll = false;
 
 	$: sortedLogs = Array.isArray(usersLog)
@@ -76,20 +73,6 @@
 	function toggleShowAll() {
 		showAll = !showAll;
 	}
-
-	onMount(async () => {
-		if (sortedLogs.length > 0) {
-			try {
-				beatmapTitles = await batchFetchTitles(sortedLogs);
-			} catch (error) {
-				console.error('Failed to fetch titles:', error);
-			} finally {
-				isLoading = false;
-			}
-		} else {
-			isLoading = false;
-		}
-	});
 </script>
 
 {#if usersLog.length > 0}
@@ -119,11 +102,7 @@
 											rel="noopener noreferrer"
 											class="text-primary-400 hover:underline ml-1 transition-colors"
 										>
-											{#if isLoading}
-												<span class="text-surface-400">loading...</span>
-											{:else}
-												{beatmapTitles[log.type_id] ?? 'unknown Map'}
-											{/if}
+											{beatmapTitles[log.type_id] ?? 'unknown Map'}
 										</a>
 									{/if}
 								</span>
@@ -142,24 +121,17 @@
 			<button
 				class="flex flex-row text-center justify-center items-center btn w-48 mx-auto variant-filled-surface px-4 py-1 mt-2 text-[0.7rem] leading-5"
 				on:click={toggleShowAll}
-				disabled={isLoading}
 			>
-				{#if isLoading}
-					<div>
-						<ProgressRadial width="w-5" />
-					</div>
-				{:else}
-					<ChevronDown class="pointer-events-none text-surface-400 {showAll ? 'rotate-180' : ''} transition-transform" size={16} />
-					<span class="font-semibold">
-						{showAll ? __('show less', $userLanguage) : __('show more', $userLanguage)}
-					</span>
-					<ChevronDown class="pointer-events-none text-surface-400 {showAll ? 'rotate-180' : ''} transition-transform" size={16} />
-				{/if}
+				<ChevronDown class="pointer-events-none text-surface-400 {showAll ? 'rotate-180' : ''} transition-transform" size={16} />
+				<span class="font-semibold">
+					{showAll ? __('show less', $userLanguage) : __('show more', $userLanguage)}
+				</span>
+				<ChevronDown class="pointer-events-none text-surface-400 {showAll ? 'rotate-180' : ''} transition-transform" size={16} />
 			</button>
 		{/if}
 	</div>
 {:else}
 	<div class="text-surface-400 text-center py-8">
-		no recent activity
+		No recent activity
 	</div>
 {/if}

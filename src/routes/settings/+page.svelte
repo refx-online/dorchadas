@@ -301,7 +301,7 @@
                                 class="input"
                                 bind:value={newUsername}
                                 on:input={() => validateUsername(newUsername)}
-                                placeholder={__('enter new username', $userLanguage)}
+                                placeholder={__('Enter new username', $userLanguage)}
                             />
                             {#if usernameError}
                                 <p class="text-error-500 text-sm">{usernameError}</p>

@@ -111,7 +111,10 @@
 	};
 
 	const navigateToDiff = (diffId: number) => {
-		goto(`/beatmaps/${diffId}`);
+			const params = new URLSearchParams();
+			params.set('mode', currentMode);
+			params.set('type', currentType);
+			goto(`/beatmaps/${diffId}?${params.toString()}`);
 	};
 
 	onMount(() => {
@@ -148,70 +151,140 @@
 					></div>
 					
 					<div class="grid md:grid-cols-[auto_auto] gap-2">
-						<div class="w-full justify-center md:justify-start flex rounded-lg">
-							<button
-								class="w-[100%] md:w-[25%] !scale-100 btn {currentType == 'vanilla'
-									? 'bg-surface-500'
-									: 'bg-surface-600'} rounded-lg rounded-r-none"
-								on:click={() => setType('vanilla')}
-								disabled={loading || failed}
-							>
-								Vanilla
-							</button>
-							<button
-								class="w-[100%] md:w-[25%] !scale-100 btn {currentType == 'relax'
-									? 'bg-surface-500'
-									: 'bg-surface-600'} rounded-none"
-								on:click={() => setType('relax')}
-								disabled={currentMode == 'mania' || loading || failed}
-							>
-								Relax
-							</button>
-							<button
-								class="w-[100%] md:w-[25%] !scale-100 btn {currentType == 'autopilot'
-									? 'bg-surface-500'
-									: 'bg-surface-600'} rounded-none"
-								on:click={() => setType('autopilot')}
-								disabled={
-									currentMode == 'taiko' ||
-									currentMode == 'catch' ||
-									currentMode == 'mania' ||
-									loading ||
-									failed
-								}
-							>
-								Autopilot
-							</button>
-							<button
-								class="w-[100%] md:w-[25%] !scale-100 btn {currentType == 'cheat'
-									? 'bg-surface-500'
-									: 'bg-surface-600'} rounded-none"
-								on:click={() => setType('cheat')}
-								disabled={
-									currentMode == 'taiko' ||
-									currentMode == 'catch' ||
-									currentMode == 'mania' ||
-									loading ||
-									failed
-								}
-							>
-								Cheat
-							</button>
-							<button
-								class="w-[100%] md:w-[25%] !scale-100 btn {currentType == 'cheatcheat'
-									? 'bg-surface-500'
-									: 'bg-surface-600'} rounded-none"
-								on:click={() => setType('cheatcheat')}
-								disabled={
-									currentMode == 'taiko' ||
-									currentMode == 'catch' ||
-									currentMode == 'mania' ||
-									loading ||
-									failed
-								}
-							>
-								CheatCheat
-							</button>
+						<div class="w-full flex flex-col md:flex-row justify-center md:justify-start rounded-lg">
+							<div class="flex w-full md:hidden mb-1">
+								<button
+									class="flex-1 !scale-100 btn {currentType == 'vanilla'
+										? 'bg-surface-500'
+										: 'bg-surface-600'} rounded-lg rounded-r-none"
+									on:click={() => setType('vanilla')}
+									disabled={loading || failed}
+								>
+									Vanilla
+								</button>
+								<button
+									class="flex-1 !scale-100 btn {currentType == 'relax'
+										? 'bg-surface-500'
+										: 'bg-surface-600'} rounded-none"
+									on:click={() => setType('relax')}
+									disabled={currentMode == 'mania' || loading || failed}
+								>
+									Relax
+								</button>
+								<button
+									class="flex-1 !scale-100 btn {currentType == 'autopilot'
+										? 'bg-surface-500'
+										: 'bg-surface-600'} rounded-lg rounded-l-none"
+									on:click={() => setType('autopilot')}
+									disabled={
+										currentMode == 'taiko' ||
+										currentMode == 'catch' ||
+										currentMode == 'mania' ||
+										loading ||
+										failed
+									}
+								>
+									Autopilot
+								</button>
+							</div>
+							<div class="flex w-full md:hidden">
+								<button
+									class="flex-1 !scale-100 btn {currentType == 'cheat'
+										? 'bg-surface-500'
+										: 'bg-surface-600'} rounded-lg rounded-r-none"
+									on:click={() => setType('cheat')}
+									disabled={
+										currentMode == 'taiko' ||
+										currentMode == 'catch' ||
+										currentMode == 'mania' ||
+										loading ||
+										failed
+									}
+								>
+									Cheat
+								</button>
+								<button
+									class="flex-1 !scale-100 btn {currentType == 'cheatcheat'
+										? 'bg-surface-500'
+										: 'bg-surface-600'} rounded-lg rounded-l-none"
+									on:click={() => setType('cheatcheat')}
+									disabled={
+										currentMode == 'taiko' ||
+										currentMode == 'catch' ||
+										currentMode == 'mania' ||
+										loading ||
+										failed
+									}
+								>
+									CheatCheat
+								</button>
+							</div>
+
+							<div class="hidden md:flex w-full">
+								<button
+									class="w-[20%] !scale-100 btn {currentType == 'vanilla'
+										? 'bg-surface-500'
+										: 'bg-surface-600'} rounded-lg rounded-r-none"
+									on:click={() => setType('vanilla')}
+									disabled={loading || failed}
+								>
+									Vanilla
+								</button>
+								<button
+									class="w-[20%] !scale-100 btn {currentType == 'relax'
+										? 'bg-surface-500'
+										: 'bg-surface-600'} rounded-none"
+									on:click={() => setType('relax')}
+									disabled={currentMode == 'mania' || loading || failed}
+								>
+									Relax
+								</button>
+								<button
+									class="w-[20%] !scale-100 btn {currentType == 'autopilot'
+										? 'bg-surface-500'
+										: 'bg-surface-600'} rounded-none"
+									on:click={() => setType('autopilot')}
+									disabled={
+										currentMode == 'taiko' ||
+										currentMode == 'catch' ||
+										currentMode == 'mania' ||
+										loading ||
+										failed
+									}
+								>
+									Autopilot
+								</button>
+								<button
+									class="w-[20%] !scale-100 btn {currentType == 'cheat'
+										? 'bg-surface-500'
+										: 'bg-surface-600'} rounded-none"
+									on:click={() => setType('cheat')}
+									disabled={
+										currentMode == 'taiko' ||
+										currentMode == 'catch' ||
+										currentMode == 'mania' ||
+										loading ||
+										failed
+									}
+								>
+									Cheat
+								</button>
+								<button
+									class="w-[20%] !scale-100 btn {currentType == 'cheatcheat'
+										? 'bg-surface-500'
+										: 'bg-surface-600'} rounded-lg rounded-l-none"
+									on:click={() => setType('cheatcheat')}
+									disabled={
+										currentMode == 'taiko' ||
+										currentMode == 'catch' ||
+										currentMode == 'mania' ||
+										loading ||
+										failed
+									}
+								>
+									CheatCheat
+								</button>
+							</div>
 						</div>
 						<div class="w-full flex rounded-lg">
 							<button
@@ -253,10 +326,9 @@
 						</div>
 					</div>
 					
-					<!-- Difficulty Selector - Below mode tabs -->
 					{#if data.diffs && data.diffs.length > 1}
 						<div class="flex flex-row items-center gap-2 mt-3 z-10 relative">
-							{#if data.diffs.length <= 9}
+							{#if data.diffs.length < 9}
 								{#each data.diffs as diff}
 									<Popup placement="bottom">
 										<button
@@ -297,11 +369,12 @@
 									</Popup>
 								{/each}
 								<Popup placement="bottom">
-									<div
-										class="w-4 h-4 rounded-full bg-gray-600 border-2 border-gray-600 flex items-center justify-center cursor-default"
+									<button
+										class="w-4 h-4 rounded-full bg-gray-600 border-2 border-gray-600 hover:bg-gray-500 hover:border-gray-500 transition-all duration-200 hover:scale-110 flex items-center justify-center"
+										on:click={() => {}}
 									>
 										<div class="w-1 h-1 bg-gray-300 rounded-full"></div>
-									</div>
+									</button>
 									<svelte:fragment slot="popup">
 										<div class="card p-3 rounded-lg variant-filled-surface text-sm min-w-48">
 											<div class="flex flex-col gap-2 max-h-40 overflow-y-auto">
