@@ -7,6 +7,7 @@
 	import { Trophy, Upload, Edit, TrendingDown, ChevronDown } from 'lucide-svelte';
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
 	import type { UsersLog } from '$lib/types';
+	import { appUrl } from '$lib/env';
 
 	dayjs.extend(relativeTime);
 	
@@ -59,9 +60,9 @@
 		if (!type_id) return '#';
 		
 		if (type === 'rank' || type === 'lost') {
-			return `https://remeliah.cyou/scores/${type_id}`;
+			return `https://${appUrl}/scores/${type_id}`;
 		} else if (type === 'submit' || type === 'update') {
-			return `https://remeliah.cyou/beatmaps/${type_id}`;
+			return `https://${appUrl}/beatmaps/${type_id}`;
 		} // TODO: changename
 		return '#';
 	}

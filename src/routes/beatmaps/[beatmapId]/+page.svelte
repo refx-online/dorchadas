@@ -147,7 +147,7 @@
 				<div class="relative p-3 bg-surface-600 rounded-t-lg">
 					<div
 						class="absolute h-full w-full top-0 left-0 bg-no-repeat bg-top blur opacity-10"
-						style="background-image: url('https://b.remeliah.cyou/cover/{data.map.set_id}');"
+						style="background-image: url('https://b.${appUrl}/cover/{data.map.set_id}');"
 					></div>
 					
 					<div class="grid md:grid-cols-[auto_auto] gap-2">
@@ -502,19 +502,21 @@
 					<div class="ms-auto flex flex-row items-center gap-3 z-10">
 						<a
 							class="btn variant-soft-primary text-sm"
-							href="https://osu.remeliah.cyou/d/{data.map.set_id}"
+							href="https://osu.${appUrl}/d/{data.map.set_id}"
 						>
 							<Download class="pointer-events-none md:mr-2" size={18} />
 							<span class="hidden md:block">{__('Download', $userLanguage)}</span>
 						</a>
-						<a
-							class="btn variant-soft-secondary text-sm"
-							href="https://osu.ppy.sh/b/{data.map.id}"
-							target="_blank"
-						>
-							<ArrowUpRight class="pointer-events-none md:mr-2" size={18} />
-							<span class="hidden md:block">{__('Show on osu.ppy.sh', $userLanguage)}</span>
-						</a>
+						{#if data.map.id < 1000000000}
+							<a
+								class="btn variant-soft-secondary text-sm"
+								href="https://osu.ppy.sh/b/{data.map.id}"
+								target="_blank"
+							>
+								<ArrowUpRight class="pointer-events-none md:mr-2" size={18} />
+								<span class="hidden md:block">{__('Show on osu.ppy.sh', $userLanguage)}</span>
+							</a>
+						{/if}
 					</div>
 				</div>
 				<div class="bg-surface-800">

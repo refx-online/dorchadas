@@ -8,6 +8,8 @@ import { isAdmin } from '$lib/privs';
 
 import { Privileges } from '$lib/privs';
 
+import { appUrl } from '$lib/env';
+
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 
@@ -92,7 +94,7 @@ export const actions: Actions = {
         await sendDiscordWebhookLog(
             'Nerv', 
             `${sessionUser?.name} (${sessionUser?.id}) updates ${user?.name} (${user?.id})'s ${field}!`,
-            'https://remeliah.cyou/nerv.png'
+            `https://${appUrl}/nerv.png`
         )
 
         return { success: true };
@@ -127,7 +129,7 @@ export const actions: Actions = {
         await sendDiscordWebhookLog(
             'Nerv', 
             `${sessionUser?.name} (${sessionUser?.id}) updates ${user?.name} (${user?.id})'s password!`,
-            'https://remeliah.cyou/nerv.png'
+            `https://${appUrl}/nerv.png`
         )
         return { success: true };
     },
@@ -160,7 +162,7 @@ export const actions: Actions = {
         await sendDiscordWebhookLog(
             'Nerv',
             `${sessionUser?.name} (${sessionUser?.id}) restricted ${user?.name} (${user?.id})!`,
-            'https://remeliah.cyou/nerv.png'
+            `https://${appUrl}/nerv.png`
         );
 
         return { success: true, newPriv };
@@ -195,7 +197,7 @@ export const actions: Actions = {
         await sendDiscordWebhookLog(
             'Nerv',
             `${sessionUser?.name} (${sessionUser?.id}) unrestricted ${user?.name} (${user?.id})!`,
-            'https://remeliah.cyou/nerv.png'
+            `https://${appUrl}/nerv.png`
         );
 
         return { success: true, newPriv };
@@ -232,7 +234,7 @@ export const actions: Actions = {
         await sendDiscordWebhookLog(
             'Nerv',
             `${sessionUser?.name} (${sessionUser?.id}) silenced ${user?.name} (${user?.id}) for ${duration} hours! Reason: ${reason}`,
-            'https://remeliah.cyou/nerv.png'
+            `https://${appUrl}/nerv.png`
         );
 
         return { success: true, silenceEnd };
@@ -261,7 +263,7 @@ export const actions: Actions = {
         await sendDiscordWebhookLog(
             'Nerv',
             `${sessionUser?.name} (${sessionUser?.id}) unsilenced ${user?.name} (${user?.id})!`,
-            'https://remeliah.cyou/nerv.png'
+            `https://${appUrl}/nerv.png`
         );
 
         return { success: true };
@@ -318,7 +320,7 @@ export const actions: Actions = {
         await sendDiscordWebhookLog(
             'Nerv',
             `${sessionUser?.name} (${sessionUser?.id}) wipes ${user?.name} (${user?.id})!`,
-            'https://remeliah.cyou/nerv.png'
+            `https://${appUrl}/nerv.png`
         );
 
         return { success: true };
