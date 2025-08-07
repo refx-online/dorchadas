@@ -24,6 +24,7 @@ export type DBUser = {
 	clan_id: number;
 	clan_priv: number;
 	userpage_content: string;
+	preferred_metric: string;
 };
 
 export type LBUser = {

@@ -20,6 +20,7 @@
     let usernameError = '';
     let message = '';
     let isLoading = false;
+    let selectedMetric = data.user.preferredMetric;
 
     function validateUsername(username: string) {
         if (!usernameRegex.test(username)) {
@@ -30,7 +31,6 @@
         return true;
     }
 
-    // TODO: move everything
     async function handleAvatarUpload() {
         if (!avatarFile?.[0]) return;
         isLoading = true;
@@ -52,7 +52,6 @@
                 message = __('An error occurred while uploading the avatar', $userLanguage);
             }
         } catch (err) {
-            console.error('Error uploading avatar:', err);
             message = __('An error occurred while uploading the avatar', $userLanguage);
         } finally {
             isLoading = false;
@@ -80,8 +79,6 @@
                 message = __('An error occurred while uploading the cover', $userLanguage);
             }
         } catch (err) {
-            // this shit doesnt even catch
-            console.error('Error uploading cover:', err);
             message = __('An error occurred while uploading the cover', $userLanguage);
         } finally {
             isLoading = false;
@@ -109,8 +106,6 @@
                 message = __('An error occurred while uploading the background', $userLanguage);
             }
         } catch (err) {
-            // this shit doesnt even catch
-            console.error('Error uploading background:', err);
             message = __('An error occurred while uploading the background', $userLanguage);
         } finally {
             isLoading = false;
@@ -134,6 +129,23 @@
                 newUsername = '';
             } else if (result.type === 'failure') {
                 message = result.data?.message || __('Failed to update username', $userLanguage);
+            }
+
+            isLoading = false;
+            await update();
+        };
+    };
+
+    const handleMetricSubmit: SubmitFunction = () => {
+        message = '';
+        isLoading = true;
+
+        return async ({ result, update }) => {
+            if (result.type === 'success') {
+                message = __('Ranking metric updated successfully', $userLanguage);
+                await invalidateAll();
+            } else if (result.type === 'failure') {
+                message = result.data?.message || __('Failed to update ranking metric', $userLanguage);
             }
 
             isLoading = false;
@@ -313,6 +325,43 @@
                             disabled={!!usernameError || !newUsername}
                         >
                             {__('Change Username', $userLanguage)}
+                        </button>
+                    </form>
+                </div>
+            {/if}
+
+            <!-- Ranking Metric -->
+            {#if data.currentUser}
+                <div class="space-y-4">
+                    <h2 class="text-xl font-semibold">{__('Ranking Metric', $userLanguage)}</h2>
+                    <form
+                        method="POST"
+                        action="?/changeMetric"
+                        use:enhance={handleMetricSubmit}
+                        class="space-y-4"
+                    >
+                        <div class="space-y-2">
+                            <label for="preferred-metric" class="label">
+                                {__('Preferred Ranking Metric', $userLanguage)}
+                            </label>
+                            <select
+                                id="preferred-metric"
+                                name="preferredMetric"
+                                class="select"
+                                bind:value={selectedMetric}
+                            >
+                                <option value="pp">{__('Performance Points (PP)', $userLanguage)}</option>
+                                <option value="score">{__('Score', $userLanguage)}</option>
+                            </select>
+                            <p class="text-sm opacity-75">
+                                {__('Choose your ranking metric for ingame leaderboard', $userLanguage)}
+                            </p>
+                        </div>
+                        <button
+                            type="submit"
+                            class="btn variant-filled-primary"
+                        >
+                            {__('Update Ranking Metric', $userLanguage)}
                         </button>
                     </form>
                 </div>

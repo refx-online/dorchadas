@@ -19,7 +19,8 @@ export const load = async ({ cookies }) => {
     return {
         user: {
             id: user.id,
-            username: user.name
+            username: user.name,
+            preferredMetric: user.preferred_metric
         }
     };
 };
@@ -118,6 +119,40 @@ export const actions = {
         } catch (error) {
             console.error('Username change error:', error);
             return fail(500, { message: 'An error occurred while updating username' });
+        }
+    },
+    changeMetric: async ({ request, cookies }) => {
+        const sessionToken = cookies.get('sessionToken');
+        const user = await getUserFromSession(sessionToken);
+        const mysqlDatabase = await getMySQLDatabase();
+        const data = await request.formData();
+        const preferredMetric = data.get('preferredMetric')?.toString();
+
+        if (!sessionToken) {
+            return redirect(302, '/signin');
+        }
+
+        if (!user) {
+            return redirect(302, '/signin');
+        }
+
+        if (!mysqlDatabase) {
+            throw error(500, 'Database connection failed');
+        }
+
+        if (!preferredMetric || !['pp', 'score'].includes(preferredMetric)) {
+            return fail(400, { message: 'Invalid ranking metric' });
+        }
+
+        try {
+            await mysqlDatabase('users')
+                .where('id', user.id)
+                .update({
+                    preferred_metric: preferredMetric
+                });
+            return { success: true };
+        } catch (error) {
+            return fail(500, { message: 'An error occurred while updating ranking metric' });
         }
     }
 };
