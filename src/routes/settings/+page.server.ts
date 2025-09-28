@@ -87,7 +87,7 @@ export const actions = {
                 return fail(400, { message: 'Username already taken' });
             }
 
-            const safeName = newUsername.toLowerCase().replace(/[^a-z0-9]/g, '_');
+            const safeName = newUsername.toLowerCase().trim().replace(/ /g, '_')
 
             // all checks are passed, update their username
             // if their old username exist, we remove

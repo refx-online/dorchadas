@@ -19,6 +19,8 @@
 	let mounted = false;
 	let currentMode = mode;
 
+	$: isReady = mounted && userId && typeof mode === 'number' && mode >= 0;
+
 	function filterRecentCaptures(captures: any[]): any[] {
 		const now = new Date().getTime();
 		const maxAge = 89 * 24 * 60 * 60 * 1000;
@@ -52,13 +54,13 @@
 	}
 	
 	async function loadChart() {
-		if (!mounted || !chartElement) {
+		if (!isReady || !chartElement) {
 			return;
 		}
 
+		error = null;
+
 		try {
-			console.log('Loading chart with mode:', mode);
-			
 			if (query === 'pp') {
 				let pp = await getPPProfileHistory(query, userId, mode);
 				ppHistory = pp;
@@ -68,7 +70,7 @@
 				rankHistory = rank as rankProfileHistory;
 				peakRankHistory = peak as peakrankProfileHistory;
 			}
-			
+
 			if (chart != null) {
 				chart.destroy();
 				chart = null;
@@ -255,20 +257,18 @@
 	onMount(() => {
 		mounted = true;
 		currentMode = mode;
-		if (userId && typeof mode === 'number') {
-			error = null;
+
+		if (userId && typeof mode === 'number' && mode >= 0) {
 			loadChart();
 		}
 	});
 
-	$: if (mounted && userId && typeof mode === 'number' && currentMode !== mode) {
-		console.log('Mode changed from', currentMode, 'to', mode); // Debug log
+	$: if (mounted && userId && typeof mode === 'number' && mode >= 0 && currentMode !== mode) {
 		currentMode = mode;
-		error = null;
 		loadChart();
 	}
 
-	$: if (mounted && userId && typeof mode === 'number' && query) {
+	$: if (isReady && query) {
 		loadChart();
 	}
 </script>
@@ -287,7 +287,11 @@
 		</button>
 	</div>
 	<div class="w-full h-16">
-		{#if error != null}
+		{#if !isReady}
+			<div class="flex items-center justify-center h-full text-surface-400">
+				Loading...
+			</div>
+		{:else if error != null}
 			<div class="flex items-center justify-center h-full text-surface-400">
 				{error}
 			</div>

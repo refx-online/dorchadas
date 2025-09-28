@@ -67,7 +67,7 @@ export const actions: Actions = {
                 .where('id', userId)
                 .update({ 
                     [field]: value,
-                    safe_name: value.toLowerCase().replace(/[^a-z0-9]/g, '_')
+                    safe_name: value.toLowerCase().trim().replace(/ /g, '_')
                 })
                 .catch(err => {
                     console.error('updateUser error:', err);

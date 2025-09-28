@@ -149,7 +149,6 @@
             }
 
             isLoading = false;
-            await update();
         };
     };
 </script>

@@ -623,7 +623,13 @@
 									>
 								</div>
 							</div>
-							<ProfileGraph userId={data.user.info.id} mode={currentModeInt}/>
+							{#if data.user?.info.id && typeof currentModeInt === 'number' && currentModeInt >= 0}
+								<ProfileGraph userId={data.user.info.id} mode={currentModeInt}/>
+							{:else}
+								<div class="flex items-center justify-center h-16 text-surface-400">
+									Loading chart...
+								</div>
+							{/if}
 							<div
 								class="w-full flex flex-col md:flex-row justify-around items-center md:items-end md:justify-normal gap-10"
 							>

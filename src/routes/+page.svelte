@@ -105,7 +105,7 @@
                     <h2 class="text-xl md:text-2xl font-bold text-white mb-4">{appName}</h2>
                     <p class="text-white/80">
                         a rich-feature osu! private server. we serve stable - our custom client - aeris - even lazer.
-                        huge codebase rewrite is work in progress!
+                        im moving to <a href="https://remeliah.icu">ripple</a>
                     </p>
                 </div>
 
