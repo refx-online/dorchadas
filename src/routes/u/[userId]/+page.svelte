@@ -360,10 +360,12 @@
 									>
 										Autopilot
 									</button>
+								</div>
+								<div class="flex w-full md:hidden">
 									<button
 										class="flex-1 !scale-100 btn {currentType == 'touch'
 											? 'bg-surface-500'
-											: 'bg-surface-600'} rounded-lg rounded-l-none"
+											: 'bg-surface-600'} rounded-lg rounded-r-none"
 										on:click={() => setType('touch')}
 										disabled={
 											currentMode == 'taiko' ||
@@ -375,8 +377,6 @@
 									>
 										TouchScreen
 									</button>
-								</div>
-								<div class="flex w-full md:hidden">
 									<button
 										class="flex-1 !scale-100 btn {currentType == 'cheat'
 											? 'bg-surface-500'

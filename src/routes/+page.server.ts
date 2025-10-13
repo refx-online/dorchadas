@@ -20,7 +20,7 @@ export const load = async () => {
 	// selects the highest pp scores per game mode for scores on ranked/approved maps,
 	// order by mode.
 	const ppRecords = await mysqlDatabase.raw(`
-		SELECT s.mode, s.pp, s.score, u.name, u.id, map.set_id as set_id, s.id as score_id 
+		SELECT s.mode, s.pp, s.score, u.name, u.id, u.priv, map.set_id as set_id, s.id as score_id 
 		FROM scores s
 		JOIN (
 			SELECT s2.mode, MAX(s2.pp) as max_pp 
@@ -35,6 +35,7 @@ export const load = async () => {
 		JOIN maps map ON s.map_md5 = map.md5
 		WHERE map.status IN (2, 3) 
 		AND s.status = 2
+		AND (u.priv & 1) != 0
 		ORDER BY s.mode
     `);
 

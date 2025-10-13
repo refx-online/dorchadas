@@ -43,7 +43,7 @@
     ];
 
     const downloadInfo = {
-      url: "https://github.com/refx-online/refxLauncher/releases/tag/0.0.1"
+      url: "https://github.com/refx-online/patcher-cli/releases/tag/v0.0.3"
     };
     
     const features = [
@@ -62,6 +62,14 @@
         {
             text: "Faster Transition",
             icon: FastForward
+        },
+        {
+            text: "This fuckshit is not for the cheat leaderboard!",
+            icon: GitBranch
+        },
+        {
+            text: "Totally not a crypto miner!",
+            icon: Settings
         },
         {
             text: "And more in the future!",
@@ -156,7 +164,6 @@
                 </div>
             </div>
             <h1 class="text-5xl font-bold mb-3 text-white">re;fx Patcher</h1>
-            <p class="text-xl text-gray-400">a fork of EZPPLauncher</p>
         </header>
         
         <section class="description mb-20 text-center mx-auto">
