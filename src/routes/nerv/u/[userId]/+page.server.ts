@@ -56,6 +56,10 @@ export const actions: Actions = {
         }
 
         const mysqlDatabase = await getMySQLDatabase();
+        if (!mysqlDatabase) {
+            return { success: false, error: 'Database connection failed' };
+        }
+
         const user = await mysqlDatabase<DBUser>('users')
             .select('name', 'id')
             .where('id', userId)
@@ -117,6 +121,10 @@ export const actions: Actions = {
         // hash password
         const newPassword = await hashPassword(newPass);
         const mysqlDatabase = await getMySQLDatabase();
+        if (!mysqlDatabase) {
+            return { success: false, error: 'Database connection failed' };
+        }
+
         const user = await mysqlDatabase<DBUser>('users')
             .select('name', 'id')
             .where('id', userId)
@@ -144,6 +152,10 @@ export const actions: Actions = {
         }
 
         const mysqlDatabase = await getMySQLDatabase();
+        if (!mysqlDatabase) {
+            return { success: false, error: 'Database connection failed' };
+        }
+
         const user = await mysqlDatabase<DBUser>('users')
             .where('id', userId)
             .first();
@@ -178,6 +190,9 @@ export const actions: Actions = {
         }
 
         const mysqlDatabase = await getMySQLDatabase();
+        if (!mysqlDatabase) {
+            return { success: false, error: 'Database connection failed' };
+        }
         
         const user = await mysqlDatabase<DBUser>('users')
             .where('id', userId)
@@ -219,6 +234,10 @@ export const actions: Actions = {
         }
 
         const mysqlDatabase = await getMySQLDatabase();
+        if (!mysqlDatabase) {
+            return { success: false, error: 'Database connection failed' };
+        }
+
         const user = await mysqlDatabase<DBUser>('users')
             .where('id', userId)
             .first();
@@ -250,6 +269,10 @@ export const actions: Actions = {
         }
 
         const mysqlDatabase = await getMySQLDatabase();
+        if (!mysqlDatabase) {
+            return { success: false, error: 'Database connection failed' };
+        }
+
         const user = await mysqlDatabase<DBUser>('users')
             .where('id', userId)
             .first();
@@ -280,6 +303,9 @@ export const actions: Actions = {
 
         const mysqlDatabase = await getMySQLDatabase();
         const redis = await getRedisClient();
+        if (!mysqlDatabase || !redis) {
+            return { success: false, error: 'Database connection failed' };
+        }
 
         const user = await mysqlDatabase('users')
             .where('id', userId).first();
@@ -315,7 +341,7 @@ export const actions: Actions = {
         for (const mode of modes) {
             await redis.zRem(`bancho:leaderboard:${mode}`, String(userId));
             await redis.zRem(`bancho:leaderboard:${mode}:${user.geoloc?.country?.acronym}`, String(userId));
-        }        
+        }
 
         await sendDiscordWebhookLog(
             'Nerv',
@@ -344,6 +370,10 @@ export async function load({ params, cookies }) {
     }
 
     const mysqlDatabase = await getMySQLDatabase();
+    if (!mysqlDatabase) {
+        return { success: false, error: 'Database connection failed' };
+    }
+
     const userId = params.userId;
 
     const user = await mysqlDatabase<DBUser>('users')

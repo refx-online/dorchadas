@@ -8,7 +8,7 @@
     export let data;
 
     const modes = ['osu', 'taiko', 'catch', 'mania'];
-    const types = ['vanilla', 'relax', 'autopilot', 'cheat', 'cheatcheat'];
+    const types = ['vanilla', 'relax', 'autopilot', 'cheat', 'cheatcheat', 'touch'];
 
     let currentType = $page.url.searchParams.get('type') || 'vanilla';
     let currentMode = $page.url.searchParams.get('mode') || 'osu';
@@ -29,7 +29,7 @@
         if (type === 'autopilot') modeNum += 8;
         if (type === 'cheat') modeNum = 12;
         if (type === 'cheatcheat') modeNum = 16;
-        
+        if (type === 'touch') modeNum = 20;
         return modeNum;
     }
 
@@ -77,6 +77,13 @@
                 on:click={() => changeType('autopilot')}
             >
                 Autopilot
+            </button>
+            <button 
+                class="px-4 py-1 rounded text-sm font-medium transition-colors
+                       {currentType === 'touch' ? 'bg-zinc-500 text-white' : 'bg-surface-900 text-zinc-400 hover:bg-zinc-700'}"
+                on:click={() => changeType('touch')}
+            >
+                TouchScreen
             </button>
             <button 
                 class="px-4 py-1 rounded text-sm font-medium transition-colors

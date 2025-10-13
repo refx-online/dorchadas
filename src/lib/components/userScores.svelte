@@ -64,6 +64,9 @@
             case 'cheatcheat':
                 mode = 16;
                 break;
+            case 'touch':
+                mode = 20;
+                break;
 		}
 
 		const recentScoresRequest = await getPlayerScores({

@@ -38,7 +38,7 @@
   
         userSearchTimeout = setTimeout(async () => {
             try {
-                const url = `${apiUrl}/v1/search_players?q=${userSearchQuery}`;
+                const url = `${apiUrl}/v1/search_players?q=${userSearchQuery}&nerv=1`;
                 const response = await fetch(url, {
                     method: 'GET'
                 });

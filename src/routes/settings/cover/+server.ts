@@ -32,7 +32,6 @@ export const POST = async ({ request, cookies }) => {
             return error(400, 'File size exceeds the 5 MB limit');
         }
 
-        const fileExtension = file.type === 'image/jpeg' ? 'jpg' : 'png';
         const coverDirectory = path.join(process.cwd(), '.data', 'cover');
 
         try {
@@ -51,7 +50,7 @@ export const POST = async ({ request, cookies }) => {
             }
         }
 
-        const coverPath = path.join(coverDirectory, `${user.id}.${fileExtension}`);
+        const coverPath = path.join(coverDirectory, `${user.id}.jpg`);
         const buffer = new Uint8Array(await file.arrayBuffer());
         await writeFile(coverPath, buffer);
 

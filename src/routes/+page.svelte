@@ -62,6 +62,7 @@
         8: 'ap!std',
         12: 'cheat!std',
         16: 'cheatcheat!std',
+        20: 'td!std'
     };
 
 	onMount(() => {
@@ -105,7 +106,7 @@
                     <h2 class="text-xl md:text-2xl font-bold text-white mb-4">{appName}</h2>
                     <p class="text-white/80">
                         a rich-feature osu! private server. we serve stable - our custom client - aeris - even lazer.
-                        im moving to <a href="https://remeliah.icu">ripple</a>
+                        im just not gonna rewrite the whole shit cuz im too lazy LOL!
                     </p>
                 </div>
 

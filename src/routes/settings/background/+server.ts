@@ -32,7 +32,6 @@ export const POST = async ({ request, cookies }) => {
             return error(400, 'File size exceeds the 5 MB limit');
         }
 
-        const fileExtension = file.type === 'image/jpeg' ? 'jpg' : 'png';
         const bgDirectory = path.join(process.cwd(), '.data', 'background');
 
         try {
@@ -42,7 +41,7 @@ export const POST = async ({ request, cookies }) => {
             return error(500, 'Failed to create background directory');
         }
 
-        const existingBgPath = path.join(bgDirectory, `${user.id}.${fileExtension}`);
+        const existingBgPath = path.join(bgDirectory, `${user.id}.png`);
         try {
             await unlink(existingBgPath);
         } catch (err: unknown) {

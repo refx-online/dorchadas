@@ -166,7 +166,7 @@
 	});
 
 	const modes = ['osu', 'taiko', 'catch', 'mania'];
-	const types = ['vanilla', 'relax', 'autopilot', 'cheat', 'cheatcheat'];
+	const types = ['vanilla', 'relax', 'autopilot', 'cheat', 'cheatcheat', 'touch'];
 
 	const updateModeInt = async () => {
 		loading = true;
@@ -199,6 +199,9 @@
 				break;
 			case 'cheatcheat':
 				mode = 16;
+				break;
+			case 'touch':
+				mode = 20;
 				break;
 		}
 		currentModeInt = mode;
@@ -357,6 +360,21 @@
 									>
 										Autopilot
 									</button>
+									<button
+										class="flex-1 !scale-100 btn {currentType == 'touch'
+											? 'bg-surface-500'
+											: 'bg-surface-600'} rounded-lg rounded-l-none"
+										on:click={() => setType('touch')}
+										disabled={
+											currentMode == 'taiko' ||
+											currentMode == 'catch' ||
+											currentMode == 'mania' ||
+											loading ||
+											failed
+										}
+									>
+										TouchScreen
+									</button>
 								</div>
 								<div class="flex w-full md:hidden">
 									<button
@@ -424,6 +442,21 @@
 										}
 									>
 										Autopilot
+									</button>
+									<button
+										class="w-[20%] !scale-100 btn {currentType == 'touch'
+											? 'bg-surface-500'
+											: 'bg-surface-600'} rounded-none"
+										on:click={() => setType('touch')}
+										disabled={
+											currentMode == 'taiko' ||
+											currentMode == 'catch' ||
+											currentMode == 'mania' ||
+											loading ||
+											failed
+										}
+									>
+										TouchScreen
 									</button>
 									<button
 										class="w-[20%] !scale-100 btn {currentType == 'cheat'
