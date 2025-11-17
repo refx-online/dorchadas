@@ -1,21 +1,22 @@
 <script>
     import { onMount } from 'svelte';
-    import { appName } from '$lib/env';
     import { fade, scale } from 'svelte/transition';
     import { X } from 'svelte-feathers';
 
     import { 
         Download, 
-        Coffee, 
-        Code, 
-        Layout, 
-        Shield, 
+        Zap, 
+        Activity, 
+        Target, 
+        TrendingUp, 
         CheckCircle, 
-        Monitor, 
-        Settings, 
-        FastForward,
-        GitBranch,
-        Star
+        Award, 
+        Clock,
+        Crosshair,
+        Sliders,
+        BarChart2,
+        Lock,
+        Unlock
     } from 'svelte-feathers';
 
     let mounted = false;
@@ -27,53 +28,55 @@
     const screenshots = [
       {
         id: 1,
-        src: "/patcher/screenshot-1.jpg",
-        alt: "g"
-      },
-      {
-        id: 2,
-        src: "/patcher/screenshot-2.png",
+        src: "/client/screenshot-1.jpg",
         alt: "a"
       },
       {
+        id: 2,
+        src: "/client/screenshot-2.png",
+        alt: "b"
+      },
+      {
         id: 3,
-        src: "/patcher/screenshot-3.jpg",
-        alt: "rl"
+        src: "/client/screenshot-3.jpg",
+        alt: "c"
       }
     ];
 
     const downloadInfo = {
-      url: "https://github.com/refx-online/patcher-cli/releases/"
+      url: "https://github.com/refx-online/refxUpdater/releases/"
     };
     
     const features = [
         {
-            text: "Enable Relax/Autopilot Miss (wow! who would've thought)",
-            icon: CheckCircle
+            text: "Aim Correction",
+            icon: Target,
+            category: "gameplay"
         },
         {
-            text: "Enable Relax/Autopilot Combo Miss Sound (the sound!)",
-            icon: Monitor
+            text: "Timewarp",
+            icon: Clock,
+            category: "gameplay"
         },
         {
-            text: "Show Relax/Autopilot Ranking Panel",
-            icon: Layout
+            text: "AR Changer",
+            icon: Sliders,
+            category: "customization"
         },
         {
-            text: "Faster Transition",
-            icon: FastForward
+            text: "CS Changer",
+            icon: Crosshair,
+            category: "customization"
         },
         {
-            text: "This fuckshit is not for the cheat leaderboard!",
-            icon: GitBranch
+            text: "PP Calculator",
+            icon: BarChart2,
+            category: "tools"
         },
         {
-            text: "Totally not a crypto miner!",
-            icon: Settings
-        },
-        {
-            text: "And more in the future!",
-            icon: Star
+            text: "Optimized Performance",
+            icon: TrendingUp,
+            category: "performance"
         }
     ];
     
@@ -145,14 +148,15 @@
 </script>
 
 <svelte:head>
-    <title>{appName} :: Patcher</title>
+    <title>re;fx :: The Client</title>
 </svelte:head>
 
-<div class="patcher-container min-h-screen relative z-[1] overflow-hidden">
+<div class="client-container min-h-screen relative z-[1] overflow-hidden">
     {#if mounted}
         <div class="absolute inset-0 opacity-10 blur-3xl z-[0]">
-            <div class="absolute w-80 h-80 bg-purple-500/30 rounded-full -top-10 -left-10"></div>
-            <div class="absolute w-96 h-96 bg-indigo-500/30 rounded-full -bottom-20 -right-20"></div>
+            <div class="absolute w-80 h-80 bg-cyan-500/30 rounded-full -top-10 -left-10"></div>
+            <div class="absolute w-96 h-96 bg-blue-500/30 rounded-full top-1/3 right-1/4"></div>
+            <div class="absolute w-80 h-80 bg-purple-500/30 rounded-full -bottom-20 -right-20"></div>
         </div>
     {/if}
 
@@ -160,19 +164,19 @@
         <header class="text-center mb-16">
             <div class="flex justify-center mb-4">
                 <div class="icon-wrapper">
-                    <Code size="36" color="#8b5cf6" />
+                    <Zap size="36" color="#06b6d4" />
                 </div>
             </div>
-            <h1 class="text-5xl font-bold mb-3 text-white">re;fx Patcher</h1>
+            <h1 class="text-5xl font-bold mb-3 text-white">re;fx Client</h1>
         </header>
         
         <section class="description mb-20 text-center mx-auto">
             <div class="flex items-center justify-center mb-6">
-                <Coffee class="mr-3 text-purple-500" size="24" />
+                <Activity class="mr-3 text-cyan-400" size="24" />
                 <h2 class="text-3xl font-semibold pb-2 border-b border-gray-800 text-white">About</h2>
             </div>
-            <p class="text-lg max-w-3xl mx-auto text-gray-300">
-                re;fx Patcher is an osu! patcher designed to enhance the relax experience with features that osu! should already have included. 
+            <p class="text-lg max-w-3xl mx-auto text-gray-300 mb-4">
+                This client is what makes this server exists. Let's not think that i copied this page from patcher
             </p>
         </section>
         
@@ -181,6 +185,9 @@
                 {#each screenshots as screenshot}
                     <div class="screenshot-card" on:click={() => openLightbox(screenshot)} on:keydown={(e) => e.key === 'Enter' && openLightbox(screenshot)}>
                         <img src={screenshot.src} alt={screenshot.alt} loading="lazy" />
+                        <div class="screenshot-overlay">
+                            <span class="screenshot-label">{screenshot.alt}</span>
+                        </div>
                     </div>
                 {/each}
             </div>
@@ -210,26 +217,30 @@
         
         <section class="features mb-20">
             <div class="flex items-center justify-center mb-8">
-                <Shield class="mr-3 text-purple-500" size="24" />
-                <h2 class="text-3xl font-semibold pb-2 border-b border-gray-800 text-white">Key Features</h2>
+                <CheckCircle class="mr-3 text-cyan-400" size="24" />
+                <h2 class="text-3xl font-semibold pb-2 border-b border-gray-800 text-white">Features</h2>
             </div>
-            <ul class="feature-list mx-auto">
+            
+            <div class="features-grid mx-auto">
                 {#each features as feature}
-                    <li class="flex items-center">
-                        <span class="icon-feature mr-3">
-                            <svelte:component this={feature.icon} size="18" color="#8b5cf6" />
-                        </span>
-                        {feature.text}
-                    </li>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svelte:component this={feature.icon} size="24" color="#06b6d4" />
+                        </div>
+                        <p class="feature-text">{feature.text}</p>
+                        <span class="feature-badge">{feature.category}</span>
+                    </div>
                 {/each}
-            </ul>
+            </div>
         </section>
         
         <section class="download mb-16">
             <div class="download-card">
-                <a href={downloadInfo.url} class="download-button flex items-center">
-                    <Download class="mr-2" size="18" /> Download Patcher
-                </a>
+                <div class="download-content">
+                    <a href={downloadInfo.url} class="download-button flex items-center">
+                        <Download class="mr-2" size="20" /> Download Updater
+                    </a>
+                </div>
             </div>
         </section>
         
@@ -238,21 +249,21 @@
     {#if mounted}
         <div class="absolute bottom-0 left-0 opacity-10 pointer-events-none z-[0]">
             <svg width="200" height="200" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="40" fill="#8b5cf6" opacity="0.2"/>
+                <circle cx="50" cy="50" r="40" fill="#06b6d4" opacity="0.2"/>
             </svg>
         </div>
-        <div class="absolute top-0 right-0 opacity-10 pointer-events-none z-[0]">
+        <div class="absolute top-1/4 right-0 opacity-10 pointer-events-none z-[0]">
             <svg width="250" height="250" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="30" fill="#8b5cf6" opacity="0.2"/>
+                <circle cx="50" cy="50" r="30" fill="#06b6d4" opacity="0.2"/>
             </svg>
         </div>
     {/if}
 </div>
   
 <style>
-    .patcher-container {
+    .client-container {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        background-color: #121212;
+        background-color: #0a0a0a;
         color: #f0f0f0;
         line-height: 1.6;
     }
@@ -262,6 +273,14 @@
         letter-spacing: -0.02em;
     }
 
+    .warning-box {
+        background: linear-gradient(135deg, rgba(234, 179, 8, 0.1), rgba(234, 179, 8, 0.05));
+        border: 1px solid rgba(234, 179, 8, 0.3);
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        backdrop-filter: blur(10px);
+    }
+
     .screenshot-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -269,29 +288,52 @@
     }
     
     .screenshot-card {
-        background-color: #1e1e1e;
+        background-color: #1a1a1a;
         border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
         transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), 
                   box-shadow 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
         cursor: pointer;
+        position: relative;
     }
     
     .screenshot-card:hover {
         transform: translateY(-10px);
-        box-shadow: 0 18px 30px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 18px 40px rgba(6, 182, 212, 0.3);
     }
     
     .screenshot-card img {
         width: 100%;
         height: auto;
         display: block;
-        transition: transform 0.5s ease;
+        transition: transform 0.5s ease, filter 0.3s ease;
     }
     
     .screenshot-card:hover img {
-        transform: scale(1.03);
+        transform: scale(1.05);
+        filter: brightness(1.1);
+    }
+
+    .screenshot-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        padding: 1rem;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+    }
+
+    .screenshot-card:hover .screenshot-overlay {
+        transform: translateY(0);
+    }
+
+    .screenshot-label {
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
     }
     
     .lightbox-overlay {
@@ -300,7 +342,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.9);
+        background-color: rgba(0, 0, 0, 0.95);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -339,7 +381,7 @@
     }
     
     .lightbox-close:hover {
-        background-color: rgba(139, 92, 246, 0.5);
+        background-color: rgba(6, 182, 212, 0.5);
     }
     
     .lightbox-nav {
@@ -368,128 +410,206 @@
     }
     
     .nav-btn:hover {
-        background-color: rgba(139, 92, 246, 0.7);
+        background-color: rgba(6, 182, 212, 0.7);
     }
     
-    .feature-list {
-        list-style-type: none;
-        padding: 0;
-        max-width: 800px;
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        max-width: 1200px;
     }
-    
-    .feature-list li {
-        padding: 1rem 1.5rem;
-        margin-bottom: 1rem;
-        background-color: #1e1e1e;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+    .feature-card {
+        background: linear-gradient(135deg, #1a1a1a, #1e1e1e);
+        border: 1px solid rgba(6, 182, 212, 0.2);
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
         position: relative;
-        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-        color: #d1d1d1;
+        overflow: hidden;
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, #06b6d4, transparent);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(6, 182, 212, 0.2);
+        border-color: rgba(6, 182, 212, 0.5);
+    }
+
+    .feature-icon {
+        background-color: rgba(6, 182, 212, 0.1);
+        width: 48px;
+        height: 48px;
         display: flex;
         align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
     }
-    
-    .feature-list li:hover {
-        transform: translateX(8px);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-        background-color: #2a2a2a;
+
+    .feature-card:hover .feature-icon {
+        transform: scale(1.1);
+        background-color: rgba(6, 182, 212, 0.2);
+    }
+
+    .feature-text {
+        color: #d1d1d1;
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+        line-height: 1.5;
+    }
+
+    .feature-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background-color: rgba(6, 182, 212, 0.15);
+        color: #06b6d4;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .highlight-card {
+        background: linear-gradient(135deg, #1a1a1a, #1e1e1e);
+        border: 1px solid rgba(6, 182, 212, 0.3);
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .highlight-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .highlight-features {
+        list-style: none;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .highlight-features li {
+        color: #d1d1d1;
+        font-size: 0.95rem;
     }
     
     .icon-wrapper {
-        background-color: rgba(139, 92, 246, 0.1);
-        width: 70px;
-        height: 70px;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(6, 182, 212, 0.05));
+        width: 80px;
+        height: 80px;
         display: flex;
         align-items: center;
         justify-content: center;
         border-radius: 50%;
         margin-bottom: 1rem;
         transition: transform 0.3s ease, background-color 0.3s ease;
+        border: 2px solid rgba(6, 182, 212, 0.3);
     }
     
     .icon-wrapper:hover {
-        transform: scale(1.1);
-        background-color: rgba(139, 92, 246, 0.2);
-    }
-    
-    .icon-feature {
-        background-color: rgba(139, 92, 246, 0.1);
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        transition: transform 0.3s ease;
-    }
-    
-    .feature-list li:hover .icon-feature {
-        transform: scale(1.1);
-    }
-    
-    .icon-footer {
-        background-color: rgba(255, 255, 255, 0.05);
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        transition: transform 0.3s ease, background-color 0.3s ease;
-    }
-    
-    .icon-footer:hover {
-        transform: scale(1.1);
-        background-color: rgba(139, 92, 246, 0.1);
+        transform: scale(1.1) rotate(5deg);
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(6, 182, 212, 0.1));
     }
 
     .download-card {
-        background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
-        border-radius: 16px;
+        background: linear-gradient(135deg, #0a4a5a, #1a1a1a);
+        border: 1px solid rgba(6, 182, 212, 0.3);
+        border-radius: 20px;
         padding: 3rem;
         display: flex;
         justify-content: center;
         align-items: center;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 12px 40px rgba(6, 182, 212, 0.15);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-        max-width: 800px;
+        max-width: 900px;
         margin: 0 auto;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .download-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
+        animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.5; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    .download-content {
+        text-align: center;
+        position: relative;
+        z-index: 1;
     }
     
     .download-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 20px 50px rgba(6, 182, 212, 0.25);
     }
     
     .download-button {
-        background-color: #8b5cf6;
+        background: linear-gradient(135deg, #06b6d4, #0891b2);
         color: white;
         text-decoration: none;
         padding: 1rem 2.5rem;
-        border-radius: 8px;
+        border-radius: 10px;
         font-weight: 600;
         font-size: 1.2rem;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
-        display: flex;
+        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+        display: inline-flex;
         align-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
     
     .download-button:hover {
-        background-color: #7c3aed;
+        background: linear-gradient(135deg, #0891b2, #0e7490);
         transform: translateY(-3px);
-        box-shadow: 0 8px 16px rgba(139, 92, 246, 0.4);
+        box-shadow: 0 8px 20px rgba(6, 182, 212, 0.5);
     }
     
     .download-button:active {
         transform: translateY(1px);
-        box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+        box-shadow: 0 2px 10px rgba(6, 182, 212, 0.4);
     }
     
     @media (max-width: 900px) {
         .screenshot-grid {
             grid-template-columns: repeat(2, 1fr);
+        }
+
+        .features-grid {
+            grid-template-columns: 1fr;
         }
         
         .lightbox-content {
@@ -510,9 +630,22 @@
         .screenshot-grid {
             grid-template-columns: 1fr;
         }
+
+        .highlight-card {
+            padding: 1.5rem;
+        }
+
+        .highlight-features {
+            grid-template-columns: 1fr;
+        }
         
         .download-card {
             padding: 2rem 1rem;
+        }
+
+        .download-button {
+            padding: 0.875rem 1.75rem;
+            font-size: 1rem;
         }
         
         .lightbox-content img {

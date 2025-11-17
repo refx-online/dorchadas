@@ -101,6 +101,25 @@
 	</a>
 
 	<a
+		href="/lazer"
+		class="btn {$page.data.url == '/lazer'
+			? 'variant-ghost-surface '
+			: 'hover:variant-outline-surface '}rounded-lg"
+		on:click={() => drawerStore.close()}
+	>
+		{__('Lazer', $userLanguage)}
+	</a>
+
+	<a
+		href="/client"
+		class="btn {$page.data.url == '/client'
+			? 'variant-ghost-surface '
+			: 'hover:variant-outline-surface '}rounded-lg"
+		on:click={() => drawerStore.close()}
+	>
+		{__('re;fx Client', $userLanguage)}
+	</a>
+	<a
 		href="/rules"
 		class="btn {$page.data.url == '/rules'
 			? 'variant-ghost-surface '
@@ -118,22 +137,6 @@
 		on:click={() => drawerStore.close()}
 	>
 		{__('Top Plays', $userLanguage)}
-	</a>
-
-	<a
-		href={`${githubUrl}/osu?tab=readme-ov-file#from-cli`}
-		class="btn hover:variant-outline-surface rounded-lg"
-		on:click={() => drawerStore.close()}
-	>
-		{__('Lazer', $userLanguage)}
-	</a>
-
-	<a
-		href={`${githubUrl}/refxUpdater/actions/runs/16594520473`}
-		class="btn hover:variant-outline-surface rounded-lg"
-		on:click={() => drawerStore.close()}
-	>
-		{__('refxUpdater', $userLanguage)}
 	</a>
 
 	<div class="h-full w-full flex flex-row justify-between items-end mt-auto">

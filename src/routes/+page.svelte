@@ -106,7 +106,6 @@
                     <h2 class="text-xl md:text-2xl font-bold text-white mb-4">{appName}</h2>
                     <p class="text-white/80">
                         a rich-feature osu! private server. we serve stable - our custom client - aeris - even lazer.
-                        im just not gonna rewrite the whole shit cuz im too lazy LOL!
                     </p>
                 </div>
 
