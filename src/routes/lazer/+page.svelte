@@ -29,7 +29,7 @@
       },
       {
         id: 2,
-        src: "/lazer/screenshot-2.png",
+        src: "/lazer/screenshot-2.jpg",
         alt: "b"
       },
       {
@@ -247,6 +247,9 @@
                 </p>
                 <p class="text-gray-400 text-sm">
                     (also yes i know the UI looks similar to the patcher and refx client page. it's called being consistent ok)
+                </p>
+                <p class="text-gray-400 text-sm">
+                    (also why did i even put more effort to this page)
                 </p>
             </div>
         </section>

@@ -33,7 +33,7 @@
       },
       {
         id: 2,
-        src: "/client/screenshot-2.png",
+        src: "/client/screenshot-2.jpg",
         alt: "b"
       },
       {
@@ -46,39 +46,6 @@
     const downloadInfo = {
       url: "https://github.com/refx-online/refxUpdater/releases/"
     };
-    
-    const features = [
-        {
-            text: "Aim Correction",
-            icon: Target,
-            category: "gameplay"
-        },
-        {
-            text: "Timewarp",
-            icon: Clock,
-            category: "gameplay"
-        },
-        {
-            text: "AR Changer",
-            icon: Sliders,
-            category: "customization"
-        },
-        {
-            text: "CS Changer",
-            icon: Crosshair,
-            category: "customization"
-        },
-        {
-            text: "PP Calculator",
-            icon: BarChart2,
-            category: "tools"
-        },
-        {
-            text: "Optimized Performance",
-            icon: TrendingUp,
-            category: "performance"
-        }
-    ];
     
     function openLightbox(screenshot) {
         currentScreenshot = screenshot;
@@ -213,25 +180,6 @@
                     </div>
                 </div>
             {/if}
-        </section>
-        
-        <section class="features mb-20">
-            <div class="flex items-center justify-center mb-8">
-                <CheckCircle class="mr-3 text-cyan-400" size="24" />
-                <h2 class="text-3xl font-semibold pb-2 border-b border-gray-800 text-white">Features</h2>
-            </div>
-            
-            <div class="features-grid mx-auto">
-                {#each features as feature}
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <svelte:component this={feature.icon} size="24" color="#06b6d4" />
-                        </div>
-                        <p class="feature-text">{feature.text}</p>
-                        <span class="feature-badge">{feature.category}</span>
-                    </div>
-                {/each}
-            </div>
         </section>
         
         <section class="download mb-16">
