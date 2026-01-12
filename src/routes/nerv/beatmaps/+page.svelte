@@ -191,10 +191,6 @@
       }
     };
   
-    const playActionSound = (action: string) => {
-      console.log(`Playing ${action} sound effect`);
-    };
-  
     onMount(() => {
       const urlBeatmapId = new URLSearchParams(window.location.search).get('id');
       if (urlBeatmapId && /^\d+$/.test(urlBeatmapId)) {
@@ -324,7 +320,6 @@
             class="action-btn rank-btn" 
             on:click={() => {
               performAction('rank');
-              playActionSound('rank');
             }}
             disabled={!hasPermission || beatmapInfo.status === 'ranked' || isLoading}
           >
@@ -335,7 +330,6 @@
             class="action-btn unrank-btn" 
             on:click={() => {
               performAction('unrank');
-              playActionSound('unrank');
             }}
             disabled={!hasPermission || beatmapInfo.status === 'pending' || isLoading}
           >
@@ -346,7 +340,6 @@
             class="action-btn love-btn" 
             on:click={() => {
               performAction('love');
-              playActionSound('love');
             }}
             disabled={!hasPermission || beatmapInfo.status === 'loved' || isLoading}
           >

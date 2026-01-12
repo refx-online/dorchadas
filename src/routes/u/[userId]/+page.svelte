@@ -929,6 +929,7 @@
 													};
 												}}
 											>
+												<input type="hidden" name="csrf_token" value={data.csrfToken} />
 												<input 
 													type="hidden" 
 													name="userpage" 

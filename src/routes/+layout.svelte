@@ -48,6 +48,7 @@
     import { elasticOut } from 'svelte/easing';
 	import { isRestricted } from '$lib/privs';
 	import { discordUrl } from '$lib/env';
+	import { csrfToken } from '$lib/storage';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 	initializeStores();
@@ -55,6 +56,8 @@
 	const drawerStore = getDrawerStore();
 
 	export let data;
+
+	$: csrfToken.set(data.csrfToken);
 
 	if ('currentUser' in data) {
 		userData.set(data.currentUser as UserData);

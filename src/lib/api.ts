@@ -14,6 +14,8 @@ import type {
 	User,
 	UsersLog
 } from './types';
+import { get } from 'svelte/store';
+import { csrfToken } from './storage';
 
 export const getClan = async (clanId: number): Promise<Clan | undefined> => {
 	try {
@@ -156,11 +158,13 @@ export const pinScore = async (
 	currentUserId: number, 
 	userId: number
 ) => {
+	const token = get(csrfToken);
     try {
         const response = await fetch('/stuff/pin-score', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+				'X-CSRF-Token': token,
             },
             body: JSON.stringify({ scoreid, isPinned, currentUserId, userId })
         });

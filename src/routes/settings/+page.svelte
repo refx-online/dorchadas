@@ -39,6 +39,7 @@
         try {
             const formData = new FormData();
             formData.append('avatar', avatarFile[0]);
+            formData.append('csrf_token', data.csrfToken);
 
             const response = await fetch('/settings/avatar', {
                 method: 'POST',
@@ -66,6 +67,7 @@
         try {
             const formData = new FormData();
             formData.append('cover', coverFile[0]);
+            formData.append('csrf_token', data.csrfToken);
 
             const response = await fetch('/settings/cover', {
                 method: 'POST',
@@ -93,6 +95,7 @@
         try {
             const formData = new FormData();
             formData.append('background', bgFile[0]);
+            formData.append('csrf_token', data.csrfToken);
 
             const response = await fetch('/settings/background', {
                 method: 'POST',
@@ -250,44 +253,44 @@
 
             <!-- Background -->
             {#if data.currentUser}
-            <div class="space-y-4">
-                <h2 class="text-xl font-semibold">{__('Background Image', $userLanguage)}</h2>
-                <div class="flex items-center space-x-4">
+                <div class="space-y-4">
+                    <h2 class="text-xl font-semibold">{__('Background Image', $userLanguage)}</h2>
+                    <div class="flex items-center space-x-4">
 
-                    <img
-                        src={"u/" + data.currentUser.id + "/background"}
-                        alt="bg"
-                        class="w-24 h-24 object-cover"
-                        style="display: {bgFile ? 'none' : 'block'};"
-                    />
-
-                    {#if bgFile}
                         <img
-                            src={URL.createObjectURL(bgFile[0])}
-                            alt="Selected Background Preview"
-                            class="w-full h-32 object-cover"
+                            src={"u/" + data.currentUser.id + "/background"}
+                            alt="bg"
+                            class="w-24 h-24 object-cover"
+                            style="display: {bgFile ? 'none' : 'block'};"
                         />
-                    {/if}
-                    <div class="space-y-2">
-                        <input
-                            type="file"
-                            accept="image/jpeg,image/png"
-                            bind:files={bgFile}
-                            class="input"
-                        />
-                        <button
-                            class="btn variant-filled-primary"
-                            on:click={handleBackgroundUpload}
-                            disabled={!bgFile?.[0]}
-                        >
-                            {__('Upload Background', $userLanguage)}
-                        </button>
-                        <p class="text-sm">
-                            {__('maximum size: 5MB. supported formats: JPG, PNG', $userLanguage)}
-                        </p>
+
+                        {#if bgFile}
+                            <img
+                                src={URL.createObjectURL(bgFile[0])}
+                                alt="Selected Background Preview"
+                                class="w-full h-32 object-cover"
+                            />
+                        {/if}
+                        <div class="space-y-2">
+                            <input
+                                type="file"
+                                accept="image/jpeg,image/png"
+                                bind:files={bgFile}
+                                class="input"
+                            />
+                            <button
+                                class="btn variant-filled-primary"
+                                on:click={handleBackgroundUpload}
+                                disabled={!bgFile?.[0]}
+                            >
+                                {__('Upload Background', $userLanguage)}
+                            </button>
+                            <p class="text-sm">
+                                {__('maximum size: 5MB. supported formats: JPG, PNG', $userLanguage)}
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
             {/if}
 
             <!-- Username Change -->
@@ -300,6 +303,7 @@
                         use:enhance={handleUsernameSubmit}
                         class="space-y-4"
                     >
+                    <input type="hidden" name="csrf_token" value={data.csrfToken} />
                     <input type="hidden"/>
                         <div class="space-y-2">
                             <label for="new-username" class="label">
@@ -339,6 +343,7 @@
                         use:enhance={handleMetricSubmit}
                         class="space-y-4"
                     >
+                        <input type="hidden" name="csrf_token" value={data.csrfToken} />
                         <div class="space-y-2">
                             <label for="preferred-metric" class="label">
                                 {__('Preferred Ranking Metric', $userLanguage)}

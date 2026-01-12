@@ -1,11 +1,15 @@
+import type { Handle } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
+import { generateCsrfToken, validateCsrfToken } from '$lib/csrf';
 import { env } from '$env/dynamic/private';
 import chalk from 'chalk';
 import knex_pkg from 'knex';
 import redis from 'redis';
-import { csrf } from '$lib/csrf';
 
 const { knex } = knex_pkg;
 
+const CSRF_COOKIE_NAME = 'csrf_token';
+const STATE_CHANGING_METHODS = ['POST', 'PUT', 'PATCH', 'DELETE'];
 
 let mysqlDatabase: knex_pkg.Knex | undefined;
 let redisClient:
@@ -189,15 +193,55 @@ export const initializeConnections = async (): Promise<void> => {
 	console.log(chalk.blue('Application startup complete'));
 };
 
-// i to be honest hate to put all of the endpoint but it is what it is
-// HELP I DONT KNOW SVELTE
-// these are the endpoints that allowed
-export const handle = csrf([
-	'/settings*',
-	'/u*',
-	'/nerv/*',
-	'/stuff/*'
-]);
+
+export const handle: Handle = async ({ event, resolve }) => {
+  const { request, cookies, url } = event;
+
+  let csrfToken = cookies.get(CSRF_COOKIE_NAME);
+  
+  if (!csrfToken) {
+    csrfToken = generateCsrfToken();
+    cookies.set(CSRF_COOKIE_NAME, csrfToken, {
+      path: '/',
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 24 // 24 hours
+    });
+  }
+
+  event.locals.csrfToken = csrfToken;
+
+  if (STATE_CHANGING_METHODS.includes(request.method)) {
+    const contentType = request.headers.get('content-type') || '';
+
+    if (contentType.includes('application/x-www-form-urlencoded') || 
+        contentType.includes('multipart/form-data')) {
+      
+      try {
+        const clonedRequest = request.clone();
+        const formData = await clonedRequest.formData();
+        const tokenFromForm = formData.get('csrf_token')?.toString();
+
+        if (!validateCsrfToken(tokenFromForm || '', csrfToken)) {
+          throw error(403, 'Invalid token');
+        }
+      } catch (err) {
+        throw error(400, 'Invalid form data');
+      }
+    }
+
+    else if (contentType.includes('application/json')) {
+      const tokenFromHeader = request.headers.get('x-csrf-token');
+
+      if (!validateCsrfToken(tokenFromHeader || '', csrfToken)) {
+        return json({ error: 'Invalid token' }, { status: 403 });
+      }
+    }
+  }
+
+  return resolve(event);
+};
 
 export function handleError({ error }): void {
 	console.log(chalk.red((error as Error).stack ?? error));

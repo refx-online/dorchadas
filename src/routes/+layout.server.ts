@@ -2,7 +2,7 @@ import { getUserFromSession } from '$lib/user';
 import { getRedisClient, getMySQLDatabase } from '../hooks.server';
 import dayjs from 'dayjs';
 
-export async function load({ url, cookies }) {
+export async function load({ url, cookies, locals }) {
 	const sessionToken = cookies.get('sessionToken') ?? undefined;
 	if (sessionToken) {
 		const user = await getUserFromSession(sessionToken);
@@ -20,6 +20,7 @@ export async function load({ url, cookies }) {
 			});
 			return {
 				url: url.pathname,
+				csrfToken: locals.csrfToken,
 				currentUser: {
 					id: user.id,
 					username: user.name,
@@ -30,6 +31,7 @@ export async function load({ url, cookies }) {
 	}
 
 	return {
-		url: url.pathname
+		url: url.pathname,
+		csrfToken: locals.csrfToken
 	};
 }
