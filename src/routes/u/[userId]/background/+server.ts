@@ -1,23 +1,24 @@
-import path from 'path';
-import { existsSync } from 'fs';
-import { error } from '@sveltejs/kit';
 import { readFile } from 'fs/promises';
+import { error } from '@sveltejs/kit';
+import path from 'path';
+import { findExistingImage } from '$lib/image';
 
-const backgroundFolder = path.join(process.cwd(), '.data', 'background');
-
-export async function GET({ params }) {
+export const GET = async ({ params }) => {
     const userId = params.userId;
-    const coverPath = path.join(backgroundFolder, `${userId}.png`);
-
-    if (!existsSync(coverPath)) {
-        return error(404, 'Background not found');
+    const bgDirectory = path.join(process.cwd(), '.data', 'background');
+    
+    const imageInfo = findExistingImage(bgDirectory, parseInt(userId));
+    
+    if (!imageInfo) {
+        throw error(404, 'Background not found');
     }
 
-    const cover = await readFile(coverPath);
-    return new Response(cover, {
+    const imageData = await readFile(imageInfo.path);
+    return new Response(imageData, {
         status: 200,
         headers: {
-            'Content-Type': 'image/png'
+            'Content-Type': imageInfo.contentType,
+            'Cache-Control': 'public, max-age=3600'
         }
     });
-}
+};

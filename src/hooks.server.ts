@@ -195,52 +195,48 @@ export const initializeConnections = async (): Promise<void> => {
 
 
 export const handle: Handle = async ({ event, resolve }) => {
-  const { request, cookies, url } = event;
+	const { request, cookies } = event;
+	let csrfToken = cookies.get(CSRF_COOKIE_NAME);
 
-  let csrfToken = cookies.get(CSRF_COOKIE_NAME);
-  
-  if (!csrfToken) {
-    csrfToken = generateCsrfToken();
-    cookies.set(CSRF_COOKIE_NAME, csrfToken, {
-      path: '/',
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60 * 24 // 24 hours
-    });
-  }
+	if (!csrfToken) {
+		csrfToken = generateCsrfToken();
+		cookies.set(CSRF_COOKIE_NAME, csrfToken, {
+			path: '/',
+			httpOnly: true,
+			sameSite: 'lax',
+			secure: process.env.NODE_ENV === 'production',
+			maxAge: 60 * 60 * 24 // 24 hours
+		});
+	}
 
-  event.locals.csrfToken = csrfToken;
+	event.locals.csrfToken = csrfToken;
 
-  if (STATE_CHANGING_METHODS.includes(request.method)) {
-    const contentType = request.headers.get('content-type') || '';
+	if (STATE_CHANGING_METHODS.includes(request.method)) {
+		const contentType = request.headers.get('content-type') || '';
 
-    if (contentType.includes('application/x-www-form-urlencoded') || 
-        contentType.includes('multipart/form-data')) {
-      
-      try {
-        const clonedRequest = request.clone();
-        const formData = await clonedRequest.formData();
-        const tokenFromForm = formData.get('csrf_token')?.toString();
+		if (contentType.includes('application/x-www-form-urlencoded') || 
+			contentType.includes('multipart/form-data')) {
+			try {
+				const clonedRequest = request.clone();
+				const formData = await clonedRequest.formData();
+				const tokenFromForm = formData.get('csrf_token')?.toString();
 
-        if (!validateCsrfToken(tokenFromForm || '', csrfToken)) {
-          throw error(403, 'Invalid token');
-        }
-      } catch (err) {
-        throw error(400, 'Invalid form data');
-      }
-    }
+				if (!validateCsrfToken(tokenFromForm || '', csrfToken)) {
+					throw error(403, 'Invalid token');
+				}
+			} catch (err) {
+				throw error(400, 'Invalid form data');
+			}
+		} else if (contentType.includes('application/json')) {
+			const tokenFromHeader = request.headers.get('x-csrf-token');
 
-    else if (contentType.includes('application/json')) {
-      const tokenFromHeader = request.headers.get('x-csrf-token');
+			if (!validateCsrfToken(tokenFromHeader || '', csrfToken)) {
+				return json({ error: 'Invalid token' }, { status: 403 });
+			}
+		}
+	}
 
-      if (!validateCsrfToken(tokenFromHeader || '', csrfToken)) {
-        return json({ error: 'Invalid token' }, { status: 403 });
-      }
-    }
-  }
-
-  return resolve(event);
+	return resolve(event);
 };
 
 export function handleError({ error }): void {

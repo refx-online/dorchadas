@@ -1,67 +1,33 @@
-import { json, error } from '@sveltejs/kit';
-import { writeFile, unlink, mkdir } from 'fs/promises';
-import path from 'path';
+import { error, json } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
+import path from 'path';
+import { validateImageFile, deleteExistingImages, saveImageFile, ensureDirectoryExists } from '$lib/image';
 
 export const POST = async ({ request, cookies }) => {
     try {
         const sessionToken = cookies.get('sessionToken');
         if (!sessionToken) {
-            return error(401, 'Not authenticated');
+            throw error(401, 'Not authenticated');
         }
 
         const user = await getUserFromSession(sessionToken);
         if (!user) {
-            return error(401, 'Invalid session');
+            throw error(401, 'Invalid session');
         }
 
         const formData = await request.formData();
         const file = formData.get('cover') as File;
-
-        if (!file) {
-            return error(400, 'No file uploaded');
-        }
-
-        const allowedTypes = ['image/jpeg', 'image/png'];
-        if (!allowedTypes.includes(file.type)) {
-            return error(400, 'Invalid file type. Only JPEG and PNG are allowed.');
-        }
-
-        const maxFileSize = 5 * 1024 * 1024;
-        if (file.size > maxFileSize) {
-            return error(400, 'File size exceeds the 5 MB limit');
-        }
+        
+        await validateImageFile(file);
 
         const coverDirectory = path.join(process.cwd(), '.data', 'cover');
+        await ensureDirectoryExists(coverDirectory);
+        await deleteExistingImages(coverDirectory, user.id);
+        await saveImageFile(file, coverDirectory, user.id);
 
-        try {
-            await mkdir(coverDirectory, { recursive: true });
-        } catch (mkdirError) {
-            console.error('Failed to create cover directory:', mkdirError);
-            return error(500, 'Failed to create cover directory');
-        }
-
-        const existingCoverPath = path.join(coverDirectory, `${user.id}.png`);
-        try {
-            await unlink(existingCoverPath);
-        } catch (err: unknown) {
-            if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
-                console.error(`Failed to delete existing cover: ${existingCoverPath}`, err);
-            }
-        }
-
-        const coverPath = path.join(coverDirectory, `${user.id}.jpg`);
-        const buffer = new Uint8Array(await file.arrayBuffer());
-        await writeFile(coverPath, buffer);
-
-        return json({
-            success: true,
-            user: {
-                id: user.id
-            }
-        });
+        return json({ success: true, user: { id: user.id } });
     } catch (err) {
         console.error('Cover upload error:', err);
-        return error(500, 'Failed to upload cover');
+        throw error(500, 'Failed to upload cover');
     }
 };

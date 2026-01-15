@@ -106,6 +106,7 @@
                     <h2 class="text-xl md:text-2xl font-bold text-white mb-4">{appName}</h2>
                     <p class="text-white/80">
                         a rich-feature osu! private server. we serve stable - our custom client - aeris - even lazer.
+                        as of today; 12-01-2026. refx-stack has become stable! 
                     </p>
                 </div>
 
