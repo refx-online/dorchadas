@@ -69,12 +69,6 @@
 	let userSearchQuery = '';
 	let userSearchTimeout: any;
 
-	let restrictedWarnOpen = true;
-
-	function toggleRestrict() {
-		restrictedWarnOpen = !restrictedWarnOpen;
-	}
-
 	const searchUsers = async () => {
 		if (userSearchTimeout) clearTimeout(userSearchTimeout);
 
@@ -105,6 +99,7 @@
 	let hoveredIndex = -1;
 	const nervNavItems = [
 		{ title: 'Nerv', icon: '⏾', path: '/nerv', description: 'Dashboard' },
+		{ title: 'Ranking', icon: '🎵', path: '/nerv/beatmaps', description: 'Beatmap Ranking' },
     ];
 
     function getRandomOffset() {

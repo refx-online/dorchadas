@@ -1,22 +1,31 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { page } from "$app/stores";
     import { scale } from 'svelte/transition';
-    import { ChevronDown, Music, Shield, Heart, AlertTriangle } from "svelte-feathers";
+    import { ChevronDown, Music, Shield, Heart, AlertTriangle, CheckCircle, XCircle } from "svelte-feathers";
+    import { RankedStatus, statusIntToString } from '$lib/beatmapStatus';
+    import type { PageData } from './$types';
+
+    export let data: PageData;
 
     let beatmapId: string = "";
     let beatmapIdError: string = "";
     let beatmapInfo: any = null;
+    let setDifficulties: Array<{ id: number; version: string; diff: number }> = [];
+    let selectedDifficultyId: number | null = null;
     let isLoading: boolean = false;
     let actionStatus: string = "";
     let actionMessage: string = "";
-    let hasPermission: boolean = true;
+    let scope: 'map' | 'set' = 'map';
+    let selectedStatus: RankedStatus = RankedStatus.Ranked;
 
-    let recentActions = [
-      { id: 2813456, title: "Camellia - GHOST", artist: "Camellia", mapper: "Riviclia", action: "ranked", timestamp: Date.now() - 82800000 },
-      { id: 2704845, title: "Lime - Smiling", artist: "Lime", mapper: "Sotarks", action: "loved", timestamp: Date.now() - 172800000 },
-      { id: 2659382, title: "UNDEAD CORPORATION - Everything will freeze", artist: "UNDEAD CORPORATION", mapper: "Ekoro", action: "unranked", timestamp: Date.now() - 345600000 },
-    ];
+    let recentActions: Array<{
+        id: number;
+        title: string;
+        artist: string;
+        mapper: string;
+        action: string;
+        timestamp: number;
+    }> = [];
 
     const formatDate = (timestamp: number) => {
       const date = new Date(timestamp);
@@ -59,44 +68,64 @@
       actionMessage = "";
 
       try {
-        const response = await fetch(`/api/beatmaps/${beatmapId}`);
+        const response = await fetch(`/api/get_map_info?id=${beatmapId}`);
 
         if (!response.ok) {
           throw new Error("Failed to fetch beatmap");
         }
 
-        const data = await response.json();
+        const responseData = await response.json();
 
-        if (data.status !== 'success' || !data.map) {
+        if (responseData.status !== 'success' || !responseData.map) {
           throw new Error("Beatmap not found");
         }
 
+        const map = responseData.map;
+
         beatmapInfo = {
-          id: data.map.id,
-          title: data.map.title,
-          artist: data.map.artist,
-          version: data.map.version,
-          creator: data.map.creator,
-          bpm: data.map.bpm,
-          stars: data.map.diff,
-          length: formatTime(data.map.total_length),
-          status: mapStatusToString(data.map.status),
-          submitDate: new Date(data.map.last_update).toISOString(),
-          maxCombo: data.map.max_combo,
-          plays: data.map.plays,
-          passes: data.map.passes,
-          setId: data.map.set_id,
-          cs: data.map.cs,
-          ar: data.map.ar,
-          od: data.map.od,
-          hp: data.map.hp,
-          md5: data.map.md5,
-          mode: data.map.mode,
-          thumbnail: `https://assets.ppy.sh/beatmaps/${data.map.set_id}}/covers/cover@2x.jpg`
+          id: map.id,
+          title: map.title,
+          artist: map.artist,
+          version: map.version,
+          creator: map.creator,
+          bpm: map.bpm,
+          stars: map.diff,
+          length: formatTime(map.total_length),
+          status: map.status,
+          statusString: statusIntToString(map.status),
+          submitDate: new Date(map.last_update).toISOString(),
+          maxCombo: map.max_combo,
+          plays: map.plays,
+          passes: map.passes,
+          setId: map.set_id,
+          cs: map.cs,
+          ar: map.ar,
+          od: map.od,
+          hp: map.hp,
+          md5: map.md5,
+          mode: map.mode,
+          thumbnail: `https://b.refx.online/thumb/${map.set_id}l.jpg`
         };
 
+        selectedDifficultyId = map.id;
+
+        try {
+          const setResponse = await fetch(`/api/get_map_set?set_id=${map.set_id}`);
+          if (setResponse.ok) {
+            const setData = await setResponse.json();
+            if (setData.status === 'success' && setData.maps) {
+              setDifficulties = setData.maps
+                .map((m: any) => ({
+                  id: m.id,
+                  version: m.version,
+                  diff: m.diff
+                }))
+                .sort((a: any, b: any) => a.diff - b.diff);
+            }
+          }
+        } catch {}
+
       } catch (error) {
-        console.error("Error fetching beatmap:", error);
         beatmapInfo = null;
         actionStatus = "error";
         actionMessage = error instanceof Error ? error.message : "Failed to fetch beatmap information";
@@ -105,33 +134,37 @@
       }
     };
 
-    const mapStatusToString = (status: number): string => {
+    const getStatusString = (status: RankedStatus): string => {
       switch (status) {
-        case -2: return "graveyard";
-        case -1: return "wip";
-        case 0: return "pending";
-        case 1: return "ranked";
-        case 2: return "approved";
-        case 3: return "qualified";
-        case 4: return "loved";
-        default: return "unknown";
+        case RankedStatus.Inactive:
+          return 'Inactive';
+        case RankedStatus.NotSubmitted:
+          return 'Not Submitted';
+        case RankedStatus.Pending:
+          return 'Pending';
+        case RankedStatus.UpdateAvailable:
+          return 'Update Available';
+        case RankedStatus.Ranked:
+          return 'Ranked';
+        case RankedStatus.Approved:
+          return 'Approved';
+        case RankedStatus.Qualified:
+          return 'Qualified';
+        case RankedStatus.Loved:
+          return 'Loved';
+        default:
+          return 'Unknown';
       }
     };
 
-    const mapStatusToNumber = (status: string): number => {
-      switch (status) {
-        case "graveyard": return -2;
-        case "wip": return -1;
-        case "pending": return 0;
-        case "ranked": return 1;
-        case "approved": return 2;
-        case "qualified": return 3;
-        case "loved": return 4;
-        default: return 0;
-      }
+    const switchDifficulty = async (diffId: number) => {
+      if (diffId === selectedDifficultyId) return;
+      
+      beatmapId = diffId.toString();
+      await fetchBeatmapInfo();
     };
 
-    const performAction = async (action: 'rank' | 'unrank' | 'love') => {
+    const performRanking = async () => {
       if (!beatmapInfo) return;
 
       isLoading = true;
@@ -139,53 +172,53 @@
       actionMessage = "";
 
       try {
-        const targetStatus = action === 'rank'
-          ? 'ranked'
-          : (action === 'love' ? 'loved' : 'pending');
+        const statusString = getStatusString(selectedStatus).toLowerCase().replace(/\s+/g, '');
 
-        const response = await fetch(`/api/beatmaps/${beatmapInfo.id}/status`, {
+        const response = await fetch('/api/beatmaps/rank', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': data.csrfToken
           },
           body: JSON.stringify({
-            action,
-            targetStatus: mapStatusToNumber(targetStatus),
-            beatmapId: beatmapInfo.id
+            status: statusString,
+            scope: scope,
+            beatmapId: selectedDifficultyId || beatmapInfo.id
           })
         });
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.message || `Failed to ${action} beatmap`);
+          throw new Error(errorData.message || 'Failed to update beatmap status');
         }
 
-        const oldStatus = beatmapInfo.status;
-        beatmapInfo.status = targetStatus;
+        const responseData = await response.json();
 
-        if (action === 'rank') {
-          actionMessage = `Beatmap ${beatmapInfo.id} has been ranked successfully`;
-        } else if (action === 'unrank') {
-          actionMessage = `Beatmap ${beatmapInfo.id} has been unranked successfully`;
-        } else if (action === 'love') {
-          actionMessage = `Beatmap ${beatmapInfo.id} has been loved successfully`;
+        if (responseData.status === 'success') {
+          actionMessage = responseData.message;
+          actionStatus = "success";
+
+          const oldStatus = beatmapInfo.status;
+          beatmapInfo.status = selectedStatus;
+          beatmapInfo.statusString = statusIntToString(selectedStatus);
+
+          recentActions = [{
+            id: beatmapInfo.id,
+            title: beatmapInfo.title,
+            artist: beatmapInfo.artist,
+            mapper: beatmapInfo.creator,
+            action: statusString,
+            timestamp: Date.now()
+          }, ...recentActions.slice(0, 9)];
+
+          await fetchBeatmapInfo();
+        } else {
+          throw new Error(responseData.message || 'Failed to update beatmap status');
         }
-
-        actionStatus = "success";
-
-        recentActions = [{
-          id: beatmapInfo.id,
-          title: beatmapInfo.title,
-          artist: beatmapInfo.artist,
-          mapper: beatmapInfo.creator,
-          action: action + (action === 'rank' ? 'ed' : (action === 'unrank' ? 'ed' : 'd')),
-          timestamp: Date.now()
-        }, ...recentActions.slice(0, 4)];
 
       } catch (error) {
-        console.error(`Error ${action}ing beatmap:`, error);
         actionStatus = "error";
-        actionMessage = error instanceof Error ? error.message : `Failed to ${action} beatmap`;
+        actionMessage = error instanceof Error ? error.message : 'Failed to update beatmap status';
       } finally {
         isLoading = false;
       }
@@ -266,8 +299,8 @@
           <div class="thumbnail-container">
             <img src={beatmapInfo.thumbnail} alt="Beatmap Thumbnail" class="beatmap-thumbnail" />
             <div class="beatmap-id">#{beatmapInfo.id}</div>
-            <div class="beatmap-status status-{beatmapInfo.status}">
-              {beatmapInfo.status.toUpperCase()}
+            <div class="beatmap-status status-{beatmapInfo.statusString.toLowerCase()}">
+              {beatmapInfo.statusString.toUpperCase()}
             </div>
           </div>
           <div class="beatmap-details">
@@ -315,36 +348,77 @@
           </div>
         </div>
 
-        <div class="action-buttons">
+        {#if setDifficulties.length > 1}
+          <div class="difficulty-selector">
+            <label for="difficulty-select">Other Difficulties:</label>
+            <select
+              id="difficulty-select"
+              bind:value={selectedDifficultyId}
+              on:change={() => {
+                if (selectedDifficultyId) {
+                  switchDifficulty(selectedDifficultyId);
+                }
+              }}
+              disabled={isLoading}
+              class="difficulty-select"
+            >
+              {#each setDifficulties as diff}
+                <option value={diff.id}>
+                  {diff.version} ({diff.diff.toFixed(2)}★)
+                </option>
+              {/each}
+            </select>
+          </div>
+        {/if}
+
+        <div class="ranking-controls">
+          <div class="scope-selector">
+            <label for="scope-selector">Scope:</label>
+            <div class="scope-buttons" id="scope-selector">
+              <button
+                class="scope-btn {scope === 'map' ? 'active' : ''}"
+                on:click={() => scope = 'map'}
+                disabled={isLoading}
+              >
+                MAP
+              </button>
+              <button
+                class="scope-btn {scope === 'set' ? 'active' : ''}"
+                on:click={() => scope = 'set'}
+                disabled={isLoading}
+              >
+                SET
+              </button>
+            </div>
+          </div>
+
+          <div class="status-selector">
+            <label for="status-select">Status:</label>
+            <select
+              id="status-select"
+              bind:value={selectedStatus}
+              disabled={isLoading}
+              class="status-select"
+            >
+              <option value={RankedStatus.Pending}>Pending</option>
+              <option value={RankedStatus.Ranked}>Ranked</option>
+              <option value={RankedStatus.Approved}>Approved</option>
+              <option value={RankedStatus.Qualified}>Qualified</option>
+              <option value={RankedStatus.Loved}>Loved</option>
+            </select>
+          </div>
+
           <button
-            class="action-btn rank-btn"
-            on:click={() => {
-              performAction('rank');
-            }}
-            disabled={!hasPermission || beatmapInfo.status === 'ranked' || isLoading}
+            class="action-btn submit-btn"
+            on:click={performRanking}
+            disabled={isLoading || beatmapInfo.status === selectedStatus}
           >
-            <Shield class="btn-icon" />
-            RANK
-          </button>
-          <button
-            class="action-btn unrank-btn"
-            on:click={() => {
-              performAction('unrank');
-            }}
-            disabled={!hasPermission || beatmapInfo.status === 'pending' || isLoading}
-          >
-            <ChevronDown class="btn-icon" />
-            UNRANK
-          </button>
-          <button
-            class="action-btn love-btn"
-            on:click={() => {
-              performAction('love');
-            }}
-            disabled={!hasPermission || beatmapInfo.status === 'loved' || isLoading}
-          >
-            <Heart class="btn-icon" />
-            LOVE
+            {#if isLoading}
+              <div class="loading-indicator"><span></span></div>
+            {:else}
+              <CheckCircle class="btn-icon" />
+              UPDATE STATUS
+            {/if}
           </button>
         </div>
       </div>
@@ -542,7 +616,9 @@
     font-family: 'OCR A Extended', 'Courier New', monospace;
     transition: all 0.3s ease;
     border-radius: 0;
+    appearance: none;
     -webkit-appearance: none;
+    -moz-appearance: none;
   }
 
   input:focus {
@@ -698,6 +774,18 @@
     border-color: #00ff00;
   }
 
+  .status-approved {
+    background: rgba(0, 150, 255, 0.2);
+    color: #0096ff;
+    border-color: #0096ff;
+  }
+
+  .status-qualified {
+    background: rgba(150, 0, 255, 0.2);
+    color: #9600ff;
+    border-color: #9600ff;
+  }
+
   .status-loved {
     background: rgba(255, 0, 255, 0.2);
     color: #ff00ff;
@@ -708,6 +796,18 @@
     background: rgba(255, 165, 0, 0.2);
     color: #ffa500;
     border-color: #ffa500;
+  }
+
+  .status-notsubmitted, .status-wip {
+    background: rgba(150, 150, 150, 0.2);
+    color: #969696;
+    border-color: #969696;
+  }
+
+  .status-inactive, .status-graveyard {
+    background: rgba(100, 100, 100, 0.2);
+    color: #646464;
+    border-color: #646464;
   }
 
   .beatmap-title {
@@ -753,6 +853,128 @@
     font-weight: bold;
   }
 
+  .ranking-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid rgba(255, 62, 0, 0.3);
+    background: rgba(255, 62, 0, 0.02);
+  }
+
+  @media (min-width: 768px) {
+    .ranking-controls {
+      flex-direction: row;
+      align-items: flex-end;
+    }
+  }
+
+  .difficulty-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid rgba(255, 62, 0, 0.3);
+    background: rgba(255, 62, 0, 0.02);
+  }
+
+  .difficulty-selector label {
+    font-size: 0.8em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .difficulty-select {
+    padding: 0.5rem;
+    background: rgba(255, 62, 0, 0.05);
+    border: 1px solid #ff3e00;
+    color: #ff3e00;
+    font-family: 'OCR A Extended', 'Courier New', monospace;
+    font-size: 1em;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+
+  .difficulty-select:focus {
+    outline: none;
+    box-shadow: 0 0 15px rgba(255, 62, 0, 0.3);
+  }
+
+  .difficulty-select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .scope-selector, .status-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .scope-selector label, .status-selector label {
+    font-size: 0.8em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .scope-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .scope-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ff3e00;
+    background: rgba(255, 62, 0, 0.05);
+    color: #ff3e00;
+    font-family: 'OCR A Extended', 'Courier New', monospace;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+  }
+
+  .scope-btn:hover:not(:disabled) {
+    background: rgba(255, 62, 0, 0.2);
+  }
+
+  .scope-btn.active {
+    background: #ff3e00;
+    color: #0a0a0f;
+  }
+
+  .scope-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .status-select {
+    padding: 0.5rem;
+    background: rgba(255, 62, 0, 0.05);
+    border: 1px solid #ff3e00;
+    color: #ff3e00;
+    font-family: 'OCR A Extended', 'Courier New', monospace;
+    font-size: 1em;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+
+  .status-select:focus {
+    outline: none;
+    box-shadow: 0 0 15px rgba(255, 62, 0, 0.3);
+  }
+
+  .status-select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
   .action-buttons {
     display: grid;
     grid-template-columns: 1fr;
@@ -787,6 +1009,17 @@
   .action-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+
+  .submit-btn {
+    border-color: #00ff00;
+    color: #00ff00;
+    flex: 1;
+  }
+
+  .submit-btn:hover:not(:disabled) {
+    background: rgba(0, 255, 0, 0.2);
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
   }
 
   .rank-btn {

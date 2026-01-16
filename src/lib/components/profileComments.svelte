@@ -27,7 +27,7 @@
 
     async function loadComments() {
         try {
-            const response = await fetch(`/stuff/comments/${userId}`);
+            const response = await fetch(`/api/comments/${userId}`);
             if (!response.ok) throw new Error('Failed to load comments');
             comments = await response.json();
             loading = false;

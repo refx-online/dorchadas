@@ -7,11 +7,13 @@
 	import { avatarUrl } from '$lib/env';
 	import { goto } from '$app/navigation';
 	import { githubUrl } from '$lib/env';
+	import { isStaff } from '$lib/privs';
 
 	export let drawerStore: DrawerStore;
 
 	const downloadsPages = ['/patcher', '/lazer', '/client'];
 	$: isDownloadsActive = downloadsPages.includes($page.data.url);
+	$: isUserStaff = isStaff($userData?.priv);
 </script>
 
 <div class="flex flex-col md:flex-row p-3 md:p-0 gap-2 h-full w-full">
@@ -193,6 +195,18 @@
 	>
 		{__('Top Plays', $userLanguage)}
 	</a>
+
+	{#if isUserStaff}
+		<a
+			href="/nerv"
+			class="btn {$page.data.url == '/nerv' || $page.data.url.startsWith('/nerv/')
+				? 'variant-ghost-surface '
+				: 'hover:variant-outline-surface '}rounded-lg"
+			on:click={() => drawerStore.close()}
+		>
+			NERV
+		</a>
+	{/if}
 
 	<div class="h-full w-full flex flex-row justify-between items-end mt-auto">
 		<div class="md:hidden ms-auto">

@@ -160,7 +160,7 @@ export const pinScore = async (
 ) => {
 	const token = get(csrfToken);
     try {
-        const response = await fetch('/stuff/pin-score', {
+        const response = await fetch('/api/pin-score', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -176,7 +176,6 @@ export const pinScore = async (
 
         return await response.json();
     } catch (error) {
-        console.error('Error pinning/unpinning score:', error);
         throw error;
     }
 };
