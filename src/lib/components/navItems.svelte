@@ -9,6 +9,9 @@
 	import { githubUrl } from '$lib/env';
 	
 	export let drawerStore: DrawerStore;
+	
+	const downloadsPages = ['/patcher', '/lazer', '/client'];
+	$: isDownloadsActive = downloadsPages.includes($page.data.url);
 </script>
 
 <div class="flex flex-col md:flex-row p-3 md:p-0 gap-2 h-full w-full">
@@ -90,35 +93,87 @@
 		{__('Clans', $userLanguage)}
 	</a>
 
-	<a
-		href="/patcher"
-		class="btn {$page.data.url == '/patcher'
-			? 'variant-ghost-surface '
-			: 'hover:variant-outline-surface '}rounded-lg"
-		on:click={() => drawerStore.close()}
-	>
-		{__('Patcher', $userLanguage)}
-	</a>
+	<div class="hidden md:block">
+		<Popup event="click" placement="bottom">
+			<button
+				class="btn {isDownloadsActive
+					? 'variant-ghost-surface '
+					: 'hover:variant-outline-surface '}rounded-lg"
+			>
+				{__('Play', $userLanguage)}
+				<svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+				</svg>
+			</button>
+			<svelte:fragment slot="popup">
+				<div class="card p-2 variant-filled-surface">
+					<div class="flex flex-col gap-1">
+						<a
+							href="/patcher"
+							class="btn {$page.data.url == '/patcher'
+								? 'variant-ghost-surface '
+								: 'hover:variant-outline-surface '}rounded-lg justify-start"
+							on:click={() => drawerStore.close()}
+						>
+							{__('Patcher', $userLanguage)}
+						</a>
+						<a
+							href="/lazer"
+							class="btn {$page.data.url == '/lazer'
+								? 'variant-ghost-surface '
+								: 'hover:variant-outline-surface '}rounded-lg justify-start"
+							on:click={() => drawerStore.close()}
+						>
+							{__('Lazer', $userLanguage)}
+						</a>
+						<a
+							href="/client"
+							class="btn {$page.data.url == '/client'
+								? 'variant-ghost-surface '
+								: 'hover:variant-outline-surface '}rounded-lg justify-start"
+							on:click={() => drawerStore.close()}
+						>
+							{__('re;fx Client', $userLanguage)}
+						</a>
+					</div>
+					<div class="arrow variant-filled-surface border-t border-l border-gray-700" />
+				</div>
+			</svelte:fragment>
+		</Popup>
+	</div>
 
-	<a
-		href="/lazer"
-		class="btn {$page.data.url == '/lazer'
-			? 'variant-ghost-surface '
-			: 'hover:variant-outline-surface '}rounded-lg"
-		on:click={() => drawerStore.close()}
-	>
-		{__('Lazer', $userLanguage)}
-	</a>
+	<div class="md:hidden flex flex-col gap-2 w-full">
+		<a
+			href="/patcher"
+			class="btn {$page.data.url == '/patcher'
+				? 'variant-ghost-surface '
+				: 'hover:variant-outline-surface '}rounded-lg"
+			on:click={() => drawerStore.close()}
+		>
+			{__('Patcher', $userLanguage)}
+		</a>
 
-	<a
-		href="/client"
-		class="btn {$page.data.url == '/client'
-			? 'variant-ghost-surface '
-			: 'hover:variant-outline-surface '}rounded-lg"
-		on:click={() => drawerStore.close()}
-	>
-		{__('re;fx Client', $userLanguage)}
-	</a>
+		<a
+			href="/lazer"
+			class="btn {$page.data.url == '/lazer'
+				? 'variant-ghost-surface '
+				: 'hover:variant-outline-surface '}rounded-lg"
+			on:click={() => drawerStore.close()}
+		>
+			{__('Lazer', $userLanguage)}
+		</a>
+
+		<a
+			href="/client"
+			class="btn {$page.data.url == '/client'
+				? 'variant-ghost-surface '
+				: 'hover:variant-outline-surface '}rounded-lg"
+			on:click={() => drawerStore.close()}
+		>
+			{__('re;fx Client', $userLanguage)}
+		</a>
+	</div>
+
 	<a
 		href="/rules"
 		class="btn {$page.data.url == '/rules'
