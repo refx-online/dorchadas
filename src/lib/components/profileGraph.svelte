@@ -25,9 +25,9 @@
 		const now = new Date().getTime();
 		const maxAge = 89 * 24 * 60 * 60 * 1000;
 
-		return captures.filter(capture => {
+		return captures.filter((capture) => {
 			const captureTime = new Date(capture.captured_at).getTime();
-			return (now - captureTime) <= maxAge;
+			return now - captureTime <= maxAge;
 		});
 	}
 
@@ -38,7 +38,7 @@
 
 		if (diffDays === 0) {
 			const todayDates = allDates
-				.filter(d => {
+				.filter((d) => {
 					const time = new Date(d).getTime();
 					return Math.floor((currentTime - time) / (1000 * 60 * 60 * 24)) === 0;
 				})
@@ -76,9 +76,7 @@
 				chart = null;
 			}
 
-			const captures = query === 'pp'
-				? ppHistory?.data.captures
-				: rankHistory?.data.captures;
+			const captures = query === 'pp' ? ppHistory?.data.captures : rankHistory?.data.captures;
 
 			if (!captures?.length) {
 				error = 'No recent data';
@@ -92,11 +90,11 @@
 				return;
 			}
 
-			const sortedCaptures = filteredCaptures.sort((a, b) =>
-				new Date(a.captured_at).getTime() - new Date(b.captured_at).getTime()
+			const sortedCaptures = filteredCaptures.sort(
+				(a, b) => new Date(a.captured_at).getTime() - new Date(b.captured_at).getTime()
 			);
 
-			const allDates = sortedCaptures.map(c => c.captured_at);
+			const allDates = sortedCaptures.map((c) => c.captured_at);
 
 			const dataPoints = sortedCaptures.map((c, index) => ({
 				x: index,
@@ -106,14 +104,15 @@
 				originalDate: c.captured_at
 			}));
 
-			const peakDataPoints = query === 'rank' && peakRankHistory?.data.captures
-				? filterRecentCaptures(peakRankHistory.data.captures).map((c, index) => ({
-					x: index,
-					y: c.rank,
-					label: timeAgo(c.captured_at, allDates),
-					originalDate: c.captured_at
-				}))
-				: [];
+			const peakDataPoints =
+				query === 'rank' && peakRankHistory?.data.captures
+					? filterRecentCaptures(peakRankHistory.data.captures).map((c, index) => ({
+							x: index,
+							y: c.rank,
+							label: timeAgo(c.captured_at, allDates),
+							originalDate: c.captured_at
+						}))
+					: [];
 
 			if (dataPoints.length === 1) {
 				dataPoints.push({
@@ -138,17 +137,21 @@
 						pointHoverBorderColor: '#818cf8',
 						fill: false
 					},
-					...(query === 'rank' && peakDataPoints.length ? [{
-						data: peakDataPoints,
-						borderColor: '#f87171',
-						borderWidth: 2,
-						tension: 0.1,
-						pointRadius: 0,
-						pointHoverRadius: 5,
-						pointHoverBackgroundColor: '#f87171',
-						pointHoverBorderColor: '#f87171',
-						fill: false
-					}] : [])
+					...(query === 'rank' && peakDataPoints.length
+						? [
+								{
+									data: peakDataPoints,
+									borderColor: '#f87171',
+									borderWidth: 2,
+									tension: 0.1,
+									pointRadius: 0,
+									pointHoverRadius: 5,
+									pointHoverBackgroundColor: '#f87171',
+									pointHoverBorderColor: '#f87171',
+									fill: false
+								}
+							]
+						: [])
 				]
 			};
 
@@ -201,10 +204,7 @@
 									} else {
 										if (context.datasetIndex === 0) {
 											const point = dataPoints[context.dataIndex];
-											return [
-												`Global: #${point.y}`,
-												`Country: #${point.countryRank}`,
-											];
+											return [`Global: #${point.y}`, `Country: #${point.countryRank}`];
 										}
 									}
 								},
@@ -226,27 +226,29 @@
 						intersect: false
 					}
 				},
-				plugins: [{
-					id: 'crosshair',
-					afterDraw: (chart) => {
-						const { ctx, chartArea, scales } = chart;
+				plugins: [
+					{
+						id: 'crosshair',
+						afterDraw: (chart) => {
+							const { ctx, chartArea, scales } = chart;
 
-						const tooltipActiveElements = chart.tooltip?.getActiveElements();
+							const tooltipActiveElements = chart.tooltip?.getActiveElements();
 
-						if (tooltipActiveElements?.length) {
-							const activePoint = tooltipActiveElements[0];
+							if (tooltipActiveElements?.length) {
+								const activePoint = tooltipActiveElements[0];
 
-							ctx.save();
-							ctx.beginPath();
-							ctx.moveTo(activePoint.element.x, chartArea.top);
-							ctx.lineTo(activePoint.element.x, chartArea.bottom);
-							ctx.lineWidth = 1;
-							ctx.strokeStyle = 'rgba(129, 140, 248, 0.4)';
-							ctx.stroke();
-							ctx.restore();
+								ctx.save();
+								ctx.beginPath();
+								ctx.moveTo(activePoint.element.x, chartArea.top);
+								ctx.lineTo(activePoint.element.x, chartArea.bottom);
+								ctx.lineWidth = 1;
+								ctx.strokeStyle = 'rgba(129, 140, 248, 0.4)';
+								ctx.stroke();
+								ctx.restore();
+							}
 						}
 					}
-				}]
+				]
 			});
 		} catch (err) {
 			console.error('Error loading history data:', err);
@@ -277,20 +279,24 @@
 	<div class="flex gap-2 justify-end">
 		<button
 			class="px-2 py-1 text-sm rounded {query === 'pp' ? 'bg-indigo-500' : 'bg-surface-200'}"
-			on:click={() => { query = 'pp'; }}>
+			on:click={() => {
+				query = 'pp';
+			}}
+		>
 			pp
 		</button>
 		<button
 			class="px-2 py-1 text-sm rounded {query === 'rank' ? 'bg-indigo-500' : 'bg-surface-200'}"
-			on:click={() => { query = 'rank'; }}>
+			on:click={() => {
+				query = 'rank';
+			}}
+		>
 			Rank
 		</button>
 	</div>
 	<div class="w-full h-16">
 		{#if !isReady}
-			<div class="flex items-center justify-center h-full text-surface-400">
-				Loading...
-			</div>
+			<div class="flex items-center justify-center h-full text-surface-400">Loading...</div>
 		{:else if error != null}
 			<div class="flex items-center justify-center h-full text-surface-400">
 				{error}

@@ -15,7 +15,13 @@ A modern frontend web application built with SvelteKit for the [bancho.py backen
   - [Installation](#installation)
   - [Configuration](#configuration)
   - [Running the Application](#running-the-application)
+    - [Docker (Recommended)](#docker-recommended)
+    - [Local Development Mode](#local-development-mode)
+    - [Production Build](#production-build)
+    - [Preview Production Build](#preview-production-build)
 - [Available Scripts](#available-scripts)
+  - [Local Development](#local-development)
+  - [Docker Commands](#docker-commands)
 - [Environment Variables](#environment-variables)
 - [Development](#development)
 - [Contributing](#contributing)
@@ -47,11 +53,12 @@ A modern frontend web application built with SvelteKit for the [bancho.py backen
 - **Database:** MySQL (via [Knex.js](https://knexjs.org/))
 - **Cache:** Redis
 - **Language:** TypeScript
+- **Containerization:** Docker & Docker Compose
 
 ## Requirements
 
 - **Backend:** A working [bancho.py](https://github.com/osuAkatsuki/bancho.py) instance
-- **Runtime:** [Bun](https://bun.sh/) (latest version recommended)
+- **Runtime:** [Bun](https://bun.sh/) (latest version recommended) or Docker & Docker Compose
 - **Database:** MySQL 5.7+ or MySQL 8.0+
 - **Cache:** Redis 6.0+
 - **Node.js:** Not required (Bun is used instead)
@@ -60,8 +67,16 @@ A modern frontend web application built with SvelteKit for the [bancho.py backen
 
 ### Prerequisites
 
-Ensure you have the following installed:
+Choose one of the following setup methods:
 
+**Option 1: Docker (Recommended)**
+- Docker & Docker Compose
+- (Optional) GNU Make (for `make build` / `make run`)
+- MySQL server (can be external or containerized)
+- Redis server (can be external or containerized)
+- Access to a bancho.py instance
+
+**Option 2: Local Development**
 - Bun runtime
 - MySQL server
 - Redis server
@@ -76,13 +91,15 @@ git clone https://github.com/HorizonCode/bpy-web.git
 cd bpy-web
 ```
 
-2. **Install Bun** (if not already installed):
+2. **For Docker users:** Skip to [Configuration](#configuration) - Docker will handle dependencies automatically.
+
+   **For local development:** Install Bun (if not already installed):
 
 ```bash
 curl -fsSL https://bun.sh/install | bash
 ```
 
-3. **Install dependencies:**
+3. **Install dependencies** (local development only):
 
 ```bash
 bun install
@@ -110,7 +127,72 @@ See [Environment Variables](#environment-variables) for detailed information.
 
 ### Running the Application
 
-#### Development Mode
+#### Docker (Recommended)
+
+**Using Docker Compose (recommended for development):**
+
+1. **Start the application:**
+
+```bash
+docker compose up -d
+```
+
+2. **View logs:**
+
+```bash
+docker compose logs -f
+```
+
+3. **Stop the application:**
+
+```bash
+docker compose down
+```
+
+4. **Rebuild after changes:**
+
+```bash
+docker compose up -d --build
+```
+
+The application will be available at `http://localhost:3000` (or the port specified in your `.env`).
+
+> **Notes:**
+> - The Compose file maps `${PORT}:${PORT}`. Ensure `PORT` is set in `.env` (defaults to `3000` in `example.env`).
+> - The Compose configuration includes volume mounts for development, allowing hot-reload of code changes. For production deployments, remove the volume mounts and use a multi-stage build.
+
+**Using Docker directly:**
+
+1. **Build the image:**
+
+```bash
+docker build -t bpy-web .
+```
+
+2. **Run the container:**
+
+```bash
+docker run -d \
+  --name bpy-web \
+  -p 3000:3000 \
+  --env-file .env \
+  bpy-web
+```
+
+> **Note:** When using Docker, ensure your `.env` file has the correct host values for MySQL and Redis. Use service names if they're in the same Docker network, or use `host.docker.internal` (on Docker Desktop) or the host's IP address to connect to services running on the host machine.
+
+**Using the Makefile (alternative):**
+
+```bash
+make build
+make run
+```
+
+> **Notes:**
+> - `make run` uses `--network=host` (Linux only) and does **not** publish ports with `-p`.
+> - `make run` mounts a named volume `meat-my-beat-i_data` to `/srv/root/.data` for persistence.
+
+#### Local Development Mode
 
 Start the development server with hot-reload:
 
@@ -144,6 +226,8 @@ bun run preview
 
 ## Available Scripts
 
+### Local Development
+
 | Command               | Description                                  |
 | --------------------- | -------------------------------------------- |
 | `bun run dev`         | Start development server with hot-reload     |
@@ -155,6 +239,19 @@ bun run preview
 | `bun run check:watch` | Run type checking in watch mode              |
 | `bun run lint`        | Run ESLint and Prettier checks               |
 | `bun run format`      | Format code with Prettier                    |
+
+### Docker Commands
+
+| Command                          | Description                                    |
+| -------------------------------- | ---------------------------------------------- |
+| `docker compose up -d`           | Start the application in detached mode         |
+| `docker compose down`            | Stop and remove containers                     |
+| `docker compose logs -f`         | View and follow application logs               |
+| `docker compose up -d --build`   | Rebuild and restart containers                 |
+| `docker compose restart`         | Restart containers without rebuilding          |
+| `docker compose exec sveltekit bun run <cmd>` | Run commands inside the container |
+| `make build`                     | Build the `frontend:latest` image (see `Makefile`) |
+| `make run`                       | Run `frontend:latest` with host networking and `.env` |
 
 ## Environment Variables
 

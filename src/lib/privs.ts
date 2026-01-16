@@ -27,18 +27,18 @@ export const isStaff = (playerPriv?: number): boolean =>
 		Privileges.MODERATOR,
 		Privileges.NOMINATOR,
 		Privileges.TOURNEY_MANAGER
-	].some(priv => hasPrivilege(playerPriv, priv));
+	].some((priv) => hasPrivilege(playerPriv, priv));
 
 export const isAdmin = (playerPriv?: number): boolean =>
 	playerPriv !== undefined &&
 	[
 		Privileges.ADMINISTRATOR,
 		Privileges.DEVELOPER,
-		Privileges.MODERATOR, // aint even admin
-	].some(priv => hasPrivilege(playerPriv, priv));
+		Privileges.MODERATOR // aint even admin
+	].some((priv) => hasPrivilege(playerPriv, priv));
 
 export const isRestricted = (playerPriv?: number): boolean =>
-	playerPriv !== undefined && !hasPrivilege(playerPriv, Privileges.UNRESTRICTED)
+	playerPriv !== undefined && !hasPrivilege(playerPriv, Privileges.UNRESTRICTED);
 
 /* https://github.com/osuAkatsuki/bancho.py/blob/master/app/constants/privileges.py#L13-L38 */
 export enum Privileges {

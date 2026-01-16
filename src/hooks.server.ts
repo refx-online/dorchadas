@@ -49,13 +49,11 @@ export const getMySQLDatabase = async (): Promise<knex_pkg.Knex | null> => {
 	}
 };
 
-export const getRedisClient = async (): Promise<
-	redis.RedisClientType<
-		redis.RedisDefaultModules & redis.RedisModules,
-		redis.RedisFunctions,
-		redis.RedisScripts
-	> | null
-> => {
+export const getRedisClient = async (): Promise<redis.RedisClientType<
+	redis.RedisDefaultModules & redis.RedisModules,
+	redis.RedisFunctions,
+	redis.RedisScripts
+> | null> => {
 	if (redisClient && redisConnected) return redisClient;
 
 	const redisUser = env.REDIS_USER ?? undefined;
@@ -141,7 +139,7 @@ export const safeRedisOperation = async <T>(
 	fallback?: T
 ): Promise<T | null> => {
 	try {
-		const client = await getRedisClient() as any;
+		const client = (await getRedisClient()) as any;
 		if (!client) {
 			console.log(chalk.yellow('Redis not available, skipping operation'));
 			return fallback ?? null;
@@ -213,8 +211,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 	if (STATE_CHANGING_METHODS.includes(request.method)) {
 		const contentType = request.headers.get('content-type') || '';
 
-		if (contentType.includes('application/x-www-form-urlencoded') ||
-			contentType.includes('multipart/form-data')) {
+		if (
+			contentType.includes('application/x-www-form-urlencoded') ||
+			contentType.includes('multipart/form-data')
+		) {
 			try {
 				const clonedRequest = request.clone();
 				const formData = await clonedRequest.formData();

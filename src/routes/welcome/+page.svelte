@@ -44,14 +44,19 @@
 				</p>
 
 				<div class="bg-surface-800 border border-surface-600 rounded-lg p-4 md:p-6 mb-8 w-full">
-					<h3 class="text-base md:text-lg font-semibold mb-4 text-surface-300 flex items-center justify-center">
+					<h3
+						class="text-base md:text-lg font-semibold mb-4 text-surface-300 flex items-center justify-center"
+					>
 						<Download size={20} class="mr-2" />
 						{__('How to Connect', $userLanguage)}
 					</h3>
 
 					<div class="text-left space-y-4">
 						<div class="flex items-start">
-							<span class="bg-surface-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 md:mr-4 mt-1 flex-shrink-0">1</span>
+							<span
+								class="bg-surface-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 md:mr-4 mt-1 flex-shrink-0"
+								>1</span
+							>
 							<div class="flex-1 min-w-0">
 								<p class="text-surface-200 font-medium mb-1 text-sm md:text-base">
 									{__('Find your osu! executable', $userLanguage)}
@@ -59,14 +64,21 @@
 								<p class="text-surface-400 text-xs md:text-sm">
 									{__('Usually located in:', $userLanguage)}
 								</p>
-								<div class="bg-surface-900 border border-surface-600 rounded p-2 text-xs font-mono mt-1 overflow-x-auto">
-									<code class="whitespace-nowrap">C:\Users\YourName\AppData\Local\osu!\osu!.exe</code>
+								<div
+									class="bg-surface-900 border border-surface-600 rounded p-2 text-xs font-mono mt-1 overflow-x-auto"
+								>
+									<code class="whitespace-nowrap"
+										>C:\Users\YourName\AppData\Local\osu!\osu!.exe</code
+									>
 								</div>
 							</div>
 						</div>
 
 						<div class="flex items-start">
-							<span class="bg-surface-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 md:mr-4 mt-1 flex-shrink-0">2</span>
+							<span
+								class="bg-surface-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 md:mr-4 mt-1 flex-shrink-0"
+								>2</span
+							>
 							<div class="flex-1 min-w-0">
 								<p class="text-surface-200 font-medium mb-1 text-sm md:text-base">
 									{__('Create a shortcut', $userLanguage)}
@@ -78,13 +90,19 @@
 						</div>
 
 						<div class="flex items-start">
-							<span class="bg-surface-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 md:mr-4 mt-1 flex-shrink-0">3</span>
+							<span
+								class="bg-surface-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 md:mr-4 mt-1 flex-shrink-0"
+								>3</span
+							>
 							<div class="flex-1 min-w-0">
 								<p class="text-surface-200 font-medium mb-1 text-sm md:text-base">
 									{__('Edit shortcut properties', $userLanguage)}
 								</p>
 								<p class="text-surface-400 text-xs md:text-sm mb-2">
-									{__('Right-click the shortcut → Properties → In the "Target" field, add:', $userLanguage)}
+									{__(
+										'Right-click the shortcut → Properties → In the "Target" field, add:',
+										$userLanguage
+									)}
 								</p>
 								<div class="bg-surface-900 border border-surface-600 rounded p-3 text-sm font-mono">
 									<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
@@ -104,7 +122,10 @@
 						</div>
 
 						<div class="flex items-start">
-							<span class="bg-surface-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 md:mr-4 mt-1 flex-shrink-0">4</span>
+							<span
+								class="bg-surface-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 md:mr-4 mt-1 flex-shrink-0"
+								>4</span
+							>
 							<div class="flex-1 min-w-0">
 								<p class="text-surface-200 font-medium mb-1 text-sm md:text-base">
 									{__('Launch and login', $userLanguage)}

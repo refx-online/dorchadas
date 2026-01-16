@@ -85,8 +85,8 @@ export const parseModsInt = (
 	// then they're not playing on lazer (duh)
 	if (modsInt) {
 		activatedMods.push({
-			name: "Classic",
-			short_name: "CL"
+			name: 'Classic',
+			short_name: 'CL'
 		});
 	}
 

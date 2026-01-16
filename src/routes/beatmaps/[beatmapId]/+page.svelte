@@ -114,10 +114,10 @@
 	};
 
 	const navigateToDiff = (diffId: number) => {
-			const params = new URLSearchParams();
-			params.set('mode', currentMode);
-			params.set('type', currentType);
-			goto(`/beatmaps/${diffId}?${params.toString()}`);
+		const params = new URLSearchParams();
+		params.set('mode', currentMode);
+		params.set('type', currentType);
+		goto(`/beatmaps/${diffId}?${params.toString()}`);
 	};
 
 	onMount(() => {
@@ -154,7 +154,9 @@
 					></div>
 
 					<div class="grid md:grid-cols-[auto_auto] gap-2">
-						<div class="w-full flex flex-col md:flex-row justify-center md:justify-start rounded-lg">
+						<div
+							class="w-full flex flex-col md:flex-row justify-center md:justify-start rounded-lg"
+						>
 							<div class="flex w-full md:hidden mb-1">
 								<button
 									class="flex-1 !scale-100 btn {currentType == 'vanilla'
@@ -179,13 +181,11 @@
 										? 'bg-surface-500'
 										: 'bg-surface-600'} rounded-lg rounded-l-none"
 									on:click={() => setType('autopilot')}
-									disabled={
-										currentMode == 'taiko' ||
+									disabled={currentMode == 'taiko' ||
 										currentMode == 'catch' ||
 										currentMode == 'mania' ||
 										loading ||
-										failed
-									}
+										failed}
 								>
 									Autopilot
 								</button>
@@ -196,13 +196,11 @@
 										? 'bg-surface-500'
 										: 'bg-surface-600'} rounded-lg rounded-r-none"
 									on:click={() => setType('touch')}
-									disabled={
-										currentMode == 'taiko' ||
+									disabled={currentMode == 'taiko' ||
 										currentMode == 'catch' ||
 										currentMode == 'mania' ||
 										loading ||
-										failed
-									}
+										failed}
 								>
 									TouchScreen
 								</button>
@@ -211,13 +209,11 @@
 										? 'bg-surface-500'
 										: 'bg-surface-600'} rounded-lg rounded-r-none"
 									on:click={() => setType('cheat')}
-									disabled={
-										currentMode == 'taiko' ||
+									disabled={currentMode == 'taiko' ||
 										currentMode == 'catch' ||
 										currentMode == 'mania' ||
 										loading ||
-										failed
-									}
+										failed}
 								>
 									Cheat
 								</button>
@@ -226,13 +222,11 @@
 										? 'bg-surface-500'
 										: 'bg-surface-600'} rounded-lg rounded-l-none"
 									on:click={() => setType('cheatcheat')}
-									disabled={
-										currentMode == 'taiko' ||
+									disabled={currentMode == 'taiko' ||
 										currentMode == 'catch' ||
 										currentMode == 'mania' ||
 										loading ||
-										failed
-									}
+										failed}
 								>
 									CheatCheat
 								</button>
@@ -262,13 +256,11 @@
 										? 'bg-surface-500'
 										: 'bg-surface-600'} rounded-none"
 									on:click={() => setType('autopilot')}
-									disabled={
-										currentMode == 'taiko' ||
+									disabled={currentMode == 'taiko' ||
 										currentMode == 'catch' ||
 										currentMode == 'mania' ||
 										loading ||
-										failed
-									}
+										failed}
 								>
 									Autopilot
 								</button>
@@ -277,13 +269,11 @@
 										? 'bg-surface-500'
 										: 'bg-surface-600'} rounded-none"
 									on:click={() => setType('touch')}
-									disabled={
-										currentMode == 'taiko' ||
+									disabled={currentMode == 'taiko' ||
 										currentMode == 'catch' ||
 										currentMode == 'mania' ||
 										loading ||
-										failed
-									}
+										failed}
 								>
 									TouchScreen
 								</button>
@@ -292,13 +282,11 @@
 										? 'bg-surface-500'
 										: 'bg-surface-600'} rounded-none"
 									on:click={() => setType('cheat')}
-									disabled={
-										currentMode == 'taiko' ||
+									disabled={currentMode == 'taiko' ||
 										currentMode == 'catch' ||
 										currentMode == 'mania' ||
 										loading ||
-										failed
-									}
+										failed}
 								>
 									Cheat
 								</button>
@@ -307,13 +295,11 @@
 										? 'bg-surface-500'
 										: 'bg-surface-600'} rounded-lg rounded-l-none"
 									on:click={() => setType('cheatcheat')}
-									disabled={
-										currentMode == 'taiko' ||
+									disabled={currentMode == 'taiko' ||
 										currentMode == 'catch' ||
 										currentMode == 'mania' ||
 										loading ||
-										failed
-									}
+										failed}
 								>
 									CheatCheat
 								</button>
@@ -365,7 +351,8 @@
 								{#each data.diffs as diff}
 									<Popup placement="bottom">
 										<button
-											class="w-4 h-4 rounded-full transition-all duration-200 hover:scale-110 border-2 {diff.id === data.map.id
+											class="w-4 h-4 rounded-full transition-all duration-200 hover:scale-110 border-2 {diff.id ===
+											data.map.id
 												? 'bg-white border-white'
 												: 'bg-gray-500 border-gray-500 hover:bg-gray-400 hover:border-gray-400'}"
 											on:click={() => navigateToDiff(diff.id)}
@@ -385,7 +372,8 @@
 								{#each data.diffs.slice(0, 8) as diff}
 									<Popup placement="bottom">
 										<button
-											class="w-4 h-4 rounded-full transition-all duration-200 hover:scale-110 border-2 {diff.id === data.map.id
+											class="w-4 h-4 rounded-full transition-all duration-200 hover:scale-110 border-2 {diff.id ===
+											data.map.id
 												? 'bg-white border-white'
 												: 'bg-gray-500 border-gray-500 hover:bg-gray-400 hover:border-gray-400'}"
 											on:click={() => navigateToDiff(diff.id)}
@@ -413,7 +401,10 @@
 											<div class="flex flex-col gap-2 max-h-40 overflow-y-auto">
 												{#each data.diffs.slice(8) as diff}
 													<button
-														class="text-left hover:bg-surface-600 px-3 py-2 rounded text-sm truncate transition-colors {diff.id === data.map.id ? 'bg-primary-500 text-white' : 'text-surface-100'}"
+														class="text-left hover:bg-surface-600 px-3 py-2 rounded text-sm truncate transition-colors {diff.id ===
+														data.map.id
+															? 'bg-primary-500 text-white'
+															: 'text-surface-100'}"
 														on:click={() => navigateToDiff(diff.id)}
 													>
 														{diff.version}

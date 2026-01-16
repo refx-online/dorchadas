@@ -9,14 +9,7 @@
 	import Map from 'svelte-feathers/Map.svelte';
 	import Server from 'svelte-feathers/Server.svelte';
 	import Shield from 'svelte-feathers/Shield.svelte';
-	import {
-		Omega,
-		Trophy,
-		PawPrint,
-		Moon,
-		Bot,
-		Ban
-	} from 'lucide-svelte'; // why dont just i use this ugghhhhh
+	import { Omega, Trophy, PawPrint, Moon, Bot, Ban } from 'lucide-svelte'; // why dont just i use this ugghhhhh
 
 	export let userPriv: number;
 	export let userID: number;
@@ -27,7 +20,6 @@
 </script>
 
 <div class="flex flex-row gap-2 px-3 drop-shadow">
-
 	<!-- Individual user badges -->
 	<!-- kaupec || ano -->
 	{#if userID === 16 || userID === 4}
@@ -131,10 +123,16 @@
 
 	@keyframes glow-animation {
 		0% {
-			text-shadow: 0 0 5px #00d4ff, 0 0 10px #00d4ff, 0 0 15px #00d4ff;
+			text-shadow:
+				0 0 5px #00d4ff,
+				0 0 10px #00d4ff,
+				0 0 15px #00d4ff;
 		}
 		100% {
-			text-shadow: 0 0 20px #00d4ff, 0 0 30px #00d4ff, 0 0 40px #00d4ff;
+			text-shadow:
+				0 0 20px #00d4ff,
+				0 0 30px #00d4ff,
+				0 0 40px #00d4ff;
 		}
 	}
 </style>

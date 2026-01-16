@@ -20,7 +20,7 @@ const getLanguageFromStorage = () => {
 };
 
 const initialLang = browser
-	? getLanguageFromStorage() ?? navigator.language.toUpperCase()
+	? (getLanguageFromStorage() ?? navigator.language.toUpperCase())
 	: defaultLang;
 
 export const userLanguage = writable(initialLang);

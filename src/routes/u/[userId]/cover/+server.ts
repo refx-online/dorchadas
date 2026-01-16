@@ -4,21 +4,21 @@ import path from 'path';
 import { findExistingImage, DATA_DIRECTORY } from '$lib/image';
 
 export const GET = async ({ params }) => {
-    const userId = params.userId;
-    const coverDirectory = path.join(DATA_DIRECTORY, 'cover');
+	const userId = params.userId;
+	const coverDirectory = path.join(DATA_DIRECTORY, 'cover');
 
-    const imageInfo = findExistingImage(coverDirectory, parseInt(userId));
+	const imageInfo = findExistingImage(coverDirectory, parseInt(userId));
 
-    if (!imageInfo) {
-        throw error(404, 'Cover not found');
-    }
+	if (!imageInfo) {
+		throw error(404, 'Cover not found');
+	}
 
-    const imageData = await readFile(imageInfo.path);
-    return new Response(new Uint8Array(imageData), {
-        status: 200,
-        headers: {
-            'Content-Type': imageInfo.contentType,
-            'Cache-Control': 'public, max-age=3600'
-        }
-    });
+	const imageData = await readFile(imageInfo.path);
+	return new Response(new Uint8Array(imageData), {
+		status: 200,
+		headers: {
+			'Content-Type': imageInfo.contentType,
+			'Cache-Control': 'public, max-age=3600'
+		}
+	});
 };

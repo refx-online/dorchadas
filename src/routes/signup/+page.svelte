@@ -74,7 +74,10 @@
 		if (loginRequest.ok) {
 			userData.set(loginResponse.user);
 			const t: ToastSettings = {
-				message: __('Registration successful! Please follow the setup instructions.', $userLanguage),
+				message: __(
+					'Registration successful! Please follow the setup instructions.',
+					$userLanguage
+				),
 				classes: '!bg-surface-800 !text-surface-200 !border-surface-700 !border'
 			};
 			toastStore.trigger(t);

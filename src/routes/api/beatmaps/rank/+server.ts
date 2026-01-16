@@ -122,18 +122,17 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 		let beatmap: any;
 
 		if (beatmapId) {
-			beatmap = await mysqlDB('maps')
-				.where('id', beatmapId)
-				.first();
+			beatmap = await mysqlDB('maps').where('id', beatmapId).first();
 		} else {
 			const playerStatus = await getPlayerStatus(sessionUser.id);
 			if (!playerStatus?.player_status?.status?.beatmap) {
-				throw error(400, 'No beatmap found. Please specify beatmapId or ensure you have a beatmap loaded.');
+				throw error(
+					400,
+					'No beatmap found. Please specify beatmapId or ensure you have a beatmap loaded.'
+				);
 			}
 			const lastNpBeatmap = playerStatus.player_status.status.beatmap;
-			beatmap = await mysqlDB('maps')
-				.where('id', lastNpBeatmap.id)
-				.first();
+			beatmap = await mysqlDB('maps').where('id', lastNpBeatmap.id).first();
 		}
 
 		if (!beatmap) {
@@ -148,9 +147,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 				});
 			}
 		} else {
-			const setMaps = await mysqlDB('maps')
-				.where('set_id', beatmap.set_id)
-				.select('id', 'status');
+			const setMaps = await mysqlDB('maps').where('set_id', beatmap.set_id).select('id', 'status');
 
 			if (setMaps.every((map: any) => map.status === newStatus)) {
 				return json({
@@ -164,45 +161,33 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 			let modifiedBeatmapIds: number[] = [];
 
 			if (scope === 'set') {
-				await trx('maps')
-					.where('set_id', beatmap.set_id)
-					.update({
-						status: newStatus,
-						frozen: 1
-					});
+				await trx('maps').where('set_id', beatmap.set_id).update({
+					status: newStatus,
+					frozen: 1
+				});
 
-				const allSetMaps = await trx('maps')
-					.where('set_id', beatmap.set_id)
-					.select('id');
+				const allSetMaps = await trx('maps').where('set_id', beatmap.set_id).select('id');
 
 				modifiedBeatmapIds = allSetMaps.map((map: any) => map.id);
 			} else {
-				await trx('maps')
-					.where('id', beatmap.id)
-					.update({
-						status: newStatus,
-						frozen: 1
-					});
+				await trx('maps').where('id', beatmap.id).update({
+					status: newStatus,
+					frozen: 1
+				});
 
 				modifiedBeatmapIds = [beatmap.id];
 			}
 
 			if (modifiedBeatmapIds.length > 0) {
-				await trx('map_requests')
-					.whereIn('map_id', modifiedBeatmapIds)
-					.update({ active: 0 });
+				await trx('map_requests').whereIn('map_id', modifiedBeatmapIds).update({ active: 0 });
 			}
 		});
 
-		await mysqlDB('scores')
-			.where('map_md5', beatmap.md5)
-			.update({ map_status: newStatus });
+		await mysqlDB('scores').where('map_md5', beatmap.md5).update({ map_status: newStatus });
 
 		if (redis) {
 			if (scope === 'set') {
-				const setMaps = await mysqlDB('maps')
-					.where('set_id', beatmap.set_id)
-					.select('id');
+				const setMaps = await mysqlDB('maps').where('set_id', beatmap.set_id).select('id');
 
 				for (const map of setMaps) {
 					await redis.publish(REFX_REFRESH_CHANNEL, `${map.id}|${newStatus}`);
@@ -214,9 +199,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 			await redis.publish(FORLORN_REFRESH_CHANNEL, beatmap.md5);
 		}
 
-		const updatedBeatmap = await mysqlDB('maps')
-			.where('id', beatmap.id)
-			.first();
+		const updatedBeatmap = await mysqlDB('maps').where('id', beatmap.id).first();
 
 		await sendDiscordWebhook(updatedBeatmap, sessionUser, newStatus);
 

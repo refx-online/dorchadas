@@ -15,15 +15,17 @@
 
 		const chartData = {
 			labels,
-			datasets: [{
-				data: dataPoints,
-				borderColor: 'yellow',
-				borderWidth: 2,
-				tension: 0.1,
-				fill: false,
-				pointBackgroundColor: 'yellow',
-				pointBorderColor: 'yellow'
-			}]
+			datasets: [
+				{
+					data: dataPoints,
+					borderColor: 'yellow',
+					borderWidth: 2,
+					tension: 0.1,
+					fill: false,
+					pointBackgroundColor: 'yellow',
+					pointBorderColor: 'yellow'
+				}
+			]
 		};
 
 		new Chart(chartElement, {
@@ -69,7 +71,7 @@
 						titleAlign: 'center',
 						bodyAlign: 'center',
 						callbacks: {
-							label: (context: TooltipItem<"line">) => {
+							label: (context: TooltipItem<'line'>) => {
 								return `${context.parsed.y} plays`;
 							}
 						}
@@ -80,33 +82,35 @@
 					intersect: false
 				}
 			},
-			plugins: [{
-				id: 'crosshair',
-				afterDraw: (chart) => {
-					const { ctx, chartArea, scales } = chart;
+			plugins: [
+				{
+					id: 'crosshair',
+					afterDraw: (chart) => {
+						const { ctx, chartArea, scales } = chart;
 
-					const tooltipActiveElements = chart.tooltip?.getActiveElements();
+						const tooltipActiveElements = chart.tooltip?.getActiveElements();
 
-					if (tooltipActiveElements?.length) {
-						const activePoint = tooltipActiveElements[0];
+						if (tooltipActiveElements?.length) {
+							const activePoint = tooltipActiveElements[0];
 
-						ctx.save();
-						ctx.beginPath();
-						ctx.moveTo(activePoint.element.x, chartArea.top);
-						ctx.lineTo(activePoint.element.x, chartArea.bottom);
-						ctx.lineWidth = 1;
-						ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-						ctx.stroke();
-						ctx.restore();
+							ctx.save();
+							ctx.beginPath();
+							ctx.moveTo(activePoint.element.x, chartArea.top);
+							ctx.lineTo(activePoint.element.x, chartArea.bottom);
+							ctx.lineWidth = 1;
+							ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+							ctx.stroke();
+							ctx.restore();
 
-						ctx.beginPath();
-						ctx.arc(activePoint.element.x, activePoint.element.y, 8, 0, Math.PI * 2);
-						ctx.fillStyle = 'yellow';
-						ctx.fill();
-						ctx.restore();
+							ctx.beginPath();
+							ctx.arc(activePoint.element.x, activePoint.element.y, 8, 0, Math.PI * 2);
+							ctx.fillStyle = 'yellow';
+							ctx.fill();
+							ctx.restore();
+						}
 					}
 				}
-			}]
+			]
 		});
 	});
 </script>

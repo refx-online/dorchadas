@@ -10,10 +10,7 @@ export const GET: RequestHandler = async ({ params }) => {
 		}
 
 		const comments = await mysqlDatabase('profile_comments')
-			.select(
-				'profile_comments.*',
-				'users.name as from_name'
-			)
+			.select('profile_comments.*', 'users.name as from_name')
 			.leftJoin('users', 'profile_comments.from_id', 'users.id')
 			.where('profile_comments.user_id', params.userId)
 			.orderBy('profile_comments.created_at', 'desc');
