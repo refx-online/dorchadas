@@ -1,7 +1,7 @@
 import { error, json } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
 import path from 'path';
-import { validateImageFile, deleteExistingImages, saveImageFile, ensureDirectoryExists } from '$lib/image';
+import { validateImageFile, deleteExistingImages, saveImageFile, ensureDirectoryExists, DATA_DIRECTORY } from '$lib/image';
 
 export const POST = async ({ request, cookies }) => {
     try {
@@ -20,7 +20,7 @@ export const POST = async ({ request, cookies }) => {
         
         await validateImageFile(file);
 
-        const bgDirectory = path.join(process.cwd(), '.data', 'background');
+        const bgDirectory = path.join(DATA_DIRECTORY, 'background');
         await ensureDirectoryExists(bgDirectory);
         await deleteExistingImages(bgDirectory, user.id);
         await saveImageFile(file, bgDirectory, user.id);

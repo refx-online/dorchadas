@@ -1,11 +1,11 @@
 import { readFile } from 'fs/promises';
 import { error } from '@sveltejs/kit';
 import path from 'path';
-import { findExistingImage } from '$lib/image';
+import { findExistingImage, DATA_DIRECTORY } from '$lib/image';
 
 export const GET = async ({ params }) => {
     const userId = params.userId;
-    const coverDirectory = path.join(process.cwd(), '.data', 'cover');
+    const coverDirectory = path.join(DATA_DIRECTORY, 'cover');
     
     const imageInfo = findExistingImage(coverDirectory, parseInt(userId));
     
