@@ -23,13 +23,9 @@ export const GET: RequestHandler = async ({ url }) => {
 			if (isNaN(id)) {
 				throw error(400, 'Invalid beatmap ID');
 			}
-			beatmap = await mysqlDB('maps')
-				.where('id', id)
-				.first();
+			beatmap = await mysqlDB('maps').where('id', id).first();
 		} else if (md5) {
-			beatmap = await mysqlDB('maps')
-				.where('md5', md5)
-				.first();
+			beatmap = await mysqlDB('maps').where('md5', md5).first();
 		}
 
 		if (!beatmap) {

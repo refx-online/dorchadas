@@ -8,10 +8,7 @@ export async function load({ params }) {
 	const db = await getMySQLDatabase();
 	if (!db) return {};
 
-	const beatmapRow = await db('maps')
-		.select('set_id')
-		.where('id', beatmapId)
-		.first();
+	const beatmapRow = await db('maps').select('set_id').where('id', beatmapId).first();
 
 	if (!beatmapRow?.set_id) return {};
 

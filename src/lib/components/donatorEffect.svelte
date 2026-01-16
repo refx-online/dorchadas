@@ -212,7 +212,8 @@
 	}
 
 	@keyframes bounce-text {
-		0%, 100% {
+		0%,
+		100% {
 			transform: translateY(0);
 		}
 		50% {

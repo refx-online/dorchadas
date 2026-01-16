@@ -45,7 +45,7 @@
 		if (type === 'rank') {
 			return `achieved rank #${rank_val?.toLocaleString() ?? 'Unknown'} on`;
 		} else if (type === 'lost') {
-			return 'lost their #1 on'
+			return 'lost their #1 on';
 		} else if (type === 'submit') {
 			return 'submitted a beatmap:';
 		} else if (type === 'update') {
@@ -68,7 +68,9 @@
 	}
 
 	function formatRelativeTime(timestamp: number) {
-		return dayjs(timestamp * 1000).locale($userLanguage).fromNow();
+		return dayjs(timestamp * 1000)
+			.locale($userLanguage)
+			.fromNow();
 	}
 
 	function toggleShowAll() {
@@ -78,11 +80,15 @@
 
 {#if usersLog.length > 0}
 	<div>
-		<h3 class="text-lg font-bold underline underline-offset-4 decoration-2 decoration-primary-400">Recent Activity</h3>
+		<h3 class="text-lg font-bold underline underline-offset-4 decoration-2 decoration-primary-400">
+			Recent Activity
+		</h3>
 		<div class="space-y-3">
 			{#each displayedLogs as log (log.id)}
 				{#if log && log.type}
-					<div class="flex items-start gap-3 p-3 rounded-lg bg-surface-600/50 hover:bg-surface-600 transition-colors">
+					<div
+						class="flex items-start gap-3 p-3 rounded-lg bg-surface-600/50 hover:bg-surface-600 transition-colors"
+					>
 						<div class="flex-shrink-0 mt-0.5">
 							<svelte:component
 								this={getActivityIcon(log.type)}
@@ -123,16 +129,24 @@
 				class="flex flex-row text-center justify-center items-center btn w-48 mx-auto variant-filled-surface px-4 py-1 mt-2 text-[0.7rem] leading-5"
 				on:click={toggleShowAll}
 			>
-				<ChevronDown class="pointer-events-none text-surface-400 {showAll ? 'rotate-180' : ''} transition-transform" size={16} />
+				<ChevronDown
+					class="pointer-events-none text-surface-400 {showAll
+						? 'rotate-180'
+						: ''} transition-transform"
+					size={16}
+				/>
 				<span class="font-semibold">
 					{showAll ? __('show less', $userLanguage) : __('show more', $userLanguage)}
 				</span>
-				<ChevronDown class="pointer-events-none text-surface-400 {showAll ? 'rotate-180' : ''} transition-transform" size={16} />
+				<ChevronDown
+					class="pointer-events-none text-surface-400 {showAll
+						? 'rotate-180'
+						: ''} transition-transform"
+					size={16}
+				/>
 			</button>
 		{/if}
 	</div>
 {:else}
-	<div class="text-surface-400 text-center py-8">
-		No recent activity
-	</div>
+	<div class="text-surface-400 text-center py-8">No recent activity</div>
 {/if}

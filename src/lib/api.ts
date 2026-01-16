@@ -47,9 +47,7 @@ export const getBeatmapMd5 = async (hash: string): Promise<MapInfo | undefined> 
 	}
 };
 
-export const getScoresInfo = async (
-	scoreId: number
-): Promise<getScoreInfo | undefined> => {
+export const getScoresInfo = async (scoreId: number): Promise<getScoreInfo | undefined> => {
 	try {
 		const requestedPlayerData = await fetch(`${apiUrl}/v1/get_score_info?id=${scoreId}`);
 		if (!requestedPlayerData.ok) return undefined;
@@ -143,7 +141,9 @@ export const getPlayer = async (
 			if (byId.ok) return (await byId.json()) as User;
 		}
 
-		const byName = await fetch(`${apiUrl}/v1/get_player_info?name=${encodeURIComponent(uid)}&scope=${scope}`);
+		const byName = await fetch(
+			`${apiUrl}/v1/get_player_info?name=${encodeURIComponent(uid)}&scope=${scope}`
+		);
 		if (byName.ok) return (await byName.json()) as User;
 
 		return undefined;
@@ -159,58 +159,58 @@ export const pinScore = async (
 	userId: number
 ) => {
 	const token = get(csrfToken);
-    try {
-        const response = await fetch('/api/pin-score', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-				'X-CSRF-Token': token,
-            },
-            body: JSON.stringify({ scoreid, isPinned, currentUserId, userId })
-        });
+	try {
+		const response = await fetch('/api/pin-score', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRF-Token': token
+			},
+			body: JSON.stringify({ scoreid, isPinned, currentUserId, userId })
+		});
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to pin/unpin score');
-        }
+		if (!response.ok) {
+			const errorData = await response.json();
+			throw new Error(errorData.message || 'Failed to pin/unpin score');
+		}
 
-        return await response.json();
-    } catch (error) {
-        throw error;
-    }
+		return await response.json();
+	} catch (error) {
+		throw error;
+	}
 };
 
 export async function sendDiscordWebhookLog(logType: string, message: string, avatarUrl?: string) {
-    try {
-        const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_LOG_URL;
-        if (!webhookUrl) {
-            console.error('Discord webhook URL is not set');
-            return;
-        }
+	try {
+		const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_LOG_URL;
+		if (!webhookUrl) {
+			console.error('Discord webhook URL is not set');
+			return;
+		}
 
-        const payload: Record<string, any> = {
-            content: message,
-            username: logType
-        };
+		const payload: Record<string, any> = {
+			content: message,
+			username: logType
+		};
 
-        if (avatarUrl) {
-            payload.avatar_url = avatarUrl;
-        }
+		if (avatarUrl) {
+			payload.avatar_url = avatarUrl;
+		}
 
-        const response = await fetch(webhookUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload)
-        });
+		const response = await fetch(webhookUrl, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(payload)
+		});
 
-        if (!response.ok) {
-            console.error('Failed to send Discord webhook', await response.text());
-        }
-    } catch (error) {
-        console.error('Error sending Discord webhook:', error);
-    }
+		if (!response.ok) {
+			console.error('Failed to send Discord webhook', await response.text());
+		}
+	} catch (error) {
+		console.error('Error sending Discord webhook:', error);
+	}
 }
 
 type ProfileHistoryResponse = ppProfileHistory | rankProfileHistory | peakrankProfileHistory;

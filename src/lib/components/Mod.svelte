@@ -27,7 +27,24 @@
 	}
 
 	function getModImageName(shortName: string): string {
-		const modsWithImages = ['ez', 'nf', 'ht', 'hr', 'sd', 'pf', 'dt', 'nc', 'hd', 'fl', 'so', 'td', 'v2', 'rx', 'ap', 'cl'];
+		const modsWithImages = [
+			'ez',
+			'nf',
+			'ht',
+			'hr',
+			'sd',
+			'pf',
+			'dt',
+			'nc',
+			'hd',
+			'fl',
+			'so',
+			'td',
+			'v2',
+			'rx',
+			'ap',
+			'cl'
+		];
 		const lowerName = shortName.toLowerCase();
 
 		return modsWithImages.includes(lowerName) ? lowerName : 'fun';
@@ -84,7 +101,8 @@
 	$: hasSettings = mod.settings && Object.keys(mod.settings).length > 0;
 	$: formattedSettings = hasSettings ? formatModSettings(mod.settings) : '';
 	$: tooltipSettings = hasSettings ? formatModSettingsTooltip(mod.settings) : '';
-	$: shouldShowSettingsOverlay = showSettings && hasSettings && formattedSettings.length > 0 && !shouldShowSpeedMultiplier(mod);
+	$: shouldShowSettingsOverlay =
+		showSettings && hasSettings && formattedSettings.length > 0 && !shouldShowSpeedMultiplier(mod);
 	$: showSpeedText = shouldShowSpeedMultiplier(mod);
 	$: speedText = showSpeedText ? getSpeedMultiplier(mod) : '';
 </script>
@@ -98,21 +116,31 @@
 					style="--height: {size}px; background-image: url(/mods/{modImageName}.png);"
 				></span>
 				{#if shouldShowSettingsOverlay}
-					<div class="absolute -bottom-0.5 -right-0.5 bg-surface-900/95 text-white px-1 py-0.5 rounded text-xs font-semibold border border-surface-400 shadow-sm z-10" style="font-size: {size * 0.3}px;">
+					<div
+						class="absolute -bottom-0.5 -right-0.5 bg-surface-900/95 text-white px-1 py-0.5 rounded text-xs font-semibold border border-surface-400 shadow-sm z-10"
+						style="font-size: {size * 0.3}px;"
+					>
 						{formattedSettings}
 					</div>
 				{:else if showSettings && hasSettings && !showSpeedText}
-					<div class="absolute -bottom-0.5 -right-0.5 w-1.5 h-1.5 bg-error-500 rounded-full border border-surface-900 z-10"></div>
+					<div
+						class="absolute -bottom-0.5 -right-0.5 w-1.5 h-1.5 bg-error-500 rounded-full border border-surface-900 z-10"
+					></div>
 				{/if}
 			</div>
 			{#if showSpeedText}
-				<span class="text-white font-semibold leading-none whitespace-nowrap" style="font-size: {size * 0.6}px; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);">
+				<span
+					class="text-white font-semibold leading-none whitespace-nowrap"
+					style="font-size: {size * 0.6}px; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);"
+				>
 					{speedText}
 				</span>
 			{/if}
 		</div>
 		<svelte:fragment slot="popup">
-			<div class="flex flex-col gap-2 card variant-filled-surface p-3 rounded-lg text-xs max-w-xs shadow-xl border border-surface-400">
+			<div
+				class="flex flex-col gap-2 card variant-filled-surface p-3 rounded-lg text-xs max-w-xs shadow-xl border border-surface-400"
+			>
 				<div class="font-semibold text-white">{mod.name}</div>
 				{#if hasSettings}
 					<div class="text-surface-200 text-xs whitespace-pre-line leading-relaxed">
@@ -130,15 +158,23 @@
 				style="--height: {size}px; background-image: url(/mods/{modImageName}.png);"
 			></span>
 			{#if shouldShowSettingsOverlay}
-				<div class="absolute -bottom-0.5 -right-0.5 bg-surface-900/95 text-white px-1 py-0.5 rounded text-xs font-semibold border border-surface-400 shadow-sm z-10" style="font-size: {size * 0.3}px;">
+				<div
+					class="absolute -bottom-0.5 -right-0.5 bg-surface-900/95 text-white px-1 py-0.5 rounded text-xs font-semibold border border-surface-400 shadow-sm z-10"
+					style="font-size: {size * 0.3}px;"
+				>
 					{formattedSettings}
 				</div>
 			{:else if showSettings && hasSettings && !showSpeedText}
-				<div class="absolute -bottom-0.5 -right-0.5 w-1.5 h-1.5 bg-error-500 rounded-full border border-surface-900 z-10"></div>
+				<div
+					class="absolute -bottom-0.5 -right-0.5 w-1.5 h-1.5 bg-error-500 rounded-full border border-surface-900 z-10"
+				></div>
 			{/if}
 		</div>
 		{#if showSpeedText}
-			<span class="text-white font-semibold leading-none whitespace-nowrap" style="font-size: {size * 0.6}px; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);">
+			<span
+				class="text-white font-semibold leading-none whitespace-nowrap"
+				style="font-size: {size * 0.6}px; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);"
+			>
 				{speedText}
 			</span>
 		{/if}

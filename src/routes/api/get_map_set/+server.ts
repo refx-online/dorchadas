@@ -26,7 +26,7 @@ export const GET: RequestHandler = async ({ url }) => {
 
 		return json({
 			status: 'success',
-			maps: maps.map(map => ({
+			maps: maps.map((map) => ({
 				id: map.id,
 				version: map.version,
 				diff: map.diff,

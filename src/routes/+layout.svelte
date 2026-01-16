@@ -45,7 +45,7 @@
 	import Popup from '$lib/components/Popup.svelte';
 	import { __, languages } from '$lib/language';
 	import Footer from '$lib/components/footer.svelte';
-    import { elasticOut } from 'svelte/easing';
+	import { elasticOut } from 'svelte/easing';
 	import { isRestricted } from '$lib/privs';
 	import { discordUrl } from '$lib/env';
 	import { csrfToken } from '$lib/storage';
@@ -99,14 +99,14 @@
 	let hoveredIndex = -1;
 	const nervNavItems = [
 		{ title: 'Nerv', icon: '⏾', path: '/nerv', description: 'Dashboard' },
-		{ title: 'Ranking', icon: '🎵', path: '/nerv/beatmaps', description: 'Beatmap Ranking' },
-    ];
+		{ title: 'Ranking', icon: '🎵', path: '/nerv/beatmaps', description: 'Beatmap Ranking' }
+	];
 
-    function getRandomOffset() {
-        return (Math.random() - 0.5) * 20;
-    }
+	function getRandomOffset() {
+		return (Math.random() - 0.5) * 20;
+	}
 
-    $: isNervPath = $page.url.pathname.startsWith('/nerv');
+	$: isNervPath = $page.url.pathname.startsWith('/nerv');
 
 	onMount(() => {
 		const pageMain = document.getElementById('page');
@@ -192,12 +192,12 @@
 					{__('Account Restricted', $userLanguage)}
 				</h4>
 				<p class="text-xs text-gray-300 text-center mb-4 leading-relaxed px-2">
-					{__('Your account is currently restricted. Join our Discord and ping a moderator or admin for assistance.', $userLanguage)}
+					{__(
+						'Your account is currently restricted. Join our Discord and ping a moderator or admin for assistance.',
+						$userLanguage
+					)}
 				</p>
-				<button
-					class="discord-btn"
-					on:click={() => window.open(discordUrl, '_blank')}
-				>
+				<button class="discord-btn" on:click={() => window.open(discordUrl, '_blank')}>
 					{__('Join Discord', $userLanguage)}
 				</button>
 			</div>
@@ -206,46 +206,46 @@
 {/if}
 
 {#if isNervPath}
-    <div class="honeycomb-nav">
-        <div class="honeycomb-container">
-            {#each nervNavItems as item, i}
-                <!-- svelte-ignore a11y-click-events-have-key-events -->
-                <!-- svelte-ignore a11y-no-static-element-interactions -->
-                <div
-                    class="honeycomb-item"
-                    class:hovered={hoveredIndex === i}
-                    class:active={$page.url.pathname === item.path}
-                    on:click={() => goto(item.path)}
-                    on:mouseenter={() => hoveredIndex = i}
-                    on:mouseleave={() => hoveredIndex = -1}
-                    style="--delay: {i * 0.1}s"
-                >
-                    {#if hoveredIndex === i}
-                        <div
-                            class="honeycomb-content"
-                            transition:fly="{{
-                                x: getRandomOffset(),
-                                y: getRandomOffset(),
-                                duration: 400,
-                                easing: elasticOut
-                            }}"
-                        >
-                            <div class="honeycomb-icon">{item.icon}</div>
-                            <div class="honeycomb-title">{item.title}</div>
-                        </div>
-                    {:else}
-                        <div class="honeycomb-content">
-                            <div class="honeycomb-icon">{item.icon}</div>
-                            <div class="honeycomb-title">{item.title}</div>
-                        </div>
-                    {/if}
-                    <svg class="honeycomb-border" viewBox="0 0 100 100" preserveAspectRatio="none">
-                        <path d="M50 0 L93.3 25 L93.3 75 L50 100 L6.7 75 L6.7 25 Z" />
-                    </svg>
-                </div>
-            {/each}
-        </div>
-    </div>
+	<div class="honeycomb-nav">
+		<div class="honeycomb-container">
+			{#each nervNavItems as item, i}
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<!-- svelte-ignore a11y-no-static-element-interactions -->
+				<div
+					class="honeycomb-item"
+					class:hovered={hoveredIndex === i}
+					class:active={$page.url.pathname === item.path}
+					on:click={() => goto(item.path)}
+					on:mouseenter={() => (hoveredIndex = i)}
+					on:mouseleave={() => (hoveredIndex = -1)}
+					style="--delay: {i * 0.1}s"
+				>
+					{#if hoveredIndex === i}
+						<div
+							class="honeycomb-content"
+							transition:fly={{
+								x: getRandomOffset(),
+								y: getRandomOffset(),
+								duration: 400,
+								easing: elasticOut
+							}}
+						>
+							<div class="honeycomb-icon">{item.icon}</div>
+							<div class="honeycomb-title">{item.title}</div>
+						</div>
+					{:else}
+						<div class="honeycomb-content">
+							<div class="honeycomb-icon">{item.icon}</div>
+							<div class="honeycomb-title">{item.title}</div>
+						</div>
+					{/if}
+					<svg class="honeycomb-border" viewBox="0 0 100 100" preserveAspectRatio="none">
+						<path d="M50 0 L93.3 25 L93.3 75 L50 100 L6.7 75 L6.7 25 Z" />
+					</svg>
+				</div>
+			{/each}
+		</div>
+	</div>
 {/if}
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -265,7 +265,9 @@
 						: 'w-[100%] bg-surface-700 border-surface-700'}  transition-all duration-700 z-[9999]"
 				>
 					<div class="flex p-2 px-4 flex-row justify-between items-center gap-2">
-						<a class="text-xl cursor-pointer mr-12 flex items-center gap-2" on:click={() => goto('/')}
+						<a
+							class="text-xl cursor-pointer mr-12 flex items-center gap-2"
+							on:click={() => goto('/')}
 							><img src="/favicon.png" alt="tsuki" class="w-8 h-8" />{appName}</a
 						>
 						<div class="hidden md:flex flex-row justify-start items-center gap-2 me-auto">
@@ -397,217 +399,219 @@
 		</div>
 	{/key}
 
-    <svelte:fragment slot="footer">
-        {#if ($page.data.url != '/signin' && $page.data.url != '/signup') || $page.status != 200}
-            <Footer />
-        {/if}
-    </svelte:fragment>
+	<svelte:fragment slot="footer">
+		{#if ($page.data.url != '/signin' && $page.data.url != '/signup') || $page.status != 200}
+			<Footer />
+		{/if}
+	</svelte:fragment>
 </AppShell>
 
 <style>
-    .honeycomb-nav {
-        position: fixed;
-        bottom: 2rem;
-        left: 2rem;
-        z-index: 1000;
-    }
+	.honeycomb-nav {
+		position: fixed;
+		bottom: 2rem;
+		left: 2rem;
+		z-index: 1000;
+	}
 
-    .honeycomb-container {
-        display: grid;
-        grid-template-columns: repeat(3, 60px);
-        grid-template-rows: repeat(3, 70px);
-        gap: 5px;
-        transform: rotate(-30deg);
-    }
+	.honeycomb-container {
+		display: grid;
+		grid-template-columns: repeat(3, 60px);
+		grid-template-rows: repeat(3, 70px);
+		gap: 5px;
+		transform: rotate(-30deg);
+	}
 
-    .honeycomb-item {
-        position: relative;
-        width: 60px;
-        height: 70px;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        opacity: 0;
-        animation: fadeIn 0.5s forwards;
-        animation-delay: var(--delay);
-    }
+	.honeycomb-item {
+		position: relative;
+		width: 60px;
+		height: 70px;
+		cursor: pointer;
+		transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+		opacity: 0;
+		animation: fadeIn 0.5s forwards;
+		animation-delay: var(--delay);
+	}
 
-    .honeycomb-item:nth-child(3n + 2) {
-        transform: translateY(35px);
-    }
+	.honeycomb-item:nth-child(3n + 2) {
+		transform: translateY(35px);
+	}
 
-    .honeycomb-content {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) rotate(30deg);
-        width: 100%;
-        text-align: center;
-        z-index: 1;
-    }
+	.honeycomb-content {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%) rotate(30deg);
+		width: 100%;
+		text-align: center;
+		z-index: 1;
+	}
 
-    .honeycomb-icon {
-        font-size: 1.2em;
-        margin-bottom: 0.2rem;
-    }
+	.honeycomb-icon {
+		font-size: 1.2em;
+		margin-bottom: 0.2rem;
+	}
 
-    .honeycomb-title {
-        font-size: 0.7em;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
+	.honeycomb-title {
+		font-size: 0.7em;
+		opacity: 0;
+		transition: opacity 0.3s ease;
+	}
 
-    .honeycomb-item:hover .honeycomb-title {
-        opacity: 1;
-    }
+	.honeycomb-item:hover .honeycomb-title {
+		opacity: 1;
+	}
 
-    .honeycomb-border {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-    }
+	.honeycomb-border {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+	}
 
-    .honeycomb-border path {
-        fill: rgba(255, 62, 0, 0.1);
-        stroke: #ff3e00;
-        stroke-width: 2;
-        transition: all 0.3s ease;
-    }
+	.honeycomb-border path {
+		fill: rgba(255, 62, 0, 0.1);
+		stroke: #ff3e00;
+		stroke-width: 2;
+		transition: all 0.3s ease;
+	}
 
-    .honeycomb-item:hover .honeycomb-border path {
-        fill: rgba(255, 62, 0, 0.2);
-        stroke-width: 3;
-        filter: drop-shadow(0 0 5px #ff3e00);
-    }
+	.honeycomb-item:hover .honeycomb-border path {
+		fill: rgba(255, 62, 0, 0.2);
+		stroke-width: 3;
+		filter: drop-shadow(0 0 5px #ff3e00);
+	}
 
-    .honeycomb-item.active .honeycomb-border path {
-        fill: rgba(255, 62, 0, 0.3);
-        stroke-width: 3;
-        filter: drop-shadow(0 0 8px #ff3e00);
-    }
+	.honeycomb-item.active .honeycomb-border path {
+		fill: rgba(255, 62, 0, 0.3);
+		stroke-width: 3;
+		filter: drop-shadow(0 0 8px #ff3e00);
+	}
 
-    .honeycomb-item.active .honeycomb-title {
-        opacity: 1;
-    }
+	.honeycomb-item.active .honeycomb-title {
+		opacity: 1;
+	}
 
-    .honeycomb-item.hovered {
-        z-index: 2;
-        transform: scale(1.1);
-    }
+	.honeycomb-item.hovered {
+		z-index: 2;
+		transform: scale(1.1);
+	}
 
-    .honeycomb-item.hovered:nth-child(3n + 2) {
-        transform: translateY(35px) scale(1.1);
-    }
+	.honeycomb-item.hovered:nth-child(3n + 2) {
+		transform: translateY(35px) scale(1.1);
+	}
 
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: scale(0.5);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
-    }
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+			transform: scale(0.5);
+		}
+		to {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
 
-    @media (max-width: 768px) {
-        .honeycomb-nav {
-            bottom: 1rem;
-            left: 1rem;
-        }
+	@media (max-width: 768px) {
+		.honeycomb-nav {
+			bottom: 1rem;
+			left: 1rem;
+		}
 
-        .honeycomb-container {
-            grid-template-columns: repeat(3, 50px);
-            grid-template-rows: repeat(3, 58px);
-        }
+		.honeycomb-container {
+			grid-template-columns: repeat(3, 50px);
+			grid-template-rows: repeat(3, 58px);
+		}
 
-        .honeycomb-item {
-            width: 50px;
-            height: 58px;
-        }
+		.honeycomb-item {
+			width: 50px;
+			height: 58px;
+		}
 
-        .honeycomb-item:nth-child(3n + 2) {
-            transform: translateY(29px);
-        }
+		.honeycomb-item:nth-child(3n + 2) {
+			transform: translateY(29px);
+		}
 
-        .honeycomb-item.hovered:nth-child(3n + 2) {
-            transform: translateY(29px) scale(1.1);
-        }
-    }
+		.honeycomb-item.hovered:nth-child(3n + 2) {
+			transform: translateY(29px) scale(1.1);
+		}
+	}
 	.restriction-warning-card {
-        width: 180px;
-        background: rgba(20, 20, 20, 0.9);
-        border: 1px solid rgba(100, 100, 100, 0.3);
-        border-radius: 12px;
-        padding: 16px;
-        backdrop-filter: blur(10px);
-        box-shadow:
-            0 8px 32px rgba(0, 0, 0, 0.3),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1),
-            0 0 0 1px rgba(255, 255, 255, 0.05);
-        position: relative;
-        overflow: hidden;
-    }
+		width: 180px;
+		background: rgba(20, 20, 20, 0.9);
+		border: 1px solid rgba(100, 100, 100, 0.3);
+		border-radius: 12px;
+		padding: 16px;
+		backdrop-filter: blur(10px);
+		box-shadow:
+			0 8px 32px rgba(0, 0, 0, 0.3),
+			inset 0 1px 0 rgba(255, 255, 255, 0.1),
+			0 0 0 1px rgba(255, 255, 255, 0.05);
+		position: relative;
+		overflow: hidden;
+	}
 
-    .restriction-warning-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg,
-            rgba(255, 255, 255, 0.1) 0%,
-            transparent 50%,
-            rgba(255, 255, 255, 0.05) 100%);
-        pointer-events: none;
-    }
+	.restriction-warning-card::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: linear-gradient(
+			135deg,
+			rgba(255, 255, 255, 0.1) 0%,
+			transparent 50%,
+			rgba(255, 255, 255, 0.05) 100%
+		);
+		pointer-events: none;
+	}
 
-    .restriction-warning-content {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+	.restriction-warning-content {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 
-    .discord-btn {
-        background: linear-gradient(135deg, #5865f2, #4752c4);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        color: white;
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 8px rgba(88, 101, 242, 0.3);
-        width: 100%;
-    }
+	.discord-btn {
+		background: linear-gradient(135deg, #5865f2, #4752c4);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		color: white;
+		padding: 8px 16px;
+		border-radius: 8px;
+		font-size: 11px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		box-shadow: 0 2px 8px rgba(88, 101, 242, 0.3);
+		width: 100%;
+	}
 
-    .discord-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(88, 101, 242, 0.4);
-        background: linear-gradient(135deg, #6b73ff, #5865f2);
-    }
+	.discord-btn:hover {
+		transform: translateY(-1px);
+		box-shadow: 0 4px 12px rgba(88, 101, 242, 0.4);
+		background: linear-gradient(135deg, #6b73ff, #5865f2);
+	}
 
-    .discord-btn:active {
-        transform: translateY(0px);
-        box-shadow: 0 2px 6px rgba(88, 101, 242, 0.3);
-    }
+	.discord-btn:active {
+		transform: translateY(0px);
+		box-shadow: 0 2px 6px rgba(88, 101, 242, 0.3);
+	}
 
-    @media (max-width: 768px) {
-        .restriction-warning-card {
-            width: 160px;
-            padding: 12px;
-        }
+	@media (max-width: 768px) {
+		.restriction-warning-card {
+			width: 160px;
+			padding: 12px;
+		}
 
-        .discord-btn {
-            padding: 6px 12px;
-            font-size: 10px;
-        }
-    }
+		.discord-btn {
+			padding: 6px 12px;
+			font-size: 10px;
+		}
+	}
 </style>

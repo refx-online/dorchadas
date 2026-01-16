@@ -27,14 +27,7 @@
 	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
 	import PlayCountGraph from '$lib/components/playCountGraph.svelte';
-	import {
-		Heart,
-		User,
-		Users,
-		UserPlus,
-		Info,
-		Layers
-	} from 'svelte-feathers';
+	import { Heart, User, Users, UserPlus, Info, Layers } from 'svelte-feathers';
 	import DonatorEffect from '$lib/components/donatorEffect.svelte';
 	import ProfileGraph from '$lib/components/profileGraph.svelte';
 	import ProfileComments from '$lib/components/profileComments.svelte';
@@ -266,15 +259,15 @@
 	};
 
 	let aboutSection: HTMLElement;
-    let ranksSection: HTMLElement;
-    let historicalSection: HTMLElement;
-    let commentsSection: HTMLElement;
+	let ranksSection: HTMLElement;
+	let historicalSection: HTMLElement;
+	let commentsSection: HTMLElement;
 	let activeSection = 'about';
 
-    const scroll = (section: HTMLElement, sectionName: string) => {
+	const scroll = (section: HTMLElement, sectionName: string) => {
 		section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        activeSection = sectionName;
-    };
+		activeSection = sectionName;
+	};
 
 	onMount(async () => {
 		if (data.user?.info.id) {
@@ -306,8 +299,8 @@
 </svelte:head>
 <div
 	class="absolute top-0 left-0 w-full h-full bg-no-repeat bg-cover bg-center bg-fixed z-[-1]"
-	style="background-image: url('/u/{data.user?.info.id}/background');">
-</div>
+	style="background-image: url('/u/{data.user?.info.id}/background');"
+></div>
 
 <div class="container mx-auto w-full p-5 min-h-screen relative">
 	<!--
@@ -315,7 +308,7 @@
 		gotta figure out why priv isnt passed
 		temporary solution using ourPriv.. but its kinda dumb
 	 -->
-	 {#if data.user?.info.id && (isStaff(data.ourPriv) || (data.user?.info.priv & Privileges.VERIFIED && data.user?.info.priv & Privileges.UNRESTRICTED))}
+	{#if data.user?.info.id && (isStaff(data.ourPriv) || (data.user?.info.priv & Privileges.VERIFIED && data.user?.info.priv & Privileges.UNRESTRICTED))}
 		<div class="mx-auto card">
 			<div class="w-full flex flex-col">
 				<div class="overflow-hidden rounded-lg">
@@ -325,7 +318,9 @@
 							style="background-image: url('/u/{data.user.info.id}/cover');"
 						></div>
 						<div class="grid md:grid-cols-[auto_auto] gap-2">
-							<div class="w-full flex flex-col md:flex-row justify-center md:justify-start rounded-lg">
+							<div
+								class="w-full flex flex-col md:flex-row justify-center md:justify-start rounded-lg"
+							>
 								<div class="flex w-full md:hidden mb-1">
 									<button
 										class="flex-1 !scale-100 btn {currentType == 'vanilla'
@@ -350,13 +345,11 @@
 											? 'bg-surface-500'
 											: 'bg-surface-600'} rounded-lg rounded-l-none"
 										on:click={() => setType('autopilot')}
-										disabled={
-											currentMode == 'taiko' ||
+										disabled={currentMode == 'taiko' ||
 											currentMode == 'catch' ||
 											currentMode == 'mania' ||
 											loading ||
-											failed
-										}
+											failed}
 									>
 										Autopilot
 									</button>
@@ -367,13 +360,11 @@
 											? 'bg-surface-500'
 											: 'bg-surface-600'} rounded-lg rounded-r-none"
 										on:click={() => setType('touch')}
-										disabled={
-											currentMode == 'taiko' ||
+										disabled={currentMode == 'taiko' ||
 											currentMode == 'catch' ||
 											currentMode == 'mania' ||
 											loading ||
-											failed
-										}
+											failed}
 									>
 										TouchScreen
 									</button>
@@ -382,13 +373,11 @@
 											? 'bg-surface-500'
 											: 'bg-surface-600'} rounded-lg rounded-r-none"
 										on:click={() => setType('cheat')}
-										disabled={
-											currentMode == 'taiko' ||
+										disabled={currentMode == 'taiko' ||
 											currentMode == 'catch' ||
 											currentMode == 'mania' ||
 											loading ||
-											failed
-										}
+											failed}
 									>
 										Cheat
 									</button>
@@ -397,13 +386,11 @@
 											? 'bg-surface-500'
 											: 'bg-surface-600'} rounded-lg rounded-l-none"
 										on:click={() => setType('cheatcheat')}
-										disabled={
-											currentMode == 'taiko' ||
+										disabled={currentMode == 'taiko' ||
 											currentMode == 'catch' ||
 											currentMode == 'mania' ||
 											loading ||
-											failed
-										}
+											failed}
 									>
 										CheatCheat
 									</button>
@@ -433,13 +420,11 @@
 											? 'bg-surface-500'
 											: 'bg-surface-600'} rounded-none"
 										on:click={() => setType('autopilot')}
-										disabled={
-											currentMode == 'taiko' ||
+										disabled={currentMode == 'taiko' ||
 											currentMode == 'catch' ||
 											currentMode == 'mania' ||
 											loading ||
-											failed
-										}
+											failed}
 									>
 										Autopilot
 									</button>
@@ -448,13 +433,11 @@
 											? 'bg-surface-500'
 											: 'bg-surface-600'} rounded-none"
 										on:click={() => setType('touch')}
-										disabled={
-											currentMode == 'taiko' ||
+										disabled={currentMode == 'taiko' ||
 											currentMode == 'catch' ||
 											currentMode == 'mania' ||
 											loading ||
-											failed
-										}
+											failed}
 									>
 										TouchScreen
 									</button>
@@ -463,13 +446,11 @@
 											? 'bg-surface-500'
 											: 'bg-surface-600'} rounded-none"
 										on:click={() => setType('cheat')}
-										disabled={
-											currentMode == 'taiko' ||
+										disabled={currentMode == 'taiko' ||
 											currentMode == 'catch' ||
 											currentMode == 'mania' ||
 											loading ||
-											failed
-										}
+											failed}
 									>
 										Cheat
 									</button>
@@ -478,13 +459,11 @@
 											? 'bg-surface-500'
 											: 'bg-surface-600'} rounded-lg rounded-l-none"
 										on:click={() => setType('cheatcheat')}
-										disabled={
-											currentMode == 'taiko' ||
+										disabled={currentMode == 'taiko' ||
 											currentMode == 'catch' ||
 											currentMode == 'mania' ||
 											loading ||
-											failed
-										}
+											failed}
 									>
 										CheatCheat
 									</button>
@@ -577,46 +556,44 @@
 							{/if}
 
 							<span
-								class={
-									privsToGroups(data.user?.info.priv ?? 0)
-										.reverse()
-										.filter((group) => group > Privileges.VERIFIED)
-										.map((group) => 'priv-' + Privileges[group].toLowerCase())
-										.pop()
-								}
+								class={privsToGroups(data.user?.info.priv ?? 0)
+									.reverse()
+									.filter((group) => group > Privileges.VERIFIED)
+									.map((group) => 'priv-' + Privileges[group].toLowerCase())
+									.pop()}
 							>
-							<!-- TODO: rework -->
-							{#if isDonator(data.user?.info.priv ?? 0)}
-								<DonatorEffect
-									username={data.user?.info.name}
-									sparkleColor="#ffd700"
-									gradientColors={['#ff6b6b', '#4ecdc4']}
-								/>
-							{:else}
-								{data.user?.info.name}
-							{/if}
+								<!-- TODO: rework -->
+								{#if isDonator(data.user?.info.priv ?? 0)}
+									<DonatorEffect
+										username={data.user?.info.name}
+										sparkleColor="#ffd700"
+										gradientColors={['#ff6b6b', '#4ecdc4']}
+									/>
+								{:else}
+									{data.user?.info.name}
+								{/if}
 
-							{#if data.oldUsernames}
-								<Popup placement="top">
-									<Layers class="pointer-events-none" size={20} />
-									<svelte:fragment slot="popup">
-										<div class="card p-2 px-4 rounded-lg variant-filled-surface text-sm">
-											{__('formerly known as:', $userLanguage)} {data.oldUsernames}
-											<div
-												class="arrow border-r border-b border-gray-700 variant-filled-surface"
-											></div>
-										</div>
-									</svelte:fragment>
-								</Popup>
-							{/if}
-
+								{#if data.oldUsernames}
+									<Popup placement="top">
+										<Layers class="pointer-events-none" size={20} />
+										<svelte:fragment slot="popup">
+											<div class="card p-2 px-4 rounded-lg variant-filled-surface text-sm">
+												{__('formerly known as:', $userLanguage)}
+												{data.oldUsernames}
+												<div
+													class="arrow border-r border-b border-gray-700 variant-filled-surface"
+												></div>
+											</div>
+										</svelte:fragment>
+									</Popup>
+								{/if}
 							</span>
 						</div>
 						<div class="flex flex-row items-center md:gap-2">
 							<Popup placement="top">
 								<img
 									class="min-w-5 w-5 md:w-8"
-									src="/flags/{data.user.info.country?.toUpperCase() ?? "XX"}.png"
+									src="/flags/{data.user.info.country?.toUpperCase() ?? 'XX'}.png"
 									alt="country flag"
 								/>
 								<svelte:fragment slot="popup">
@@ -633,8 +610,9 @@
 								userPriv={data.user.info.priv}
 								userID={data.user.info.id}
 								userRank={$globalRank}
-								userMode={currentMode}!{currentType}
-							/> <!-- Ok -->
+								userMode="{currentMode}!{currentType}"
+							/>
+							<!-- Ok -->
 						</div>
 					</div>
 				</div>
@@ -657,7 +635,7 @@
 								</div>
 							</div>
 							{#if data.user?.info.id && typeof currentModeInt === 'number' && currentModeInt >= 0}
-								<ProfileGraph userId={data.user.info.id} mode={currentModeInt}/>
+								<ProfileGraph userId={data.user.info.id} mode={currentModeInt} />
 							{:else}
 								<div class="flex items-center justify-center h-16 text-surface-400">
 									Loading chart...
@@ -763,33 +741,39 @@
 				<div class="flex flex-row justify-between gap-2 bg-surface-600 p-7 py-2">
 					<div class="flex items-center gap-5">
 						{#if data.relationships}
-						<div class="flex items-center gap-5">
-							<form
-								action="?/relationship"
-								method="POST"
-								use:enhance={() => {
-									return async ({ update }) => {
-										await update({ reset: false });
-									};
-								}}
-								class="relative inline-flex items-center justify-center h-[40px] px-6 text-white text-sm font-semibold rounded-full
-								shadow-md transition {data.user?.info.id === $userData?.id ?
-								'bg-gray-600 hover:bg-gray-200 cursor-not-allowed' :
-								relationshipColors[data.relationships.relationshipStatus]}"
-							>
-							<input type="hidden" name="friendID" value={data.user?.info.id} />
-							<input type="hidden" name="relationshipStatus" value={data.relationships.relationshipStatus} />
+							<div class="flex items-center gap-5">
+								<form
+									action="?/relationship"
+									method="POST"
+									use:enhance={() => {
+										return async ({ update }) => {
+											await update({ reset: false });
+										};
+									}}
+									class="relative inline-flex items-center justify-center h-[40px] px-6 text-white text-sm font-semibold rounded-full
+								shadow-md transition {data.user?.info.id === $userData?.id
+										? 'bg-gray-600 hover:bg-gray-200 cursor-not-allowed'
+										: relationshipColors[data.relationships.relationshipStatus]}"
+								>
+									<input type="hidden" name="friendID" value={data.user?.info.id} />
+									<input
+										type="hidden"
+										name="relationshipStatus"
+										value={data.relationships.relationshipStatus}
+									/>
 
-							<button type="submit" class="inline-flex items-center">
-								<svelte:component
-									this={data.user?.info.id === $userData?.id ? User : relationshipIcons[data.relationships.relationshipStatus]}
-									class="mr-2 text-xl"
-								/>
+									<button type="submit" class="inline-flex items-center">
+										<svelte:component
+											this={data.user?.info.id === $userData?.id
+												? User
+												: relationshipIcons[data.relationships.relationshipStatus]}
+											class="mr-2 text-xl"
+										/>
 
-								{data.relationships.followers}
-							</button>
-							</form>
-						</div>
+										{data.relationships.followers}
+									</button>
+								</form>
+							</div>
 						{/if}
 					</div>
 					<div class="ms-auto flex items-center gap-5">
@@ -828,25 +812,33 @@
 					<div class="flex flex-col gap-2 py-2 px-7">
 						<div class="hidden md:flex flex-row gap-8">
 							<span
-								class="cursor-pointer text-sm {activeSection === 'about' ? 'text-primary-400' : 'text-surface-200 hover:text-surface-50'}"
+								class="cursor-pointer text-sm {activeSection === 'about'
+									? 'text-primary-400'
+									: 'text-surface-200 hover:text-surface-50'}"
 								on:click={() => scroll(aboutSection, 'about')}
 							>
 								{__('me!', $userLanguage)}
 							</span>
 							<span
-								class="cursor-pointer text-sm {activeSection === 'ranks' ? 'text-primary-400' : 'text-surface-200 hover:text-surface-50'}"
+								class="cursor-pointer text-sm {activeSection === 'ranks'
+									? 'text-primary-400'
+									: 'text-surface-200 hover:text-surface-50'}"
 								on:click={() => scroll(ranksSection, 'ranks')}
 							>
 								{__('Ranks', $userLanguage)}
 							</span>
 							<span
-								class="cursor-pointer text-sm {activeSection === 'historical' ? 'text-primary-400' : 'text-surface-200 hover:text-surface-50'}"
+								class="cursor-pointer text-sm {activeSection === 'historical'
+									? 'text-primary-400'
+									: 'text-surface-200 hover:text-surface-50'}"
 								on:click={() => scroll(historicalSection, 'historical')}
 							>
 								{__('Historical', $userLanguage)}
 							</span>
 							<span
-								class="cursor-pointer text-sm {activeSection === 'comments' ? 'text-primary-400' : 'text-surface-200 hover:text-surface-50'}"
+								class="cursor-pointer text-sm {activeSection === 'comments'
+									? 'text-primary-400'
+									: 'text-surface-200 hover:text-surface-50'}"
 								on:click={() => scroll(commentsSection, 'comments')}
 							>
 								{__('Comments', $userLanguage)}
@@ -855,25 +847,33 @@
 
 						<div class="flex md:hidden overflow-x-auto gap-6">
 							<span
-								class="cursor-pointer text-sm whitespace-nowrap {activeSection === 'about' ? 'text-primary-400' : 'text-surface-200'}"
+								class="cursor-pointer text-sm whitespace-nowrap {activeSection === 'about'
+									? 'text-primary-400'
+									: 'text-surface-200'}"
 								on:click={() => scroll(aboutSection, 'about')}
 							>
 								{__('me!', $userLanguage)}
 							</span>
 							<span
-								class="cursor-pointer text-sm whitespace-nowrap {activeSection === 'ranks' ? 'text-primary-400' : 'text-surface-200'}"
+								class="cursor-pointer text-sm whitespace-nowrap {activeSection === 'ranks'
+									? 'text-primary-400'
+									: 'text-surface-200'}"
 								on:click={() => scroll(ranksSection, 'ranks')}
 							>
 								{__('Ranks', $userLanguage)}
 							</span>
 							<span
-								class="cursor-pointer text-sm whitespace-nowrap {activeSection === 'historical' ? 'text-primary-400' : 'text-surface-200'}"
+								class="cursor-pointer text-sm whitespace-nowrap {activeSection === 'historical'
+									? 'text-primary-400'
+									: 'text-surface-200'}"
 								on:click={() => scroll(historicalSection, 'historical')}
 							>
 								{__('Historical', $userLanguage)}
 							</span>
 							<span
-								class="cursor-pointer text-sm whitespace-nowrap {activeSection === 'comments' ? 'text-primary-400' : 'text-surface-200'}"
+								class="cursor-pointer text-sm whitespace-nowrap {activeSection === 'comments'
+									? 'text-primary-400'
+									: 'text-surface-200'}"
 								on:click={() => scroll(commentsSection, 'comments')}
 							>
 								{__('Comments', $userLanguage)}
@@ -930,15 +930,8 @@
 												}}
 											>
 												<input type="hidden" name="csrf_token" value={data.csrfToken} />
-												<input
-													type="hidden"
-													name="userpage"
-													value={editedUserpage}
-												/>
-												<button
-													type="submit"
-													class="btn btn-icon variant-filled-primary h-10 w-10"
-												>
+												<input type="hidden" name="userpage" value={editedUserpage} />
+												<button type="submit" class="btn btn-icon variant-filled-primary h-10 w-10">
 													<Check class="pointer-events-none" size={20} />
 												</button>
 											</form>
@@ -952,7 +945,9 @@
 									{#if data.userpage.length > 0}
 										{@html data.userpage}
 									{:else}
-										<p class="text-surface-400 italic">{__("this user hasn't set an about me! section yet", $userLanguage)}</p>
+										<p class="text-surface-400 italic">
+											{__("this user hasn't set an about me! section yet", $userLanguage)}
+										</p>
 									{/if}
 								</div>
 							{:else}
@@ -1027,10 +1022,10 @@
 							{#if data.playCountGraph}
 								<div class="card !bg-surface-700 w-full py-3 p-6">
 									<div class="flex flex-col gap-5">
-									<p class="text-lg font-bold decoration-2 decoration-primary-400 ">
-										{__('Play History', $userLanguage)}
-									</p>
-									<PlayCountGraph playCountGraph={data.playCountGraph} />
+										<p class="text-lg font-bold decoration-2 decoration-primary-400">
+											{__('Play History', $userLanguage)}
+										</p>
+										<PlayCountGraph playCountGraph={data.playCountGraph} />
 									</div>
 								</div>
 							{/if}

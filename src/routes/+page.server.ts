@@ -4,18 +4,18 @@ import type { DBUser } from '$lib/types';
 
 export const load = async () => {
 	const userCounts = await getPlayerCounts();
-    const mysqlDatabase = await getMySQLDatabase();
+	const mysqlDatabase = await getMySQLDatabase();
 
-    const recentAccounts = await mysqlDatabase<DBUser>('users')
-        .select('id', 'name', 'creation_time')
-        .orderBy('creation_time', 'desc')
-        .limit(10);
+	const recentAccounts = await mysqlDatabase<DBUser>('users')
+		.select('id', 'name', 'creation_time')
+		.orderBy('creation_time', 'desc')
+		.limit(10);
 
-    const rankedMapsCount = await mysqlDatabase('maps')
-        .where('status', '=', 2)
-        .count('* as count')
-        .first()
-        .then(result => result ? result.count : 0);
+	const rankedMapsCount = await mysqlDatabase('maps')
+		.where('status', '=', 2)
+		.count('* as count')
+		.first()
+		.then((result) => (result ? result.count : 0));
 
 	// selects the highest pp scores per game mode for scores on ranked/approved maps,
 	// order by mode.
@@ -39,10 +39,10 @@ export const load = async () => {
 		ORDER BY s.mode
     `);
 
-    return {
-        userCounts,
-        recentAccounts,
-        rankedMapsCount,
-        ppRecords: ppRecords[0]
-    };
+	return {
+		userCounts,
+		recentAccounts,
+		rankedMapsCount,
+		ppRecords: ppRecords[0]
+	};
 };

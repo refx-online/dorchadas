@@ -207,13 +207,11 @@
 								? 'bg-surface-500'
 								: 'bg-surface-600'} rounded-lg rounded-l-none"
 							on:click={() => setType('autopilot')}
-							disabled={
-								currentMode == 'taiko' ||
+							disabled={currentMode == 'taiko' ||
 								currentMode == 'catch' ||
 								currentMode == 'mania' ||
 								loading ||
-								failed
-							}
+								failed}
 						>
 							Autopilot
 						</button>
@@ -225,13 +223,11 @@
 								? 'bg-surface-500'
 								: 'bg-surface-600'} rounded-lg rounded-r-none"
 							on:click={() => setType('touch')}
-							disabled={
-								currentMode == 'taiko' ||
+							disabled={currentMode == 'taiko' ||
 								currentMode == 'catch' ||
 								currentMode == 'mania' ||
 								loading ||
-								failed
-							}
+								failed}
 						>
 							TouchScreen
 						</button>
@@ -240,13 +236,11 @@
 								? 'bg-surface-500'
 								: 'bg-surface-600'} rounded-lg rounded-r-none"
 							on:click={() => setType('cheat')}
-							disabled={
-								currentMode == 'taiko' ||
+							disabled={currentMode == 'taiko' ||
 								currentMode == 'catch' ||
 								currentMode == 'mania' ||
 								loading ||
-								failed
-							}
+								failed}
 						>
 							Cheat
 						</button>
@@ -255,13 +249,11 @@
 								? 'bg-surface-500'
 								: 'bg-surface-600'} rounded-lg rounded-l-none"
 							on:click={() => setType('cheatcheat')}
-							disabled={
-								currentMode == 'taiko' ||
+							disabled={currentMode == 'taiko' ||
 								currentMode == 'catch' ||
 								currentMode == 'mania' ||
 								loading ||
-								failed
-							}
+								failed}
 						>
 							CheatCheat
 						</button>
@@ -291,13 +283,11 @@
 								? 'bg-surface-500'
 								: 'bg-surface-600'} rounded-none"
 							on:click={() => setType('autopilot')}
-							disabled={
-								currentMode == 'taiko' ||
+							disabled={currentMode == 'taiko' ||
 								currentMode == 'catch' ||
 								currentMode == 'mania' ||
 								loading ||
-								failed
-							}
+								failed}
 						>
 							Autopilot
 						</button>
@@ -306,13 +296,11 @@
 								? 'bg-surface-500'
 								: 'bg-surface-600'} rounded-none"
 							on:click={() => setType('touch')}
-							disabled={
-								currentMode == 'taiko' ||
+							disabled={currentMode == 'taiko' ||
 								currentMode == 'catch' ||
 								currentMode == 'mania' ||
 								loading ||
-								failed
-							}
+								failed}
 						>
 							TouchScreen
 						</button>
@@ -321,13 +309,11 @@
 								? 'bg-surface-500'
 								: 'bg-surface-600'} rounded-none"
 							on:click={() => setType('cheat')}
-							disabled={
-								currentMode == 'taiko' ||
+							disabled={currentMode == 'taiko' ||
 								currentMode == 'catch' ||
 								currentMode == 'mania' ||
 								loading ||
-								failed
-							}
+								failed}
 						>
 							Cheat
 						</button>
@@ -336,13 +322,11 @@
 								? 'bg-surface-500'
 								: 'bg-surface-600'} rounded-lg rounded-l-none"
 							on:click={() => setType('cheatcheat')}
-							disabled={
-								currentMode == 'taiko' ||
+							disabled={currentMode == 'taiko' ||
 								currentMode == 'catch' ||
 								currentMode == 'mania' ||
 								loading ||
-								failed
-							}
+								failed}
 						>
 							CheatCheat
 						</button>
