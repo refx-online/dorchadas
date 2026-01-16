@@ -9,10 +9,10 @@
 	import Map from 'svelte-feathers/Map.svelte';
 	import Server from 'svelte-feathers/Server.svelte';
 	import Shield from 'svelte-feathers/Shield.svelte';
-	import { 
-		Omega, 
-		Trophy, 
-		PawPrint, 
+	import {
+		Omega,
+		Trophy,
+		PawPrint,
 		Moon,
 		Bot,
 		Ban
@@ -35,14 +35,14 @@
 			<Omega class="w-4 md:w-6 pointer-events-none" />
 		</div>
 	{/if}
-	
+
 	<!-- kselon -->
 	{#if userID === 13}
 		<div class="tooltip text-pink-300" aria-label="Femboy">
 			<PawPrint class="w-4 md:w-6 pointer-events-none" />
 		</div>
 	{/if}
-	
+
 	<!-- Misc -->
 	<!-- og player -->
 	{#if userID >= 3 && userID <= 15}
@@ -50,14 +50,14 @@
 			<Moon class="w-4 md:w-6 pointer-events-none" />
 		</div>
 	{/if}
-	
+
 	<!-- Asuka -->
 	{#if userID === 1}
 		<div class="tooltip text-cyan-300" aria-label="Bot">
 			<Bot class="w-4 md:w-6 pointer-events-none" />
 		</div>
 	{/if}
-	
+
 	<!-- Restricted Players (ok what is this check)-->
 	{#if !Privileges.UNRESTRICTED || userPriv == 1 << 1}
 		<div class="tooltip text-grey-300" aria-label="Restricted">
@@ -128,7 +128,7 @@
 	.numba1 {
 		animation: glow-animation 1.5s infinite alternate;
 	}
-	
+
 	@keyframes glow-animation {
 		0% {
 			text-shadow: 0 0 5px #00d4ff, 0 0 10px #00d4ff, 0 0 15px #00d4ff;

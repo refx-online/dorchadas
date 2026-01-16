@@ -69,7 +69,7 @@ export const actions: Actions = {
         if (field === 'name' && typeof value === 'string') {
             await mysqlDatabase<DBUser>('users')
                 .where('id', userId)
-                .update({ 
+                .update({
                     [field]: value,
                     safe_name: value.toLowerCase().trim().replace(/ /g, '_')
                 })
@@ -96,7 +96,7 @@ export const actions: Actions = {
         }
 
         await sendDiscordWebhookLog(
-            'Nerv', 
+            'Nerv',
             `${sessionUser?.name} (${sessionUser?.id}) updates ${user?.name} (${user?.id})'s ${field}!`,
             `${appUrl}/nerv.png`
         )
@@ -133,9 +133,9 @@ export const actions: Actions = {
         await mysqlDatabase<DBUser>('users')
             .where('id', userId)
             .update({ pw_bcrypt: newPassword });
-        
+
         await sendDiscordWebhookLog(
-            'Nerv', 
+            'Nerv',
             `${sessionUser?.name} (${sessionUser?.id}) updates ${user?.name} (${user?.id})'s password!`,
             `${appUrl}/nerv.png`
         )
@@ -145,7 +145,7 @@ export const actions: Actions = {
     restrictUser: async ({ request, cookies }) => {
         const data = await request.formData();
         const userId = Number(data.get('userId'));
-        
+
         const sessionUser = await getUserFromSession(cookies.get('sessionToken'));
         if (!isAdmin(sessionUser?.priv)) {
             return { success: false, error: 'Insufficient privileges' };
@@ -161,7 +161,7 @@ export const actions: Actions = {
             .first();
 
         const newPrivileges = user?.priv & ~Privileges.UNRESTRICTED;
-        
+
         await mysqlDatabase<DBUser>('users')
             .where('id', userId)
             .update({ priv: newPrivileges });
@@ -183,7 +183,7 @@ export const actions: Actions = {
     unrestrictUser: async ({ request, cookies }) => {
         const data = await request.formData();
         const userId = Number(data.get('userId'));
-        
+
         const sessionUser = await getUserFromSession(cookies.get('sessionToken'));
         if (!isAdmin(sessionUser?.priv)) {
             return { success: false, error: 'Insufficient privileges' };
@@ -193,7 +193,7 @@ export const actions: Actions = {
         if (!mysqlDatabase) {
             return { success: false, error: 'Database connection failed' };
         }
-        
+
         const user = await mysqlDatabase<DBUser>('users')
             .where('id', userId)
             .first();
@@ -223,7 +223,7 @@ export const actions: Actions = {
         const userId = Number(data.get('userId'));
         const duration = Number(data.get('duration')); // in hours
         const reason = data.get('reason')?.toString();
-        
+
         const sessionUser = await getUserFromSession(cookies.get('sessionToken'));
         if (!isAdmin(sessionUser?.priv)) {
             return { success: false, error: 'Insufficient privileges' };
@@ -243,10 +243,10 @@ export const actions: Actions = {
             .first();
 
         const silenceEnd = Math.floor(Date.now() / 1000) + (duration * 3600);
-        
+
         await mysqlDatabase<DBUser>('users')
             .where('id', userId)
-            .update({ 
+            .update({
                 silence_end: silenceEnd,
             });
 
@@ -262,7 +262,7 @@ export const actions: Actions = {
     unsilenceUser: async ({ request, cookies }) => {
         const data = await request.formData();
         const userId = Number(data.get('userId'));
-        
+
         const sessionUser = await getUserFromSession(cookies.get('sessionToken'));
         if (!isAdmin(sessionUser?.priv)) {
             return { success: false, error: 'Insufficient privileges' };
@@ -276,10 +276,10 @@ export const actions: Actions = {
         const user = await mysqlDatabase<DBUser>('users')
             .where('id', userId)
             .first();
-        
+
         await mysqlDatabase<DBUser>('users')
             .where('id', userId)
-            .update({ 
+            .update({
                 silence_end: 0,
             });
 
@@ -379,6 +379,6 @@ export async function load({ params, cookies }) {
     const user = await mysqlDatabase<DBUser>('users')
         .where('id', userId)
         .first();
-    
+
     return { user };
 }

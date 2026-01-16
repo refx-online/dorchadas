@@ -10,26 +10,26 @@
 
 	function shouldShowSpeedMultiplier(mod: Mod): boolean {
 		if (!mod.settings) return false;
-		
+
 		const isSpeedMod = ['DT', 'NC', 'HT'].includes(mod.short_name.toUpperCase());
 		const hasSpeedSetting = mod.settings.speed_change || mod.settings.clock_rate;
-		
+
 		return isSpeedMod && hasSpeedSetting;
 	}
 
 	function getSpeedMultiplier(mod: Mod): string {
 		if (!mod.settings) return '';
-		
+
 		const speed = mod.settings.speed_change || mod.settings.clock_rate;
 		if (!speed) return '';
-		
+
 		return `${speed}x`;
 	}
 
 	function getModImageName(shortName: string): string {
 		const modsWithImages = ['ez', 'nf', 'ht', 'hr', 'sd', 'pf', 'dt', 'nc', 'hd', 'fl', 'so', 'td', 'v2', 'rx', 'ap', 'cl'];
 		const lowerName = shortName.toLowerCase();
-		
+
 		return modsWithImages.includes(lowerName) ? lowerName : 'fun';
 	}
 
@@ -37,7 +37,7 @@
 		if (!settings || Object.keys(settings).length === 0) {
 			return '';
 		}
-		
+
 		const settingsArray = [];
 		for (const [key, value] of Object.entries(settings)) {
 			if (key === 'speed_change' || key === 'clock_rate') {
@@ -52,7 +52,7 @@
 				settingsArray.push(`HP${value}`);
 			}
 		}
-		
+
 		return settingsArray.slice(0, 3).join(' ');
 	}
 
@@ -60,7 +60,7 @@
 		if (!settings || Object.keys(settings).length === 0) {
 			return '';
 		}
-		
+
 		const settingsArray = [];
 		for (const [key, value] of Object.entries(settings)) {
 			if (key === 'speed_change' || key === 'clock_rate') {

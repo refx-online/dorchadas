@@ -17,7 +17,7 @@ export const POST = async ({ request, cookies }) => {
 
         const formData = await request.formData();
         const file = formData.get('avatar') as File;
-        
+
         await validateImageFile(file);
 
         const avatarDirectory = env.AVATAR_DIRECTORY;

@@ -16,19 +16,19 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
     const hasPermission = isStaff(sessionUser?.priv);
 
     if (!hasPermission) {
-      return json({ 
-        status: 'error', 
-        message: 'Unauthorized: Staff permission required' 
+      return json({
+        status: 'error',
+        message: 'Unauthorized: Staff permission required'
       }, { status: 403 });
     }
 
     const body = await request.json();
     const { action, targetStatus } = body;
-    
+
     if (!action || targetStatus === undefined) {
-      return json({ 
-        status: 'error', 
-        message: 'Action and targetStatus are required' 
+      return json({
+        status: 'error',
+        message: 'Action and targetStatus are required'
       }, { status: 400 });
     }
 
@@ -36,12 +36,12 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
 
     const beatmapData = await redis.get(`beatmap:${beatmapId}`);
     if (!beatmapData) {
-      return json({ 
-        status: 'error', 
-        message: 'Beatmap not found' 
+      return json({
+        status: 'error',
+        message: 'Beatmap not found'
       }, { status: 404 });
     }
-    
+
     const beatmap = JSON.parse(beatmapData);
     const oldStatus = beatmap.status;
 
@@ -49,7 +49,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
     beatmap.last_update = new Date().toISOString();
 
     await redis.set(`beatmap:${beatmapId}`, JSON.stringify(beatmap));
- 
+
     const statusEvent = {
       beatmapId,
       title: beatmap.title,
@@ -61,7 +61,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
       timestamp: Date.now(),
       updatedBy: 'userId'
     };
-    
+
     await redis.publish(BEATMAP_STATUS_CHANNEL, JSON.stringify(statusEvent));
 
     await redis.lPush('beatmap:status:history', JSON.stringify({
@@ -70,7 +70,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
     }));
 
     await redis.lTrim('beatmap:status:history', 0, 99);
-    
+
     return json({
       status: 'success',
       message: `Beatmap ${beatmapId} has been ${action}ed successfully`,
@@ -79,7 +79,7 @@ export const POST: RequestHandler = async ({ request, params, cookies }) => {
         status: targetStatus
       }
     });
-    
+
   } catch (error) {
     console.error('Error updating beatmap status:', error);
     return json({
@@ -93,22 +93,22 @@ export const GET: RequestHandler = async ({ request }) => {
   try {
     const hasPermission = await validateBATPermission(request);
     if (!hasPermission) {
-      return json({ 
-        status: 'error', 
-        message: 'Unauthorized: Permission required to view history' 
+      return json({
+        status: 'error',
+        message: 'Unauthorized: Permission required to view history'
       }, { status: 403 });
     }
-    
+
     const redis = await getRedisClient();
 
     const historyData = await redis.lRange('beatmap:status:history', 0, 19);
     const history = historyData.map(entry => JSON.parse(entry));
-    
+
     return json({
       status: 'success',
       history
     });
-    
+
   } catch (error) {
     console.error('Error fetching status history:', error);
     return json({

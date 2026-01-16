@@ -37,7 +37,7 @@ export const isAdmin = (playerPriv?: number): boolean =>
 		Privileges.MODERATOR, // aint even admin
 	].some(priv => hasPrivilege(playerPriv, priv));
 
-export const isRestricted = (playerPriv?: number): boolean => 
+export const isRestricted = (playerPriv?: number): boolean =>
 	playerPriv !== undefined && !hasPrivilege(playerPriv, Privileges.UNRESTRICTED)
 
 /* https://github.com/osuAkatsuki/bancho.py/blob/master/app/constants/privileges.py#L13-L38 */

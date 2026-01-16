@@ -218,7 +218,7 @@
 							Autopilot
 						</button>
 					</div>
-					
+
 					<div class="flex w-full md:hidden">
 						<button
 							class="flex-1 !scale-100 btn {currentType == 'touch'
@@ -266,7 +266,7 @@
 							CheatCheat
 						</button>
 					</div>
-					
+
 					<div class="hidden md:flex w-full">
 						<button
 							class="w-[20%] !scale-100 btn {currentType == 'vanilla'

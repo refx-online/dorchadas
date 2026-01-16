@@ -27,12 +27,12 @@
 	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
 	import PlayCountGraph from '$lib/components/playCountGraph.svelte';
-	import { 
-		Heart, 
-		User, 
-		Users, 
-		UserPlus, 
-		Info, 
+	import {
+		Heart,
+		User,
+		Users,
+		UserPlus,
+		Info,
 		Layers
 	} from 'svelte-feathers';
 	import DonatorEffect from '$lib/components/donatorEffect.svelte';
@@ -304,14 +304,14 @@
 		<title>{appName} :: player not found</title>
 	{/if}
 </svelte:head>
-<div 
+<div
 	class="absolute top-0 left-0 w-full h-full bg-no-repeat bg-cover bg-center bg-fixed z-[-1]"
 	style="background-image: url('/u/{data.user?.info.id}/background');">
 </div>
 
-<div class="container mx-auto w-full p-5 min-h-screen relative"> 
-	<!-- 
-		TODO: (data.user?.info.id && isStaff($userData?.priv)) 
+<div class="container mx-auto w-full p-5 min-h-screen relative">
+	<!--
+		TODO: (data.user?.info.id && isStaff($userData?.priv))
 		gotta figure out why priv isnt passed
 		temporary solution using ourPriv.. but its kinda dumb
 	 -->
@@ -587,9 +587,9 @@
 							>
 							<!-- TODO: rework -->
 							{#if isDonator(data.user?.info.priv ?? 0)}
-								<DonatorEffect 
-									username={data.user?.info.name} 
-									sparkleColor="#ffd700" 
+								<DonatorEffect
+									username={data.user?.info.name}
+									sparkleColor="#ffd700"
 									gradientColors={['#ff6b6b', '#4ecdc4']}
 								/>
 							{:else}
@@ -609,7 +609,7 @@
 									</svelte:fragment>
 								</Popup>
 							{/if}
-							
+
 							</span>
 						</div>
 						<div class="flex flex-row items-center md:gap-2">
@@ -630,10 +630,10 @@
 							</Popup>
 							<span class="hidden md:block">{getCountryName(data.user.info.country)}</span>
 							<UserRankBadges
-								userPriv={data.user.info.priv} 
+								userPriv={data.user.info.priv}
 								userID={data.user.info.id}
 								userRank={$globalRank}
-								userMode={currentMode}!{currentType} 
+								userMode={currentMode}!{currentType}
 							/> <!-- Ok -->
 						</div>
 					</div>
@@ -764,28 +764,28 @@
 					<div class="flex items-center gap-5">
 						{#if data.relationships}
 						<div class="flex items-center gap-5">
-							<form 
-								action="?/relationship" 
+							<form
+								action="?/relationship"
 								method="POST"
 								use:enhance={() => {
 									return async ({ update }) => {
 										await update({ reset: false });
 									};
 								}}
-								class="relative inline-flex items-center justify-center h-[40px] px-6 text-white text-sm font-semibold rounded-full 
-								shadow-md transition {data.user?.info.id === $userData?.id ? 
-								'bg-gray-600 hover:bg-gray-200 cursor-not-allowed' : 
+								class="relative inline-flex items-center justify-center h-[40px] px-6 text-white text-sm font-semibold rounded-full
+								shadow-md transition {data.user?.info.id === $userData?.id ?
+								'bg-gray-600 hover:bg-gray-200 cursor-not-allowed' :
 								relationshipColors[data.relationships.relationshipStatus]}"
 							>
 							<input type="hidden" name="friendID" value={data.user?.info.id} />
 							<input type="hidden" name="relationshipStatus" value={data.relationships.relationshipStatus} />
 
 							<button type="submit" class="inline-flex items-center">
-								<svelte:component 
-									this={data.user?.info.id === $userData?.id ? User : relationshipIcons[data.relationships.relationshipStatus]} 
-									class="mr-2 text-xl" 
+								<svelte:component
+									this={data.user?.info.id === $userData?.id ? User : relationshipIcons[data.relationships.relationshipStatus]}
+									class="mr-2 text-xl"
 								/>
-								
+
 								{data.relationships.followers}
 							</button>
 							</form>
@@ -827,25 +827,25 @@
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div class="flex flex-col gap-2 py-2 px-7">
 						<div class="hidden md:flex flex-row gap-8">
-							<span 
+							<span
 								class="cursor-pointer text-sm {activeSection === 'about' ? 'text-primary-400' : 'text-surface-200 hover:text-surface-50'}"
 								on:click={() => scroll(aboutSection, 'about')}
 							>
 								{__('me!', $userLanguage)}
 							</span>
-							<span 
+							<span
 								class="cursor-pointer text-sm {activeSection === 'ranks' ? 'text-primary-400' : 'text-surface-200 hover:text-surface-50'}"
 								on:click={() => scroll(ranksSection, 'ranks')}
 							>
 								{__('Ranks', $userLanguage)}
 							</span>
-							<span 
+							<span
 								class="cursor-pointer text-sm {activeSection === 'historical' ? 'text-primary-400' : 'text-surface-200 hover:text-surface-50'}"
 								on:click={() => scroll(historicalSection, 'historical')}
 							>
 								{__('Historical', $userLanguage)}
 							</span>
-							<span 
+							<span
 								class="cursor-pointer text-sm {activeSection === 'comments' ? 'text-primary-400' : 'text-surface-200 hover:text-surface-50'}"
 								on:click={() => scroll(commentsSection, 'comments')}
 							>
@@ -854,25 +854,25 @@
 						</div>
 
 						<div class="flex md:hidden overflow-x-auto gap-6">
-							<span 
+							<span
 								class="cursor-pointer text-sm whitespace-nowrap {activeSection === 'about' ? 'text-primary-400' : 'text-surface-200'}"
 								on:click={() => scroll(aboutSection, 'about')}
 							>
 								{__('me!', $userLanguage)}
 							</span>
-							<span 
+							<span
 								class="cursor-pointer text-sm whitespace-nowrap {activeSection === 'ranks' ? 'text-primary-400' : 'text-surface-200'}"
 								on:click={() => scroll(ranksSection, 'ranks')}
 							>
 								{__('Ranks', $userLanguage)}
 							</span>
-							<span 
+							<span
 								class="cursor-pointer text-sm whitespace-nowrap {activeSection === 'historical' ? 'text-primary-400' : 'text-surface-200'}"
 								on:click={() => scroll(historicalSection, 'historical')}
 							>
 								{__('Historical', $userLanguage)}
 							</span>
-							<span 
+							<span
 								class="cursor-pointer text-sm whitespace-nowrap {activeSection === 'comments' ? 'text-primary-400' : 'text-surface-200'}"
 								on:click={() => scroll(commentsSection, 'comments')}
 							>
@@ -883,9 +883,9 @@
 				</div>
 				<div class="flex flex-col gap-2 bg-surface-800 p-7 py-2">
 					<div class="card !bg-surface-700 w-full p-6">
-						<RecentAct 
-							usersLog={data.usersLog || []} 
-							userName={data.user?.info.name || ''} 
+						<RecentAct
+							usersLog={data.usersLog || []}
+							userName={data.user?.info.name || ''}
 							beatmapTitles={data.logTitles || []}
 						/>
 					</div>
@@ -899,7 +899,7 @@
 								</p>
 								{#if $userData?.id == data.user.info.id}
 									{#if !isEditing}
-										<button 
+										<button
 											class="btn btn-icon variant-filled-surface h-10 w-10 absolute top-2 right-2"
 											on:click={handleEditToggle}
 										>
@@ -907,20 +907,20 @@
 										</button>
 									{:else}
 										<div class="absolute top-2 right-2 flex gap-2">
-											<button 
-												class="btn btn-icon variant-filled-surface h-10 w-10" 
+											<button
+												class="btn btn-icon variant-filled-surface h-10 w-10"
 												on:click={() => (window.location.href = '/bbcode')}
 											>
 												<Info class="pointer-events-none" size={20} />
 											</button>
-											<button 
+											<button
 												class="btn btn-icon variant-filled-surface h-10 w-10"
 												on:click={handleEditToggle}
 											>
 												<Edit2 class="pointer-events-none" size={20} />
 											</button>
-											<form 
-												method="POST" 
+											<form
+												method="POST"
 												action="?/updateUserpage"
 												use:enhance={() => {
 													return async ({ update }) => {
@@ -930,12 +930,12 @@
 												}}
 											>
 												<input type="hidden" name="csrf_token" value={data.csrfToken} />
-												<input 
-													type="hidden" 
-													name="userpage" 
-													value={editedUserpage} 
+												<input
+													type="hidden"
+													name="userpage"
+													value={editedUserpage}
 												/>
-												<button 
+												<button
 													type="submit"
 													class="btn btn-icon variant-filled-primary h-10 w-10"
 												>
@@ -956,7 +956,7 @@
 									{/if}
 								</div>
 							{:else}
-								<textarea 
+								<textarea
 									class="textarea w-full min-h-[300px] bg-surface-600"
 									bind:value={editedUserpage}
 									placeholder={__('write something about yourself...', $userLanguage)}
@@ -1054,7 +1054,7 @@
 							>
 								{__('Comments', $userLanguage)}
 							</p>
-							
+
 							<ProfileComments userId={data.user.info.id} />
 						</div>
 					</div>

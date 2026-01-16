@@ -10,7 +10,7 @@
 	import { appUrl } from '$lib/env';
 
 	dayjs.extend(relativeTime);
-	
+
 	export let usersLog: UsersLog[] = [];
 	export let userName = '';
 	export let beatmapTitles: Record<number, string> = {};
@@ -20,7 +20,7 @@
 	$: sortedLogs = Array.isArray(usersLog)
 		? [...usersLog].sort((a, b) => b.timestamp - a.timestamp)
 		: [];
-	
+
 	$: displayedLogs = showAll ? sortedLogs : sortedLogs.slice(0, 5);
 	$: hasMoreLogs = sortedLogs.length > 5;
 
@@ -41,7 +41,7 @@
 
 	function getActivityText(log: UsersLog) {
 		const { type, rank_val, type_id } = log;
-		
+
 		if (type === 'rank') {
 			return `achieved rank #${rank_val?.toLocaleString() ?? 'Unknown'} on`;
 		} else if (type === 'lost') {
@@ -56,9 +56,9 @@
 
 	function getActivityUrl(log: UsersLog) {
 		const { type, type_id } = log;
-		
+
 		if (!type_id) return '#';
-		
+
 		if (type === 'rank' || type === 'lost') {
 			return `${appUrl}/scores/${type_id}`;
 		} else if (type === 'submit' || type === 'update') {

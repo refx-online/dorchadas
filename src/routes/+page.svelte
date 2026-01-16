@@ -76,7 +76,7 @@
 				const elapsed = currentTime - startTime;
 				const progress = Math.min(elapsed / duration, 1);
 				const currentValue = Math.floor(progress * target);
-				
+
 				setter(currentValue);
 
 				if (progress < 1) {
@@ -106,11 +106,11 @@
                     <h2 class="text-xl md:text-2xl font-bold text-white mb-4">{appName}</h2>
                     <p class="text-white/80">
                         a rich-feature osu! private server. we serve stable - our custom client - aeris - even lazer.
-                        as of today; 12-01-2026. refx-stack has become stable! 
+                        as of today; 12-01-2026. refx-stack has become stable!
                     </p>
                 </div>
 
-                <div class="col-span-1 md:col-span-4">			
+                <div class="col-span-1 md:col-span-4">
                     {#if data.userCounts?.counts}
                         <div class="grid grid-cols-2 gap-4 mb-6">
                             <div class="variant-glass-surface rounded-xl p-3 text-center hover-lift">
@@ -182,9 +182,9 @@
                             {#if data.ppRecords[currentPPIndex]}
                                 {@const score = data.ppRecords[currentPPIndex]}
                                 <div class="flex items-center bg-black/20 rounded-xl p-3 hover-glow">
-                                    <img 
+                                    <img
                                         src={`${avatarUrl}/${score.id}`}
-                                        alt="{score.name}'s avatar" 
+                                        alt="{score.name}'s avatar"
                                         class="w-8 h-8 rounded-full mr-3 object-cover"
                                     />
                                     <div class="flex-grow">
@@ -221,9 +221,9 @@
                             {#if data.recentAccounts[currentAccountIndex]}
                                 {@const account = data.recentAccounts[currentAccountIndex]}
                                 <div class="flex items-center bg-black/20 rounded-xl p-3 hover-glow">
-                                    <img 
+                                    <img
                                         src={`${avatarUrl}/${account.id}`}
-                                        alt="{account.name}'s avatar" 
+                                        alt="{account.name}'s avatar"
                                         class="w-8 h-8 rounded-full mr-3 object-cover"
                                     />
                                     <div>
@@ -240,17 +240,17 @@
                     {/if}
 
                     <div class="variant-glass-surface rounded-2xl p-4 mb-6">
-                        <iframe 
-                            src="https://discord.com/widget?id={env.PUBLIC_DISCORD_SERVER_ID}&theme=dark" 
-                            width="100%" 
-                            height="320" 
+                        <iframe
+                            src="https://discord.com/widget?id={env.PUBLIC_DISCORD_SERVER_ID}&theme=dark"
+                            width="100%"
+                            height="320"
                             frameborder="0"
                             title="disc"
                             sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
                             style="background-color: transparent;">
-                        </iframe>					
+                        </iframe>
                     </div>
-					
+
                 </div>
             </div>
         </div>
@@ -267,7 +267,7 @@
 		width: 100%;
 		position: relative;
 	}
-  
+
 	.overlay {
 		background-color: rgba(0, 0, 0, 0.6);
 		min-height: 100vh;
@@ -275,7 +275,7 @@
 		position: relative;
 		z-index: 1;
 	}
-  
+
 	:global(.variant-glass-surface) {
 		background-color: rgba(var(--color-surface-500) / 0.8) !important;
 		backdrop-filter: blur(8px);
@@ -283,12 +283,12 @@
 
 	.hover-button {
 		transition: transform 0.2s ease, box-shadow 0.2s ease;
-		
+
 		&:hover {
 			transform: translateY(-2px);
 			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 		}
-		
+
 		&:active {
 			transform: translateY(0);
 		}
@@ -296,7 +296,7 @@
 
 	.hover-lift {
 		transition: transform 0.2s ease, box-shadow 0.2s ease;
-		
+
 		&:hover {
 			transform: translateY(-4px);
 			box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
@@ -305,14 +305,14 @@
 
 	.hover-glow {
 		transition: all 0.3s ease;
-		
+
 		&:hover {
 			background-color: rgba(0, 0, 0, 0.3);
 			box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
 			transform: translateX(4px);
 		}
 	}
-  
+
 	@media (max-width: 640px) {
 		.text-xl {
 			font-size: 1.5rem;

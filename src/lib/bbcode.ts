@@ -10,7 +10,7 @@ export function parseBBCodeToHtml(bbcode: string): string {
         '"': '&quot;',
         "'": '&#39;'
     }[c] || c));
-    
+
     // skull
     // copied from our old frontend
     // maybe need a bb code page to explain what these means?

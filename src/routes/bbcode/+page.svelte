@@ -112,18 +112,18 @@
                 <header class="card-header">
                     <h2 class="h2">{__(bbcode.name, $userLanguage)}</h2>
                 </header>
-                
+
                 <section class="p-4 space-y-4">
                     <div class="card variant-ghost-surface p-4">
                         <h3 class="h3 mb-2">{__("Syntax", $userLanguage)}</h3>
                         <pre class="text-sm font-mono bg-surface-900 p-2 rounded">{bbcode.code}</pre>
                     </div>
-                    
+
                     <div>
                         <h3 class="h3 mb-2">{__("Description", $userLanguage)}</h3>
                         <p class="text-surface-300">{__(bbcode.description, $userLanguage)}</p>
                     </div>
-                    
+
                     <div class="card variant-ghost-surface p-4">
                         <h3 class="h3 mb-2">{__("Example", $userLanguage)}</h3>
                         <div class="space-y-2">

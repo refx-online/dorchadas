@@ -86,10 +86,10 @@
 					const { ctx, chartArea, scales } = chart;
 
 					const tooltipActiveElements = chart.tooltip?.getActiveElements();
-					
+
 					if (tooltipActiveElements?.length) {
 						const activePoint = tooltipActiveElements[0];
-						
+
 						ctx.save();
 						ctx.beginPath();
 						ctx.moveTo(activePoint.element.x, chartArea.top);

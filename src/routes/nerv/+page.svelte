@@ -8,34 +8,34 @@
     import { scale } from 'svelte/transition';
     import { getDrawerStore } from "@skeletonlabs/skeleton";
     import { ChevronsUp, User } from "svelte-feathers";
-  
+
     const drawerStore = getDrawerStore();
-  
+
     export let data: PageData;
     let currentTime = new Date();;
-  
+
     onMount(() => {
         const interval = setInterval(() => {
             currentTime = new Date();
         }, 1000);
-        
+
         return () => {
             clearInterval(interval);
         };
     });
-  
+
     let userSearchResults: { id: number; name: string }[] = [];
     let userSearchQuery = '';
     let userSearchTimeout: any;
-  
+
     const searchUsers = async () => {
         if (userSearchTimeout) clearTimeout(userSearchTimeout);
-  
+
         if (userSearchQuery.length <= 2) {
             userSearchResults = [];
             return;
         }
-  
+
         userSearchTimeout = setTimeout(async () => {
             try {
                 const url = `${apiUrl}/v1/search_players?q=${userSearchQuery}&nerv=1`;
@@ -53,32 +53,32 @@
             }
         }, 500);
     };
-  
+
     $: formattedTime = currentTime.toLocaleTimeString('en-US', {
         hour12: false,
         hour: '2-digit',
         minute: '2-digit'
     });
-  
+
     const navigateToUser = (userId: number) => {
         goto(`/nerv/u/${userId}`);
     };
   </script>
-  
+
   <svelte:head>
     <title>{appName} :: Nerv</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </svelte:head>
-  
+
   <div class="nerv">
     <div class="welcome-message">
         Welcome aboard, {data.OurUser.name} (#{data.OurUser.id})!
     </div>
-  
+
     <div class="search-section">
         <div class="search-container">
-            <input 
-                type="text" 
+            <input
+                type="text"
                 bind:value={userSearchQuery}
                 on:input={searchUsers}
                 placeholder="Search players..."
@@ -86,7 +86,7 @@
             />
             <div class="search-icon">⌕</div>
         </div>
-        
+
         {#if userSearchResults.length > 0}
             <div class="search-results">
                 <div class="overflow-y-auto">
@@ -104,10 +104,10 @@
                                     userSearchResults = [];
                                 }}
                             >
-                                <img 
-                                    src="{avatarUrl}/{user.id}" 
-                                    alt={user.name} 
-                                    class="w-10 h-10 rounded-lg" 
+                                <img
+                                    src="{avatarUrl}/{user.id}"
+                                    alt={user.name}
+                                    class="w-10 h-10 rounded-lg"
                                 />
                                 <p>{user.name}</p>
                             </div>
@@ -117,7 +117,7 @@
             </div>
         {/if}
     </div>
-    
+
     <div class="stats-overview">
       <div class="stat-card" style="transform: translateX({Math.random() * 10}px)">
         <User class="pointer-events-none text-red-400" />
@@ -141,7 +141,7 @@
               </div>
           </div>
       </div>
-      
+
       <div class="stat-card" style="transform: translateX({Math.random() * 10}px)">
         <ChevronsUp class="pointer-events-none text-red-400" />
           <h3>Gameplay Stats</h3>
@@ -161,20 +161,20 @@
           </div>
       </div>
     </div>
-  
+
     <div class="recent-accounts">
       <h3>Recent Accounts</h3>
         <div class="accounts-list">
             {#each data.recentAccounts.slice(0, 5) as account}
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <!-- svelte-ignore a11y-no-static-element-interactions -->
-                <div 
+                <div
                     class="account-item"
                     on:click={() => navigateToUser(account.id)}
                 >
-                    <img 
-                        src={`${avatarUrl}/${account.id}`} 
-                        alt={account.name} 
+                    <img
+                        src={`${avatarUrl}/${account.id}`}
+                        alt={account.name}
                         class="user-avatar"
                     />
                     <div class="account-info">
@@ -186,12 +186,12 @@
             {/each}
         </div>
     </div>
-  
+
     <div class="time-display">
         <div class="current-time">{formattedTime}</div>
     </div>
   </div>
-  
+
   <style>
     .nerv {
         background-color: #0a0a0f;
@@ -202,13 +202,13 @@
         grid-template-columns: 1fr;
         grid-gap: 1rem;
         border: 2px solid #ff3e00;
-        box-shadow: 
+        box-shadow:
             0 0 20px rgba(255, 62, 0, 0.5),
             inset 0 0 15px rgba(255, 62, 0, 0.3);
         position: relative;
         overflow: hidden;
     }
-  
+
     @media (min-width: 768px) {
         .nerv {
             grid-template-columns: repeat(2, 1fr);
@@ -216,7 +216,7 @@
             padding: 2rem;
         }
     }
-  
+
     .welcome-message {
         grid-column: 1 / -1;
         font-size: 1.2em;
@@ -228,7 +228,7 @@
         animation: welcome-pulse 2s infinite;
         word-break: break-word;
     }
-  
+
     @media (min-width: 768px) {
         .welcome-message {
             font-size: 1.5em;
@@ -236,12 +236,12 @@
             letter-spacing: 0.2em;
         }
     }
-  
+
     @keyframes welcome-pulse {
         0%, 100% { text-shadow: 0 0 10px rgba(255, 62, 0, 0.5); }
         50% { text-shadow: 0 0 20px rgba(255, 62, 0, 0.8); }
     }
-  
+
     .nerv::before {
         content: '';
         position: absolute;
@@ -253,28 +253,28 @@
         animation: scan-line 4s linear infinite;
         opacity: 0.5;
     }
-  
+
     @keyframes scan-line {
         0% { transform: translateY(-100%); }
         100% { transform: translateY(2000%); }
     }
-  
+
     .search-section {
         grid-column: 1 / -1;
         position: relative;
         margin-bottom: 1rem;
     }
-  
+
     @media (min-width: 768px) {
         .search-section {
             margin-bottom: 2rem;
         }
     }
-  
+
     .search-container {
         position: relative;
     }
-  
+
     .search-input {
         width: 100%;
         background: rgba(255, 62, 0, 0.05);
@@ -287,12 +287,12 @@
         border-radius: 0;
         -webkit-appearance: none;
     }
-  
+
     .search-input:focus {
         outline: none;
         box-shadow: 0 0 15px rgba(255, 62, 0, 0.3);
     }
-  
+
     .search-icon {
         position: absolute;
         right: 10px;
@@ -301,7 +301,7 @@
         font-size: 1.2em;
         color: #ff3e00;
     }
-  
+
     .search-results {
         position: absolute;
         top: 100%;
@@ -315,7 +315,7 @@
         z-index: 1000;
         backdrop-filter: blur(5px);
     }
-  
+
     .stat-card {
         border: 1px solid #ff3e00;
         padding: 1rem;
@@ -326,28 +326,28 @@
         transition: transform 0.3s ease;
         margin-bottom: 1rem;
     }
-  
+
     @media (min-width: 768px) {
         .stat-card {
             padding: 1.5rem;
             margin-bottom: 0;
         }
     }
-  
+
     .stats-overview {
         grid-column: 1 / -1;
         display: grid;
         grid-template-columns: 1fr;
         gap: 1rem;
     }
-  
+
     @media (min-width: 768px) {
         .stats-overview {
             grid-column: auto;
             grid-template-columns: repeat(2, 1fr);
         }
     }
-  
+
     .stat-item {
         transition: transform 0.3s ease;
         padding: 0.75rem;
@@ -356,7 +356,7 @@
         background: rgba(255, 62, 0, 0.03);
         font-size: 0.9em;
     }
-  
+
     @media (min-width: 768px) {
         .stat-item {
             padding: 1rem;
@@ -364,59 +364,59 @@
             font-size: 1em;
         }
     }
-  
+
     .stat-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 0.5rem;
         margin-top: 1rem;
     }
-  
+
     @media (min-width: 768px) {
         .stat-grid {
             gap: 1rem;
         }
     }
-  
+
     .stat-item.hoverable {
         transition: all 0.3s ease;
         cursor: pointer;
     }
-  
+
     .stat-item.hoverable:hover {
         transform: translateY(-5px) scale(1.02);
         background: rgba(255, 62, 0, 0.1);
-        box-shadow: 
+        box-shadow:
             0 5px 15px rgba(255, 62, 0, 0.2),
             0 0 0 1px rgba(255, 62, 0, 0.3);
     }
-  
+
     .stat-item.hoverable:hover .stat-value {
         text-shadow: 0 0 15px rgba(255, 62, 0, 0.8);
     }
-  
+
     .stat-label {
         display: block;
         font-size: 0.85em;
         margin-bottom: 0.25rem;
     }
-  
+
     .stat-value {
         display: block;
         font-size: 1.2em;
         font-weight: bold;
     }
-  
+
     .recent-accounts {
         grid-column: 1 / -1;
     }
-  
+
     @media (min-width: 768px) {
         .recent-accounts {
             grid-column: auto;
         }
     }
-  
+
     .account-item {
         display: grid;
         grid-template-columns: auto 1fr auto;
@@ -432,7 +432,7 @@
         margin-bottom: 0.5rem;
         font-size: 0.9em;
     }
-  
+
     @media (min-width: 768px) {
         .account-item {
             gap: 1rem;
@@ -440,13 +440,13 @@
             font-size: 1em;
         }
     }
-  
+
     .account-item:hover {
         background: rgba(255, 62, 0, 0.1);
         transform: translateX(5px);
         box-shadow: -5px 0 10px rgba(255, 62, 0, 0.3);
     }
-  
+
     .account-item::after {
         content: '';
         position: absolute;
@@ -463,11 +463,11 @@
         transform: skewX(-20deg);
         transition: 0.5s;
     }
-  
+
     .account-item:hover::after {
         left: 150%;
     }
-  
+
     .user-avatar {
         width: 28px;
         height: 28px;
@@ -479,7 +479,7 @@
         object-fit: cover;
         transition: all 0.3s ease;
     }
-  
+
     @media (min-width: 768px) {
         .user-avatar {
             width: 32px;
@@ -489,28 +489,28 @@
             margin-right: 0.75rem;
         }
     }
-  
+
     .account-info {
         overflow: hidden;
     }
-  
+
     .account-name {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         font-weight: bold;
     }
-  
+
     .account-time {
         font-size: 0.8em;
         opacity: 0.8;
     }
-  
+
     .account-id {
         font-size: 0.8em;
         white-space: nowrap;
     }
-  
+
     .time-display {
         grid-column: 1 / -1;
         text-align: center;
@@ -519,13 +519,13 @@
         background: rgba(255, 62, 0, 0.05);
         position: relative;
     }
-  
+
     @media (min-width: 768px) {
         .time-display {
             padding: 1rem;
         }
     }
-  
+
     .current-time {
         font-size: 1.8em;
         font-weight: bold;
@@ -534,13 +534,13 @@
         text-shadow: 0 0 10px rgba(255, 62, 0, 0.5);
         position: relative;
     }
-  
+
     @media (min-width: 768px) {
         .current-time {
             font-size: 2.5em;
         }
     }
-  
+
     .current-time::before {
         content: '';
         position: absolute;
@@ -552,12 +552,12 @@
         background: #ff3e00;
         animation: time-line 2s infinite;
     }
-  
+
     @keyframes time-line {
         0%, 100% { width: 30%; opacity: 0.3; }
         50% { width: 50%; opacity: 0.8; }
     }
-  
+
     h3 {
         margin: 0;
         font-size: 1.1em;
@@ -567,14 +567,14 @@
         display: inline-block;
         padding-bottom: 0.5rem;
     }
-  
+
     @media (min-width: 768px) {
         h3 {
             font-size: 1.2em;
             letter-spacing: 0.2em;
         }
     }
-  
+
     h3::after {
         content: '';
         position: absolute;

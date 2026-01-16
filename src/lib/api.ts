@@ -153,9 +153,9 @@ export const getPlayer = async (
 };
 
 export const pinScore = async (
-	scoreid: number, 
-	isPinned: boolean, 
-	currentUserId: number, 
+	scoreid: number,
+	isPinned: boolean,
+	currentUserId: number,
 	userId: number
 ) => {
 	const token = get(csrfToken);

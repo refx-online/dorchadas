@@ -152,7 +152,7 @@
 						class="absolute h-full w-full top-0 left-0 bg-no-repeat bg-top blur opacity-10"
 						style="background-image: url('https://b.remeliah.cyou/cover/{data.map.set_id}');"
 					></div>
-					
+
 					<div class="grid md:grid-cols-[auto_auto] gap-2">
 						<div class="w-full flex flex-col md:flex-row justify-center md:justify-start rounded-lg">
 							<div class="flex w-full md:hidden mb-1">
@@ -358,15 +358,15 @@
 							</button>
 						</div>
 					</div>
-					
+
 					{#if data.diffs && data.diffs.length > 1}
 						<div class="flex flex-row items-center gap-2 mt-3 z-10 relative">
 							{#if data.diffs.length < 9}
 								{#each data.diffs as diff}
 									<Popup placement="bottom">
 										<button
-											class="w-4 h-4 rounded-full transition-all duration-200 hover:scale-110 border-2 {diff.id === data.map.id 
-												? 'bg-white border-white' 
+											class="w-4 h-4 rounded-full transition-all duration-200 hover:scale-110 border-2 {diff.id === data.map.id
+												? 'bg-white border-white'
 												: 'bg-gray-500 border-gray-500 hover:bg-gray-400 hover:border-gray-400'}"
 											on:click={() => navigateToDiff(diff.id)}
 										>
@@ -385,8 +385,8 @@
 								{#each data.diffs.slice(0, 8) as diff}
 									<Popup placement="bottom">
 										<button
-											class="w-4 h-4 rounded-full transition-all duration-200 hover:scale-110 border-2 {diff.id === data.map.id 
-												? 'bg-white border-white' 
+											class="w-4 h-4 rounded-full transition-all duration-200 hover:scale-110 border-2 {diff.id === data.map.id
+												? 'bg-white border-white'
 												: 'bg-gray-500 border-gray-500 hover:bg-gray-400 hover:border-gray-400'}"
 											on:click={() => navigateToDiff(diff.id)}
 										>

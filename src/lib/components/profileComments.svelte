@@ -91,8 +91,8 @@
 <div class="card !bg-surface-700 w-full py-3 p-6">
     <div class="flex flex-col gap-5">
         {#if $userData}
-            <form 
-                method="POST" 
+            <form
+                method="POST"
                 action="?/addComment"
                 use:enhance={() => {
                     return async ({ update }) => {
@@ -113,8 +113,8 @@
                     minlength="1"
                     maxlength="500"
                 ></textarea>
-                <button 
-                    type="submit" 
+                <button
+                    type="submit"
                     class="btn variant-filled-primary w-fit ml-auto"
                     disabled={!newComment.trim()}
                 >
@@ -138,8 +138,8 @@
                 {#each comments as comment (comment.id)}
                     <div class="flex gap-4 p-4 bg-surface-600 rounded-lg">
                         <a href="/u/{comment.from_id}" class="shrink-0">
-                            <img 
-                                src="{avatarUrl}/{comment.from_id}" 
+                            <img
+                                src="{avatarUrl}/{comment.from_id}"
                                 alt="Avatar"
                                 class="w-12 h-12 rounded-full"
                             />
@@ -147,7 +147,7 @@
                         <div class="flex-1">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <a 
+                                    <a
                                         href="/u/{comment.from_id}"
                                         class="font-semibold hover:text-primary-400"
                                     >
@@ -160,7 +160,7 @@
                                         {/if}
                                     </span>
                                 </div>
-                                
+
                                 {#if $userData?.id === comment.from_id}
                                     <div class="flex gap-2">
                                         {#if editingCommentId === comment.id}
@@ -205,7 +205,7 @@
                                     </div>
                                 {/if}
                             </div>
-                            
+
                             {#if editingCommentId === comment.id}
                                 <textarea
                                     bind:value={editingContent}

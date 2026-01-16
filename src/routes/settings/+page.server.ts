@@ -75,7 +75,7 @@ export const actions = {
                 return fail(400, { message: `You're on timeout. ${hours.toString().padStart(2, '0')} hours ${minutes.toString().padStart(2, '0')} minutes left` });
             }
 
-            // get existing user from the new username, 
+            // get existing user from the new username,
             // if exist we throw username already taken
             const existingUser = await mysqlDatabase
                 .select('id')
@@ -111,7 +111,7 @@ export const actions = {
                     safe_name: safeName,
                     last_namechange: currentTime
                 });
-            
+
             // TODO: make this a bit cooler
             sendDiscordWebhookLog('change name', `${user.name} (${user.id}) -> ${newUsername} (${user.id})`)
 

@@ -138,20 +138,20 @@
                                 <div class="flex flex-col w-full truncate">
                                     <div class="flex flex-col lg:flex-row lg:items-center lg:gap-1 mb-1">
                                         <div class="text-sm font-bold truncate max-w-full" title={score.beatmap.title}>
-                                            {score.beatmap.title.length > 30 
-                                                ? score.beatmap.title.slice(0, 30) + '...' 
+                                            {score.beatmap.title.length > 30
+                                                ? score.beatmap.title.slice(0, 30) + '...'
                                                 : score.beatmap.title}
                                         </div>
                                         <div class="text-xs font-semibold truncate max-w-full" title={score.beatmap.artist}>
-                                            by {score.beatmap.artist.length > 20 
-                                                ? score.beatmap.artist.slice(0, 20) + '...' 
+                                            by {score.beatmap.artist.length > 20
+                                                ? score.beatmap.artist.slice(0, 20) + '...'
                                                 : score.beatmap.artist}
                                         </div>
                                     </div>
                                     <div class="flex flex-col lg:flex-row lg:gap-3">
                                         <span class="text-xs font-semibold text-yellow-600 truncate max-w-full" title={score.beatmap.version}>
-                                            {score.beatmap.version.length > 25 
-                                                ? score.beatmap.version.slice(0, 25) + '...' 
+                                            {score.beatmap.version.length > 25
+                                                ? score.beatmap.version.slice(0, 25) + '...'
                                                 : score.beatmap.version}
                                         </span>
                                         <Popup placement="right">
@@ -202,7 +202,7 @@
                                             <MoreVertical class="pointer-events-none" />
                                         </button>
                                         {#if openMenuIndex === idx}
-                                            <div 
+                                            <div
                                                 class="absolute z-[9999] right-0 top-full mt-1 bg-surface-600 rounded-lg shadow-lg border border-surface-400 w-max"
                                                 use:clickOutside={() => openMenuIndex = null}
                                             >
@@ -212,8 +212,8 @@
                                                         on:click|stopPropagation={() => handlePinScore(score)}
                                                     >
                                                         <Heart
-                                                            class="mr-2" 
-                                                            fill={score.pinned === 1 ? 'currentColor' : 'none'} 
+                                                            class="mr-2"
+                                                            fill={score.pinned === 1 ? 'currentColor' : 'none'}
                                                             stroke={score.pinned === 1 ? 'none' : 'currentColor'}
                                                         />
                                                         {score.pinned === 1 ? __('Unpin Score', $userLanguage) : __('Pin Score', $userLanguage)}

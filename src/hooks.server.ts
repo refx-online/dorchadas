@@ -25,7 +25,7 @@ let redisConnected = false;
 
 export const getMySQLDatabase = async (): Promise<knex_pkg.Knex | null> => {
 	if (mysqlDatabase && mysqlConnected) return mysqlDatabase;
-	
+
 	try {
 		console.log(chalk.gray('Connecting to MySQL database...'));
 		const tempMysqlDatabase = knex({
@@ -57,7 +57,7 @@ export const getRedisClient = async (): Promise<
 	> | null
 > => {
 	if (redisClient && redisConnected) return redisClient;
-	
+
 	const redisUser = env.REDIS_USER ?? undefined;
 	const redisPassword = env.REDIS_PASSWORD ?? undefined;
 	const redisHost = env.REDIS_HOST ?? '127.0.0.1';
@@ -103,7 +103,7 @@ export const getRedisClient = async (): Promise<
 
 		await tempRedisClient.connect();
 		await tempRedisClient.ping();
-		
+
 		console.log(chalk.green('Connected to Redis!'));
 		redisConnected = true;
 		return (redisClient = tempRedisClient);
@@ -156,7 +156,7 @@ export const safeRedisOperation = async <T>(
 
 export const attemptMySQLReconnection = async (): Promise<boolean> => {
 	if (mysqlConnected) return true;
-	
+
 	console.log(chalk.gray('Attempting MySQL reconnection...'));
 	const db = await getMySQLDatabase();
 	return db !== null;
@@ -164,7 +164,7 @@ export const attemptMySQLReconnection = async (): Promise<boolean> => {
 
 export const attemptRedisReconnection = async (): Promise<boolean> => {
 	if (redisConnected) return true;
-	
+
 	console.log(chalk.gray('Attempting Redis reconnection...'));
 	const client = await getRedisClient();
 	return client !== null;
@@ -172,7 +172,7 @@ export const attemptRedisReconnection = async (): Promise<boolean> => {
 
 export const initializeConnections = async (): Promise<void> => {
 	console.log(chalk.blue('Initializing database connections...'));
-	
+
 	const [mysqlResult, redisResult] = await Promise.allSettled([
 		getMySQLDatabase(),
 		getRedisClient()
@@ -192,7 +192,6 @@ export const initializeConnections = async (): Promise<void> => {
 
 	console.log(chalk.blue('Application startup complete'));
 };
-
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const { request, cookies } = event;
@@ -214,7 +213,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	if (STATE_CHANGING_METHODS.includes(request.method)) {
 		const contentType = request.headers.get('content-type') || '';
 
-		if (contentType.includes('application/x-www-form-urlencoded') || 
+		if (contentType.includes('application/x-www-form-urlencoded') ||
 			contentType.includes('multipart/form-data')) {
 			try {
 				const clonedRequest = request.clone();

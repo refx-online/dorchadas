@@ -7,7 +7,7 @@ import { env } from '$env/dynamic/private';
 export const DATA_DIRECTORY = env.DATA_DIRECTORY || '/app/.data';
 
 export const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
-export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+export const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 export const IMAGE_EXTENSIONS = {
     'image/jpeg': 'jpg',

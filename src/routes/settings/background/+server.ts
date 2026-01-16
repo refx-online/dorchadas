@@ -17,7 +17,7 @@ export const POST = async ({ request, cookies }) => {
 
         const formData = await request.formData();
         const file = formData.get('background') as File;
-        
+
         await validateImageFile(file);
 
         const bgDirectory = path.join(DATA_DIRECTORY, 'background');

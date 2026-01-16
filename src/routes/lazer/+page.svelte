@@ -3,12 +3,12 @@
     import { fade, scale } from 'svelte/transition';
     import { X } from 'svelte-feathers';
 
-    import { 
-        Download, 
-        Zap, 
-        Check, 
-        AlertCircle, 
-        TrendingUp, 
+    import {
+        Download,
+        Zap,
+        Check,
+        AlertCircle,
+        TrendingUp,
         Users,
         Tool,
         Server,
@@ -20,7 +20,7 @@
     let currentScreenshot = null;
     let touchStartX = 0;
     let touchEndX = 0;
-    
+
     const screenshots = [
       {
         id: 1,
@@ -42,7 +42,7 @@
     const downloadInfo = {
       url: "https://github.com/refx-online/osu/releases/"
     };
-    
+
     const workingStuff = [
         "Score Submission - yeah it works",
         "In-game Leaderboards - see your scores",
@@ -56,18 +56,18 @@
         "Chat System - kinda wonky rn but someday",
         "Friends List - also someday maybe",
     ];
-    
+
     function openLightbox(screenshot) {
         currentScreenshot = screenshot;
         lightboxOpen = true;
         document.body.style.overflow = 'hidden';
     }
-    
+
     function closeLightbox() {
         lightboxOpen = false;
         document.body.style.overflow = '';
     }
-    
+
     function handleKeydown(event) {
         if (lightboxOpen) {
             if (event.key === 'Escape') {
@@ -79,27 +79,27 @@
             }
         }
     }
-    
+
     function navigateScreenshot(direction) {
         if (!currentScreenshot) return;
-        
+
         const currentIndex = screenshots.findIndex(s => s.id === currentScreenshot.id);
         let newIndex = currentIndex + direction;
-        
+
         if (newIndex < 0) newIndex = screenshots.length - 1;
         if (newIndex >= screenshots.length) newIndex = 0;
-        
+
         currentScreenshot = screenshots[newIndex];
     }
-    
+
     function handleTouchStart(event) {
         touchStartX = event.touches[0].clientX;
     }
-    
+
     function handleTouchMove(event) {
         touchEndX = event.touches[0].clientX;
     }
-    
+
     function handleTouchEnd() {
         if (lightboxOpen) {
             const swipeDistance = touchEndX - touchStartX;
@@ -112,14 +112,14 @@
             }
         }
     }
-    
+
     onMount(() => {
       mounted = true;
       window.addEventListener('keydown', handleKeydown);
-      
+
       return () => {
         window.removeEventListener('keydown', handleKeydown);
-        document.body.style.overflow = ''; 
+        document.body.style.overflow = '';
       };
     });
 </script>
@@ -147,7 +147,7 @@
             <h1 class="text-5xl font-bold mb-3 text-white">osu!lazer</h1>
             <p class="text-xl text-gray-400 mt-4">it somehow works!</p>
         </header>
-        
+
         <section class="description mb-20 text-center mx-auto">
             <div class="flex items-center justify-center mb-6">
                 <Server class="mr-3 text-pink-400" size="24" />
@@ -157,11 +157,11 @@
                 so basically this is osu!lazer but connected to this server.
             </p>
             <p class="text-base max-w-2xl mx-auto text-gray-400">
-                lazer is still being ACTIVELY developed by the osu! team, and this server support is... a WORK in progress. 
+                lazer is still being ACTIVELY developed by the osu! team, and this server support is... a WORK in progress.
                 but the important stuff works, so you can actually play and submit scores.
             </p>
         </section>
-        
+
         <section class="screenshots mb-20">
             <div class="screenshot-grid">
                 {#each screenshots as screenshot}
@@ -170,15 +170,15 @@
                     </div>
                 {/each}
             </div>
-            
+
             {#if lightboxOpen && currentScreenshot}
-                <div class="lightbox-overlay" 
-                     on:click={closeLightbox} 
+                <div class="lightbox-overlay"
+                     on:click={closeLightbox}
                      on:touchstart={handleTouchStart}
                      on:touchmove={handleTouchMove}
                      on:touchend={handleTouchEnd}
                      transition:fade={{ duration: 300 }}>
-                    <div class="lightbox-content" 
+                    <div class="lightbox-content"
                          on:click|stopPropagation={() => {}}
                          transition:scale={{ duration: 300, start: 0.95 }}>
                         <img src={currentScreenshot.src} alt={currentScreenshot.alt} />
@@ -193,13 +193,13 @@
                 </div>
             {/if}
         </section>
-        
+
         <section class="status mb-20">
             <div class="flex items-center justify-center mb-8">
                 <Tool class="mr-3 text-pink-400" size="24" />
                 <h2 class="text-3xl font-semibold pb-2 border-b border-gray-800 text-white">what works (and what doesn't)</h2>
             </div>
-            
+
             <div class="status-grid">
                 <div class="status-box working">
                     <div class="status-header">
@@ -253,7 +253,7 @@
                 </p>
             </div>
         </section>
-        
+
         <section class="download mb-16">
             <div class="download-card">
                 <div class="download-content">
@@ -263,7 +263,7 @@
                 </div>
             </div>
         </section>
-        
+
     </div>
 
     {#if mounted}
@@ -279,7 +279,7 @@
         </div>
     {/if}
 </div>
-  
+
 <style>
     .lazer-container {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -287,7 +287,7 @@
         color: #f0f0f0;
         line-height: 1.6;
     }
-    
+
     h1, h2, h3 {
         font-weight: 700;
         letter-spacing: -0.02em;
@@ -298,33 +298,33 @@
         grid-template-columns: repeat(3, 1fr);
         gap: 2rem;
     }
-    
+
     .screenshot-card {
         background-color: #1a1a1a;
         border-radius: 12px;
         overflow: hidden;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-        transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), 
+        transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
                   box-shadow 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
         cursor: pointer;
     }
-    
+
     .screenshot-card:hover {
         transform: translateY(-10px);
         box-shadow: 0 18px 40px rgba(236, 72, 153, 0.3);
     }
-    
+
     .screenshot-card img {
         width: 100%;
         height: auto;
         display: block;
         transition: transform 0.5s ease;
     }
-    
+
     .screenshot-card:hover img {
         transform: scale(1.05);
     }
-    
+
     .lightbox-overlay {
         position: fixed;
         top: 0;
@@ -337,14 +337,14 @@
         justify-content: center;
         z-index: 1000;
     }
-    
+
     .lightbox-content {
         position: relative;
         max-width: 90%;
         max-height: 90%;
         margin: auto;
     }
-    
+
     .lightbox-content img {
         max-width: 100%;
         max-height: 85vh;
@@ -352,7 +352,7 @@
         border-radius: 4px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
     }
-    
+
     .lightbox-close {
         position: absolute;
         top: -40px;
@@ -368,11 +368,11 @@
         justify-content: center;
         transition: background-color 0.3s ease;
     }
-    
+
     .lightbox-close:hover {
         background-color: rgba(236, 72, 153, 0.5);
     }
-    
+
     .lightbox-nav {
         position: absolute;
         width: 100%;
@@ -382,7 +382,7 @@
         transform: translateY(-50%);
         padding: 0 20px;
     }
-    
+
     .nav-btn {
         background: rgba(0, 0, 0, 0.5);
         color: white;
@@ -397,7 +397,7 @@
         cursor: pointer;
         transition: background-color 0.3s ease;
     }
-    
+
     .nav-btn:hover {
         background-color: rgba(236, 72, 153, 0.7);
     }
@@ -465,7 +465,7 @@
         margin: 0 auto;
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
     }
-    
+
     .icon-wrapper {
         background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(236, 72, 153, 0.05));
         width: 80px;
@@ -478,7 +478,7 @@
         transition: transform 0.3s ease;
         border: 2px solid rgba(236, 72, 153, 0.3);
     }
-    
+
     .icon-wrapper:hover {
         transform: scale(1.1) rotate(-5deg);
     }
@@ -496,7 +496,7 @@
     .download-content {
         text-align: center;
     }
-    
+
     .download-button {
         background: linear-gradient(135deg, #ec4899, #db2777);
         color: white;
@@ -511,17 +511,17 @@
         align-items: center;
         border: 1px solid rgba(255, 255, 255, 0.2);
     }
-    
+
     .download-button:hover {
         background: linear-gradient(135deg, #db2777, #be185d);
         transform: translateY(-3px);
         box-shadow: 0 8px 20px rgba(236, 72, 153, 0.5);
     }
-    
+
     .download-button:active {
         transform: translateY(1px);
     }
-    
+
     @media (max-width: 900px) {
         .screenshot-grid {
             grid-template-columns: repeat(2, 1fr);
@@ -530,22 +530,22 @@
         .status-grid {
             grid-template-columns: 1fr;
         }
-        
+
         .lightbox-content {
             max-width: 95%;
         }
-        
+
         .nav-btn {
             width: 36px;
             height: 36px;
         }
     }
-    
+
     @media (max-width: 600px) {
         h1 {
             font-size: 2.5rem;
         }
-        
+
         .screenshot-grid {
             grid-template-columns: 1fr;
         }
@@ -553,7 +553,7 @@
         .info-card {
             padding: 1.5rem;
         }
-        
+
         .download-card {
             padding: 2rem 1rem;
         }
@@ -562,21 +562,21 @@
             padding: 0.875rem 1.75rem;
             font-size: 1rem;
         }
-        
+
         .lightbox-content img {
             max-height: 80vh;
         }
-        
+
         .lightbox-close {
             top: -35px;
         }
-        
+
         .nav-btn {
             width: 32px;
             height: 32px;
             font-size: 16px;
         }
-        
+
         .lightbox-nav {
             padding: 0 10px;
         }

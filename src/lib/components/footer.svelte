@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { 
-        appName, 
+    import {
+        appName,
         githubUrl,
         //twitterUrl,
         //youtubeUrl,
@@ -34,7 +34,7 @@
                 <ChevronUp size={24} class="transform transition-transform duration-300" />
             {/if}
         </button>
-        
+
         {#if $showFooter}
             <div transition:slide={{ duration: 300 }} class="bg-black/10">
                 <div class="p-3">
@@ -46,7 +46,7 @@
                                 using <a href="https://github.com/osuAkatsuki/bancho.py" class="text-blue-500 hover:underline" target="_blank">bancho.py</a> instance
                             </p>
                         </div>
-                        
+
                         <div>
                             <h3 class="font-semibold mb-1">{__('Quick Links', $userLanguage)}</h3>
                             <ul class="space-y-0.5">
@@ -100,7 +100,7 @@
     :global(.transform) {
         transform-origin: center;
     }
-    
+
     button:hover :global(.transform) {
         transform: scale(1.2);
     }

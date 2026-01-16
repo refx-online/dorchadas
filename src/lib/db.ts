@@ -48,20 +48,20 @@ export const getTopScores = async (opts: {
         const offset = opts.offset ?? 0;
 		// me when raw
         const scores = await mysqlDB.raw(`
-            SELECT s.status, s.id as scoreid, s.userid, s.pp, s.mods, s.grade, 
-                   m.set_id, m.title, m.version, m.artist, 
-                   u.country, u.name as username, 
-                   m.id as map_id, 
-                   ls.mods_json 
-            FROM scores s 
-            LEFT JOIN users u ON u.id = s.userid 
-            LEFT JOIN maps m ON m.md5 = s.map_md5 
-            LEFT JOIN lazer_scores ls ON ls.score_id = s.id 
-            WHERE s.mode = ? 
-            AND u.priv & 1 
-            AND m.status IN (2, 3) 
-            AND s.status = 2 
-            ORDER BY s.pp DESC 
+            SELECT s.status, s.id as scoreid, s.userid, s.pp, s.mods, s.grade,
+                   m.set_id, m.title, m.version, m.artist,
+                   u.country, u.name as username,
+                   m.id as map_id,
+                   ls.mods_json
+            FROM scores s
+            LEFT JOIN users u ON u.id = s.userid
+            LEFT JOIN maps m ON m.md5 = s.map_md5
+            LEFT JOIN lazer_scores ls ON ls.score_id = s.id
+            WHERE s.mode = ?
+            AND u.priv & 1
+            AND m.status IN (2, 3)
+            AND s.status = 2
+            ORDER BY s.pp DESC
             LIMIT ? OFFSET ?
         `, [opts.mode, limit, offset]);
 
@@ -79,12 +79,12 @@ export const getTopScoresCount = async (mode: number): Promise<number> => {
 
         const countResult = await mysqlDB.raw(`
             SELECT COUNT(*) as count
-            FROM scores s 
-            LEFT JOIN users u ON u.id = s.userid 
-            LEFT JOIN maps m ON m.md5 = s.map_md5 
-            WHERE s.mode = ? 
-            AND u.priv & 1 
-            AND m.status IN (2, 3) 
+            FROM scores s
+            LEFT JOIN users u ON u.id = s.userid
+            LEFT JOIN maps m ON m.md5 = s.map_md5
+            WHERE s.mode = ?
+            AND u.priv & 1
+            AND m.status IN (2, 3)
             AND s.status = 2
         `, [mode]);
 
@@ -103,35 +103,35 @@ export const getPlayCountResults = async (requestedUserId: string): Promise<Reco
         // https://github.com/osu-NoLimits/Shiina-Web/blob/33926947f5420cf2429cedd66639462d4338f62e/src/main/java/dev/osunolimits/routes/get/User.java#L110
         // Thanks marc
         const playCountResults = await mysqlDB.raw(
-            `WITH RECURSIVE month_list AS ( 
-                SELECT 
+            `WITH RECURSIVE month_list AS (
+                SELECT
                     DATE_FORMAT(DATE_SUB(MIN(play_time), INTERVAL 1 MONTH), '%Y-%m-01') AS month,
                     DATE_FORMAT(DATE_SUB(MIN(play_time), INTERVAL 1 MONTH), '%M') AS month_name
-                FROM scores 
-                WHERE userid = ? 
-                UNION ALL 
-                SELECT 
+                FROM scores
+                WHERE userid = ?
+                UNION ALL
+                SELECT
                     DATE_ADD(month, INTERVAL 1 MONTH),
                     DATE_FORMAT(DATE_ADD(month, INTERVAL 1 MONTH), '%M')
-                FROM month_list 
-                WHERE month < DATE_FORMAT(CURRENT_DATE, '%Y-%m-01') 
-            ) 
-            SELECT 
-                CONCAT(DATE_FORMAT(ml.month, '%Y'), ' ', ml.month_name) AS month, 
-                COALESCE(COUNT(s.play_time), 0) AS play_count 
-            FROM month_list ml 
-            LEFT JOIN scores s ON DATE_FORMAT(s.play_time, '%Y-%m') = DATE_FORMAT(ml.month, '%Y-%m') 
-                AND s.userid = ? 
+                FROM month_list
+                WHERE month < DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')
+            )
+            SELECT
+                CONCAT(DATE_FORMAT(ml.month, '%Y'), ' ', ml.month_name) AS month,
+                COALESCE(COUNT(s.play_time), 0) AS play_count
+            FROM month_list ml
+            LEFT JOIN scores s ON DATE_FORMAT(s.play_time, '%Y-%m') = DATE_FORMAT(ml.month, '%Y-%m')
+                AND s.userid = ?
             GROUP BY ml.month, ml.month_name
             ORDER BY ml.month ASC`,
             [requestedUserId, requestedUserId]
         );
-        
+
         const playCountGraph: Record<string, number> = {};
         playCountResults[0].forEach((row: any) => {
             playCountGraph[row.month] = row.play_count;
         });
-        
+
         return playCountGraph;
     } catch (error) {
         console.error('failed to retrieve play count graph', error);
@@ -159,25 +159,25 @@ export const getUserRelationships = async (requestedUserId: string, ourUser: any
     // also thanks again marc im copying ur logic again
     if (ourUser?.id) {
         const statusResult = await mysqlDB.raw(
-            `SELECT 
-                CASE 
+            `SELECT
+                CASE
                     WHEN EXISTS (
-                        SELECT 1 FROM relationships r2 
+                        SELECT 1 FROM relationships r2
                         WHERE r2.user1 = r.user2 AND r2.user2 = r.user1
                     ) THEN 'mutual'
                     WHEN r.user1 = ? THEN 'known'
-                    ELSE 'follower' 
+                    ELSE 'follower'
                 END AS status
             FROM relationships r
-            WHERE 
-                (r.user1 = ? AND r.user2 = ?) OR 
+            WHERE
+                (r.user1 = ? AND r.user2 = ?) OR
                 (r.user1 = ? AND r.user2 = ?)
             LIMIT 1`,
             [
-                ourUser?.id, 
-                ourUser?.id, 
-                parseInt(requestedUserId), 
-                parseInt(requestedUserId), 
+                ourUser?.id,
+                ourUser?.id,
+                parseInt(requestedUserId),
+                parseInt(requestedUserId),
                 ourUser?.id
             ]
         );
@@ -240,7 +240,7 @@ export const addFriend = async (userID: number, friendID: number): Promise<void>
 
 export const removeFriend = async (userID: number, friendID: number): Promise<void> => {
     if (userID === friendID) return;
-    
+
     const mysqlDB = await getMySQLDatabase();
     if (!mysqlDB) return;
 
@@ -276,7 +276,7 @@ export const getOldUsername = async (userID: number, currUsername?: string): Pro
 
 export const batchFetchTitles = async (logs: UsersLog[]): Promise<Record<number, string>> => {
 	const results: Record<number, string> = {};
-	
+
 	try {
 		const mysqlDB = await getMySQLDatabase();
 		if (!mysqlDB) return results;
@@ -284,7 +284,7 @@ export const batchFetchTitles = async (logs: UsersLog[]): Promise<Record<number,
 		const scoreLogIds = logs
 			.filter(log => log.type === 'rank' || log.type === 'lost')
 			.map(log => log.type_id);
-		
+
 		const mapLogIds = logs
 			.filter(log => log.type === 'submit' || log.type === 'update')
 			.map(log => log.type_id);
@@ -295,7 +295,7 @@ export const batchFetchTitles = async (logs: UsersLog[]): Promise<Record<number,
 				.whereIn('id', scoreLogIds);
 
 			const mapMd5s = scoreResults.map(score => score.map_md5);
-			
+
 			if (mapMd5s.length > 0) {
 				const mapResults = await mysqlDB('maps')
 					.select('md5', 'artist', 'title', 'version')

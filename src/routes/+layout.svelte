@@ -106,7 +106,7 @@
 	const nervNavItems = [
 		{ title: 'Nerv', icon: '⏾', path: '/nerv', description: 'Dashboard' },
     ];
-    
+
     function getRandomOffset() {
         return (Math.random() - 0.5) * 20;
     }
@@ -216,7 +216,7 @@
             {#each nervNavItems as item, i}
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <!-- svelte-ignore a11y-no-static-element-interactions -->
-                <div 
+                <div
                     class="honeycomb-item"
                     class:hovered={hoveredIndex === i}
                     class:active={$page.url.pathname === item.path}
@@ -226,10 +226,10 @@
                     style="--delay: {i * 0.1}s"
                 >
                     {#if hoveredIndex === i}
-                        <div 
+                        <div
                             class="honeycomb-content"
-                            transition:fly="{{ 
-                                x: getRandomOffset(), 
+                            transition:fly="{{
+                                x: getRandomOffset(),
                                 y: getRandomOffset(),
                                 duration: 400,
                                 easing: elasticOut
@@ -277,7 +277,7 @@
 							<NavItems {drawerStore} />
 						</div>
 						<div class="flex flex-row gap-5 items-center">
-							<button 
+							<button
 								class="btn px-2 py-2 rounded-lg variant-ghost-surface hidden md:block"
 								on:click={() => goto('/donate')}
 							>
@@ -540,14 +540,14 @@
             transform: translateY(29px) scale(1.1);
         }
     }
-	.restriction-warning-card { 
+	.restriction-warning-card {
         width: 180px;
         background: rgba(20, 20, 20, 0.9);
         border: 1px solid rgba(100, 100, 100, 0.3);
         border-radius: 12px;
         padding: 16px;
         backdrop-filter: blur(10px);
-        box-shadow: 
+        box-shadow:
             0 8px 32px rgba(0, 0, 0, 0.3),
             inset 0 1px 0 rgba(255, 255, 255, 0.1),
             0 0 0 1px rgba(255, 255, 255, 0.05);
@@ -562,9 +562,9 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(135deg, 
-            rgba(255, 255, 255, 0.1) 0%, 
-            transparent 50%, 
+        background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.1) 0%,
+            transparent 50%,
             rgba(255, 255, 255, 0.05) 100%);
         pointer-events: none;
     }
@@ -609,7 +609,7 @@
             width: 160px;
             padding: 12px;
         }
-        
+
         .discord-btn {
             padding: 6px 12px;
             font-size: 10px;

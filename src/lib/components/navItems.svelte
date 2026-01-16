@@ -7,9 +7,9 @@
 	import { avatarUrl } from '$lib/env';
 	import { goto } from '$app/navigation';
 	import { githubUrl } from '$lib/env';
-	
+
 	export let drawerStore: DrawerStore;
-	
+
 	const downloadsPages = ['/patcher', '/lazer', '/client'];
 	$: isDownloadsActive = downloadsPages.includes($page.data.url);
 </script>

@@ -59,15 +59,15 @@
                 <div class="relative group">
                     <div class="{donor.backgroundColor} rounded-2xl shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-4xl p-6">
                         <div class="flex items-center mb-6">
-                            <img 
-                                src={donor.avatar} 
-                                alt="{donor.name}'s avatar" 
+                            <img
+                                src={donor.avatar}
+                                alt="{donor.name}'s avatar"
                                 class="w-20 h-20 rounded-full border-4 border-white/30 mr-6 object-cover"
                             />
                             <div>
-                                <a 
-                                    href={donor.profileUrl} 
-                                    target="_blank" 
+                                <a
+                                    href={donor.profileUrl}
+                                    target="_blank"
                                     class="text-2xl font-bold text-white hover:underline"
                                 >
                                     {donor.name}
@@ -80,9 +80,9 @@
                             <p class="text-white mb-4">
                                 {__('Buy me a coffee to keep the code brewing!', $userLanguage)}
                             </p>
-                            <a 
-                                href={donor.kofiLink} 
-                                target="_blank" 
+                            <a
+                                href={donor.kofiLink}
+                                target="_blank"
                                 class="inline-block bg-white text-primary-600 px-6 py-3 rounded-full font-bold hover:bg-primary-50 transition-all"
                             >
                                 ☕ {__('Donate on Ko-Fi', $userLanguage)}

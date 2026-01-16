@@ -15,8 +15,8 @@
 </svelte:head>
 
 <div class="content container mx-auto px-4 py-8 relative z-[2]">
-    <section 
-        class="section relative z-[3]" 
+    <section
+        class="section relative z-[3]"
         in:slide="{{ duration: 300, axis: 'x' }}"
         out:fade="{{ duration: 200 }}"
     >

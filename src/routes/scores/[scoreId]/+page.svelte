@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { 
-		appName, 
-		appUrl, 
-		apiUrl, 
-		avatarUrl 
+	import {
+		appName,
+		appUrl,
+		apiUrl,
+		avatarUrl
 	} from '$lib/env';
 
 	import Download from 'svelte-feathers/Download.svelte';
@@ -93,19 +93,19 @@
 											</linearGradient>
 											<filter id="glow">
 												<feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-												<feMerge> 
+												<feMerge>
 													<feMergeNode in="coloredBlur"/>
 													<feMergeNode in="SourceGraphic"/>
 												</feMerge>
 											</filter>
 										</defs>
 										<circle cx="50" cy="50" r="45" fill="none" stroke="url(#ringGradient)" stroke-width="2" opacity="0.5"/>
-										<circle 
-											cx="50" 
-											cy="50" 
-											r="45" 
-											fill="none" 
-											stroke="url(#progressGradient)" 
+										<circle
+											cx="50"
+											cy="50"
+											r="45"
+											fill="none"
+											stroke="url(#progressGradient)"
 											stroke-width="3"
 											stroke-dasharray="{2 * Math.PI * 45}"
 											stroke-dashoffset="{2 * Math.PI * 45 * (1 - data.score.acc / 100)}"
@@ -195,8 +195,8 @@
 				<div class="relative z-10 p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
 					<div class="flex items-center gap-3 sm:gap-4">
 						<div class="w-12 h-12 sm:w-16 sm:h-16 bg-gray-600 rounded-full overflow-hidden flex-shrink-0">
-							<img 
-								src="{avatarUrl}/{data.score.userid}" 
+							<img
+								src="{avatarUrl}/{data.score.userid}"
 								alt="{data.player?.name} avatar"
 								class="w-full h-full object-cover"
 							/>
@@ -206,8 +206,8 @@
 						</div>
 					</div>
 					<div class="flex gap-3 w-full sm:w-auto">
-						<a 
-							href="{apiUrl}/v1/get_play?id={data.score.id}" 
+						<a
+							href="{apiUrl}/v1/get_play?id={data.score.id}"
 							class="bg-gray-600 hover:bg-gray-700 text-white px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 flex-1 sm:flex-initial"
 						>
 							<Download size={16} />

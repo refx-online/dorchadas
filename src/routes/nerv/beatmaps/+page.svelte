@@ -3,7 +3,7 @@
     import { page } from "$app/stores";
     import { scale } from 'svelte/transition';
     import { ChevronDown, Music, Shield, Heart, AlertTriangle } from "svelte-feathers";
-  
+
     let beatmapId: string = "";
     let beatmapIdError: string = "";
     let beatmapInfo: any = null;
@@ -11,66 +11,66 @@
     let actionStatus: string = "";
     let actionMessage: string = "";
     let hasPermission: boolean = true;
-    
+
     let recentActions = [
       { id: 2813456, title: "Camellia - GHOST", artist: "Camellia", mapper: "Riviclia", action: "ranked", timestamp: Date.now() - 82800000 },
       { id: 2704845, title: "Lime - Smiling", artist: "Lime", mapper: "Sotarks", action: "loved", timestamp: Date.now() - 172800000 },
       { id: 2659382, title: "UNDEAD CORPORATION - Everything will freeze", artist: "UNDEAD CORPORATION", mapper: "Ekoro", action: "unranked", timestamp: Date.now() - 345600000 },
     ];
-  
+
     const formatDate = (timestamp: number) => {
       const date = new Date(timestamp);
       return date.toLocaleString('en-US', {
-        year: 'numeric', 
-        month: 'short', 
+        year: 'numeric',
+        month: 'short',
         day: 'numeric',
         hour: '2-digit',
         minute: '2-digit'
       });
     };
-  
+
     const formatTime = (seconds: number): string => {
       const minutes = Math.floor(seconds / 60);
       const remainingSeconds = Math.floor(seconds % 60);
       return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     };
-  
+
     const validateBeatmapId = () => {
       if (!beatmapId.trim()) {
         beatmapIdError = "Beatmap ID is required";
         return false;
       }
-      
+
       const numericId = parseInt(beatmapId.trim());
       if (isNaN(numericId) || numericId <= 0) {
         beatmapIdError = "Beatmap ID must be a positive number";
         return false;
       }
-      
+
       beatmapIdError = "";
       return true;
     };
-  
+
     const fetchBeatmapInfo = async () => {
       if (!validateBeatmapId()) return;
-      
+
       isLoading = true;
       actionStatus = "";
       actionMessage = "";
-      
+
       try {
         const response = await fetch(`/api/beatmaps/${beatmapId}`);
-        
+
         if (!response.ok) {
           throw new Error("Failed to fetch beatmap");
         }
-        
+
         const data = await response.json();
-        
+
         if (data.status !== 'success' || !data.map) {
           throw new Error("Beatmap not found");
         }
-        
+
         beatmapInfo = {
           id: data.map.id,
           title: data.map.title,
@@ -94,7 +94,7 @@
           mode: data.map.mode,
           thumbnail: `https://assets.ppy.sh/beatmaps/${data.map.set_id}}/covers/cover@2x.jpg`
         };
-        
+
       } catch (error) {
         console.error("Error fetching beatmap:", error);
         beatmapInfo = null;
@@ -104,7 +104,7 @@
         isLoading = false;
       }
     };
-    
+
     const mapStatusToString = (status: number): string => {
       switch (status) {
         case -2: return "graveyard";
@@ -130,17 +130,17 @@
         default: return 0;
       }
     };
-  
+
     const performAction = async (action: 'rank' | 'unrank' | 'love') => {
       if (!beatmapInfo) return;
-      
+
       isLoading = true;
       actionStatus = "";
       actionMessage = "";
-      
+
       try {
-        const targetStatus = action === 'rank' 
-          ? 'ranked' 
+        const targetStatus = action === 'rank'
+          ? 'ranked'
           : (action === 'love' ? 'loved' : 'pending');
 
         const response = await fetch(`/api/beatmaps/${beatmapInfo.id}/status`, {
@@ -148,18 +148,18 @@
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ 
-            action, 
+          body: JSON.stringify({
+            action,
             targetStatus: mapStatusToNumber(targetStatus),
             beatmapId: beatmapInfo.id
           })
         });
-        
+
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.message || `Failed to ${action} beatmap`);
         }
-        
+
         const oldStatus = beatmapInfo.status;
         beatmapInfo.status = targetStatus;
 
@@ -170,9 +170,9 @@
         } else if (action === 'love') {
           actionMessage = `Beatmap ${beatmapInfo.id} has been loved successfully`;
         }
-        
+
         actionStatus = "success";
-        
+
         recentActions = [{
           id: beatmapInfo.id,
           title: beatmapInfo.title,
@@ -181,7 +181,7 @@
           action: action + (action === 'rank' ? 'ed' : (action === 'unrank' ? 'ed' : 'd')),
           timestamp: Date.now()
         }, ...recentActions.slice(0, 4)];
-        
+
       } catch (error) {
         console.error(`Error ${action}ing beatmap:`, error);
         actionStatus = "error";
@@ -190,7 +190,7 @@
         isLoading = false;
       }
     };
-  
+
     onMount(() => {
       const urlBeatmapId = new URLSearchParams(window.location.search).get('id');
       if (urlBeatmapId && /^\d+$/.test(urlBeatmapId)) {
@@ -199,12 +199,12 @@
       }
     });
   </script>
-  
+
   <svelte:head>
     <title>NERV :: Beatmap Ranking</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </svelte:head>
-  
+
   <div class="nerv-container">
     <div class="header-section">
       <div class="terminal-effect">
@@ -215,22 +215,22 @@
         <div class="subtitle">// Clearance level: BAT required for modifications //</div>
       </div>
     </div>
-  
+
     <div class="control-section">
       <div class="beatmap-lookup">
         <div class="form-group">
           <label for="beatmap-id">Beatmap ID</label>
           <div class="input-wrapper">
-            <input 
-              type="text" 
+            <input
+              type="text"
               id="beatmap-id"
               bind:value={beatmapId}
               on:input={() => beatmapIdError = ""}
               placeholder="Enter beatmap ID..."
               class:error={beatmapIdError}
             />
-            <button 
-              class="lookup-btn" 
+            <button
+              class="lookup-btn"
               on:click={fetchBeatmapInfo}
               disabled={isLoading}
             >
@@ -250,16 +250,16 @@
         </div>
       </div>
     </div>
-  
+
     {#if actionStatus}
-      <div 
-        class="action-message {actionStatus}" 
+      <div
+        class="action-message {actionStatus}"
         transition:scale={{ start: 0.95, duration: 200 }}
       >
         {actionMessage}
       </div>
     {/if}
-  
+
     {#if beatmapInfo}
       <div class="beatmap-info" transition:scale={{ start: 0.95, duration: 300 }}>
         <div class="beatmap-header">
@@ -275,7 +275,7 @@
             <div class="beatmap-artist">{beatmapInfo.artist}</div>
             <div class="beatmap-mapper">Mapped by: {beatmapInfo.creator}</div>
             <div class="beatmap-difficulty">Version: {beatmapInfo.version}</div>
-            
+
             <div class="beatmap-stats">
               <div class="stat">
                 <div class="stat-label">BPM</div>
@@ -306,7 +306,7 @@
                 <div class="stat-value">{beatmapInfo.hp.toFixed(1)}</div>
               </div>
             </div>
-            
+
             <div class="additional-stats">
               <div class="additional-stat">Max Combo: {beatmapInfo.maxCombo}</div>
               <div class="additional-stat">Plays: {beatmapInfo.plays.toLocaleString()}</div>
@@ -314,10 +314,10 @@
             </div>
           </div>
         </div>
-  
+
         <div class="action-buttons">
-          <button 
-            class="action-btn rank-btn" 
+          <button
+            class="action-btn rank-btn"
             on:click={() => {
               performAction('rank');
             }}
@@ -326,8 +326,8 @@
             <Shield class="btn-icon" />
             RANK
           </button>
-          <button 
-            class="action-btn unrank-btn" 
+          <button
+            class="action-btn unrank-btn"
             on:click={() => {
               performAction('unrank');
             }}
@@ -336,8 +336,8 @@
             <ChevronDown class="btn-icon" />
             UNRANK
           </button>
-          <button 
-            class="action-btn love-btn" 
+          <button
+            class="action-btn love-btn"
             on:click={() => {
               performAction('love');
             }}
@@ -349,7 +349,7 @@
         </div>
       </div>
     {/if}
-  
+
     <div class="recent-actions">
       <h3>Recent Actions</h3>
       <div class="actions-list">
@@ -387,7 +387,7 @@
     flex-direction: column;
     gap: 1.5rem;
     border: 2px solid #ff3e00;
-    box-shadow: 
+    box-shadow:
         0 0 20px rgba(255, 62, 0, 0.5),
         inset 0 0 15px rgba(255, 62, 0, 0.3);
     position: relative;
@@ -479,7 +479,7 @@
       font-size: 1.5em;
       letter-spacing: 0.2em;
     }
-    
+
     .title-icon {
       width: 32px;
       height: 32px;
@@ -509,7 +509,7 @@
       flex-direction: row;
       align-items: flex-start;
     }
-    
+
     .beatmap-lookup {
       flex: 1;
     }
@@ -647,11 +647,11 @@
     .beatmap-header {
       flex-direction: row;
     }
-    
+
     .thumbnail-container {
       width: 240px;
     }
-    
+
     .beatmap-details {
       flex: 1;
     }

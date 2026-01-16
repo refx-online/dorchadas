@@ -50,7 +50,7 @@
 	});
 </script>
 
-<div 
+<div
 	class="donator-username-container"
 	role="button"
 	tabindex="0"
@@ -60,13 +60,13 @@
 >
 	<div class="username-wrapper">
 		<svg class="star-icon" viewBox="0 0 24 24">
-			<path 
-				d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" 
-				fill={particleColor} 
+			<path
+				d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+				fill={particleColor}
 			/>
 		</svg>
 
-		<div 
+		<div
 			class="donator-username"
 			style="
 				background: linear-gradient(45deg, {gradientColors[0]}, {gradientColors[1]});
@@ -79,40 +79,40 @@
 		</div>
 
 		<svg class="star-icon" viewBox="0 0 24 24">
-			<path 
-				d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" 
-				fill={particleColor} 
+			<path
+				d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+				fill={particleColor}
 			/>
 		</svg>
 	</div>
 
 	<div class="sparkle-container">
 		{#each sparkles as sparkle (sparkle.id)}
-			<svg 
-				class="sparkle" 
-				viewBox="0 0 24 24" 
+			<svg
+				class="sparkle"
+				viewBox="0 0 24 24"
 				style="
-					left: {sparkle.x}%; 
-					top: {sparkle.y}%; 
-					width: {sparkle.size}px; 
+					left: {sparkle.x}%;
+					top: {sparkle.y}%;
+					width: {sparkle.size}px;
 					height: {sparkle.size}px;
 				"
 			>
-				<path 
-					d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" 
+				<path
+					d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
 					fill={sparkleColor}
 				/>
 			</svg>
 		{/each}
 
 		{#each particles as particle (particle.id)}
-			<div 
-				class="particle" 
+			<div
+				class="particle"
 				style="
-					left: {particle.x}%; 
-					top: {particle.y}%; 
-					width: {particle.size}px; 
-					height: {particle.size}px; 
+					left: {particle.x}%;
+					top: {particle.y}%;
+					width: {particle.size}px;
+					height: {particle.size}px;
 					opacity: {particle.opacity};
 				"
 			></div>

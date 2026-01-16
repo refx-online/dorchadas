@@ -24,7 +24,7 @@
 	function filterRecentCaptures(captures: any[]): any[] {
 		const now = new Date().getTime();
 		const maxAge = 89 * 24 * 60 * 60 * 1000;
-		
+
 		return captures.filter(capture => {
 			const captureTime = new Date(capture.captured_at).getTime();
 			return (now - captureTime) <= maxAge;
@@ -35,7 +35,7 @@
 		const currentTime = new Date().getTime();
 		const inputTime = new Date(date).getTime();
 		const diffDays = Math.floor((currentTime - inputTime) / (1000 * 60 * 60 * 24));
-		
+
 		if (diffDays === 0) {
 			const todayDates = allDates
 				.filter(d => {
@@ -49,10 +49,10 @@
 			}
 			return '1 day ago';
 		}
-		
+
 		return diffDays === 1 ? '2 days ago' : `${diffDays + 1} days ago`;
 	}
-	
+
 	async function loadChart() {
 		if (!isReady || !chartElement) {
 			return;
@@ -76,7 +76,7 @@
 				chart = null;
 			}
 
-			const captures = query === 'pp' 
+			const captures = query === 'pp'
 				? ppHistory?.data.captures
 				: rankHistory?.data.captures;
 
@@ -92,7 +92,7 @@
 				return;
 			}
 
-			const sortedCaptures = filteredCaptures.sort((a, b) => 
+			const sortedCaptures = filteredCaptures.sort((a, b) =>
 				new Date(a.captured_at).getTime() - new Date(b.captured_at).getTime()
 			);
 
@@ -106,7 +106,7 @@
 				originalDate: c.captured_at
 			}));
 
-			const peakDataPoints = query === 'rank' && peakRankHistory?.data.captures 
+			const peakDataPoints = query === 'rank' && peakRankHistory?.data.captures
 				? filterRecentCaptures(peakRankHistory.data.captures).map((c, index) => ({
 					x: index,
 					y: c.rank,
@@ -232,10 +232,10 @@
 						const { ctx, chartArea, scales } = chart;
 
 						const tooltipActiveElements = chart.tooltip?.getActiveElements();
-						
+
 						if (tooltipActiveElements?.length) {
 							const activePoint = tooltipActiveElements[0];
-							
+
 							ctx.save();
 							ctx.beginPath();
 							ctx.moveTo(activePoint.element.x, chartArea.top);
@@ -275,12 +275,12 @@
 
 <div class="flex flex-col gap-2 w-full">
 	<div class="flex gap-2 justify-end">
-		<button 
+		<button
 			class="px-2 py-1 text-sm rounded {query === 'pp' ? 'bg-indigo-500' : 'bg-surface-200'}"
 			on:click={() => { query = 'pp'; }}>
 			pp
 		</button>
-		<button 
+		<button
 			class="px-2 py-1 text-sm rounded {query === 'rank' ? 'bg-indigo-500' : 'bg-surface-200'}"
 			on:click={() => { query = 'rank'; }}>
 			Rank

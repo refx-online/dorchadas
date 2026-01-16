@@ -17,12 +17,12 @@
 
     function t(timestamp?: number): number {
         if (!timestamp || timestamp === 0) return Date.now();
-        
+
         const now = Date.now();
         if (timestamp < now / 1000) {
             return timestamp * 1000;
         }
-        
+
         return timestamp;
     }
 
@@ -31,15 +31,15 @@
             ...data.friends.map(friend => getPlayerStatus(friend.id)),
             ...data.followers.map(follower => getPlayerStatus(follower.id))
         ];
-        
+
         const statuses = await Promise.all(statusPromises);
-        
+
         statuses.forEach((status, index) => {
             if (status) {
-                const user = index < data.friends.length 
-                    ? data.friends[index] 
+                const user = index < data.friends.length
+                    ? data.friends[index]
                     : data.followers[index - data.friends.length];
-                
+
                 playerStatusMap[user.id] = status.player_status;
             }
         });
@@ -47,13 +47,13 @@
 
     function getOnlineStatus(userId: number) {
         return playerStatusMap[userId]?.online
-            ? { 
-                circlething: 'bg-green-500 border-green-600', 
-                text: __('Online', $userLanguage) 
+            ? {
+                circlething: 'bg-green-500 border-green-600',
+                text: __('Online', $userLanguage)
             }
-            : { 
-                circlething: 'bg-gray-400 border-surface-400', 
-                text: __('Offline', $userLanguage) 
+            : {
+                circlething: 'bg-gray-400 border-surface-400',
+                text: __('Offline', $userLanguage)
             };
     }
 </script>
@@ -66,14 +66,14 @@
     <div class="mx-auto card">
         <div class="bg-surface-800 p-4 sm:p-7">
             <div class="flex flex-col sm:flex-row gap-2 sm:gap-4 mb-6">
-                <button 
+                <button
                     class="btn w-full sm:w-auto {activeTab === 'friends' ? 'variant-filled-primary' : 'variant-soft'} flex items-center justify-center gap-2"
                     on:click={() => activeTab = 'friends'}
                 >
                     <Users class="w-5 h-5" />
                     <span class="whitespace-nowrap">{data.friends.length} {__('Friends', $userLanguage)}</span>
                 </button>
-                <button 
+                <button
                     class="btn w-full sm:w-auto {activeTab === 'followers' ? 'variant-filled-primary' : 'variant-soft'} flex items-center justify-center gap-2"
                     on:click={() => activeTab = 'followers'}
                 >
@@ -81,19 +81,19 @@
                     <span class="whitespace-nowrap">{data.followers.length} {__('Followers', $userLanguage)}</span>
                 </button>
             </div>
-            
+
             <!-- Friends -->
             {#if activeTab === 'friends'}
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {#each data.friends as friend (friend.id)}
-                        <div 
+                        <div
                             class="relative flex flex-col justify-end p-4 h-40 rounded-lg overflow-hidden transition-all duration-300 hover:ring-2 hover:ring-primary-500"
-                            style="background-image: url('/u/{friend.id}/cover'); 
-                                background-size: cover; 
+                            style="background-image: url('/u/{friend.id}/cover');
+                                background-size: cover;
                                 background-position: center;"
                         >
                             <div class="absolute inset-0 bg-black opacity-50"></div>
-                            
+
                             <div class="relative z-10 flex items-center">
                                 <div class="relative mr-4">
                                     <span
@@ -113,7 +113,7 @@
                                     {/if}
 
                                     <div class="flex items-center gap-2 mb-1">
-                                        <div 
+                                        <div
                                             class="w-3 h-3 rounded-full border-2 {getOnlineStatus(friend.id).circlething}"
                                         ></div>
                                         <span class="text-sm text-white">
@@ -163,14 +163,14 @@
             {#if activeTab === 'followers'}
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {#each data.followers as follower (follower.id)}
-                        <div 
+                        <div
                             class="relative flex flex-col justify-end p-4 h-40 rounded-lg overflow-hidden transition-all duration-300 hover:ring-2 hover:ring-primary-500"
-                            style="background-image: url('/u/{follower.id}/cover'); 
-                                background-size: cover; 
+                            style="background-image: url('/u/{follower.id}/cover');
+                                background-size: cover;
                                 background-position: center;"
                         >
                             <div class="absolute inset-0 bg-black opacity-50"></div>
-                            
+
                             <div class="relative z-10 flex items-center">
                                 <div class="relative mr-4">
                                     <span
@@ -190,7 +190,7 @@
                                     {/if}
 
                                     <div class="flex items-center gap-2 mb-1">
-                                        <div 
+                                        <div
                                             class="w-3 h-3 rounded-full border-2 {getOnlineStatus(follower.id).circlething}"
                                         ></div>
                                         <span class="text-sm text-white">

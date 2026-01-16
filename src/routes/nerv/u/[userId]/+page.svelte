@@ -58,7 +58,7 @@
 
     const truncateText = (text: string, limit: number) => {
         if (text === null) return "";
-        
+
         return text.length > limit ? text.slice(0, limit) + '...' : text;
     };
 
@@ -70,12 +70,12 @@
         const action = isUserRestricted ? 'unrestrict' : 'restrict';
         const form = new FormData();
         form.append('userId', data.user.id.toString());
-        
+
         const res = await fetch(`?/${action}User`, {
             method: 'POST',
             body: form
         });
-        
+
         const result = await res.json();
         addNotification(`User ${action}ed successfully`);
         data.user.priv = result.newPriv;
@@ -134,7 +134,7 @@
 
         addNotification('User data wiped successfully');
         showWipeConfirm = false;
-        
+
     };
 
     const getPrivilegesList = () => {
@@ -183,9 +183,9 @@
     </div>
 
     <div class="user-header" transition:fade>
-        <img 
+        <img
             src={avatarUrl + '/' + data.user.id}
-            alt={data.user.name} 
+            alt={data.user.name}
             class="user-avatar"
         />
         <h1 class="user-name">{data.user.name}</h1>
@@ -194,21 +194,21 @@
     <div class="moderation-panel" transition:fade>
         <h2>Moderation Actions</h2>
         <div class="moderation-buttons">
-            <button 
+            <button
                 class="mod-button {isUserRestricted ? 'warning' : ''}"
                 on:click={handleRestriction}
             >
                 {isUserRestricted ? 'Unrestrict' : 'Restrict'} User
             </button>
 
-            <button 
+            <button
                 class="mod-button {isUserSilenced ? 'warning' : ''}"
                 on:click={() => isUserSilenced ? handleUnsilence() : showSilenceModal = true}
             >
                 {isUserSilenced ? 'Unsilence' : 'Silence'} User
             </button>
 
-            <button 
+            <button
                 class="mod-button danger {showWipeConfirm ? 'confirm' : ''}"
                 on:click={handleWipe}
             >
@@ -223,8 +223,8 @@
                 <h2>Silence User</h2>
                 <div class="form-group">
                     <label for="duration">Duration (hours)</label>
-                    <input 
-                        type="number" 
+                    <input
+                        type="number"
                         id="duration"
                         bind:value={silenceDuration}
                         min="1"
@@ -234,7 +234,7 @@
                 </div>
                 <div class="form-group">
                     <label for="reason">Reason</label>
-                    <textarea 
+                    <textarea
                         id="reason"
                         bind:value={silenceReason}
                         class="modal-input"
@@ -249,20 +249,20 @@
         </div>
     {/if}
 
-    <button 
-        class="change-password-button" 
+    <button
+        class="change-password-button"
         on:click={() => showChangePassword = true}
         transition:fade
     >
         Change Password
     </button>
-    
+
     {#if showChangePassword}
         <div class="password-modal" transition:fade>
             <div class="password-content">
                 <h2>Change Password</h2>
-                <form 
-                    method="POST" 
+                <form
+                    method="POST"
                     action="?/updatePassword"
                     use:enhance={() => {
                         return async ({ result }) => {
@@ -276,32 +276,32 @@
                     }}
                 >
                     <input type="hidden" name="userId" value={data.user.id} />
-                    <input 
-                        type="password" 
-                        name="newPassword" 
-                        placeholder="New Password" 
-                        required 
+                    <input
+                        type="password"
+                        name="newPassword"
+                        placeholder="New Password"
+                        required
                         class="password-input"
                         bind:value={confirmPassword}
                     />
-                    <input 
-                        type="password" 
-                        placeholder="Confirm Password" 
-                        required 
+                    <input
+                        type="password"
+                        placeholder="Confirm Password"
+                        required
                         class="password-input"
                         bind:value={confirmPassword}
                     />
                     <div class="button-group">
-                        <button 
-                            type="submit" 
+                        <button
+                            type="submit"
                             class="save-button"
                             disabled={!confirmPassword}
                         >
                             Save
                         </button>
-                        <button 
-                            type="button" 
-                            class="cancel-button" 
+                        <button
+                            type="button"
+                            class="cancel-button"
                             on:click={() => {
                                 showChangePassword = false;
                                 confirmPassword = '';
@@ -320,14 +320,14 @@
             <div class="info-item" transition:fade>
                 <div class="info-header">
                     <span class="info-label">{field.label}</span>
-                    <button 
+                    <button
                         class="edit-button"
                         on:click={() => toggleEdit(field.key)}
                     >
                         {editMode[field.key] ? '✓' : '✎'}
                     </button>
                 </div>
-                
+
                 {#if editMode[field.key]}
                     <form
                         method="POST"
@@ -346,7 +346,7 @@
                     >
                         <input type="hidden" name="userId" value={data.user.id} />
                         <input type="hidden" name="field" value={field.key} />
-                        
+
                         {#if field.type === 'textarea'}
                             <textarea
                                 name="value"
@@ -363,17 +363,17 @@
                                 transition:slide
                             />
                         {/if}
-                        
+
                         <div class="button-group">
-                            <button 
-                                type="submit" 
+                            <button
+                                type="submit"
                                 class="save-button"
                                 disabled={!editValues[field.key]}
                             >
                                 Save
                             </button>
-                            <button 
-                                type="button" 
+                            <button
+                                type="button"
                                 class="cancel-button"
                                 on:click={() => toggleEdit(field.key)}
                             >
@@ -392,14 +392,14 @@
         <div class="info-item" transition:fade>
             <div class="info-header">
                 <span class="info-label">Privileges</span>
-                <button 
+                <button
                     class="edit-button"
                     on:click={() => toggleEdit('priv')}
                 >
                     {editMode['priv'] ? '✓' : '✎'}
                 </button>
             </div>
-            
+
             {#if editMode['priv']}
                 <form
                     method="POST"
@@ -419,7 +419,7 @@
                     <input type="hidden" name="userId" value={data.user.id} />
                     <input type="hidden" name="field" value="priv" />
                     <input type="hidden" name="value" value={editValues['priv']} />
-                    
+
                     <div class="privileges-grid">
                         {#each getPrivilegesList() as privilege}
                             <label class="privilege-checkbox">
@@ -432,20 +432,20 @@
                             </label>
                         {/each}
                     </div>
-                    
+
                     <div class="privilege-value">
                         Current value: {editValues['priv']}
                     </div>
-                    
+
                     <div class="button-group">
-                        <button 
-                            type="submit" 
+                        <button
+                            type="submit"
                             class="save-button"
                         >
                             Save
                         </button>
-                        <button 
-                            type="button" 
+                        <button
+                            type="button"
                             class="cancel-button"
                             on:click={() => toggleEdit('priv')}
                         >

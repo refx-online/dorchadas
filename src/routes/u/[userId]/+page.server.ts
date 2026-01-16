@@ -5,12 +5,12 @@ import { parse } from 'marked';
 import { parseBBCodeToHtml } from '$lib/bbcode';
 import { getMySQLDatabase } from '../../../hooks.server';
 import { getUserFromSession } from '$lib/user';
-import { 
-    getUserRelationships, 
-    getPlayCountResults, 
-    addFriend, 
+import {
+    getUserRelationships,
+    getPlayCountResults,
+    addFriend,
     removeFriend,
-    getOldUsername, 
+    getOldUsername,
     getUsersLog,
     batchFetchTitles
 } from '$lib/db';
@@ -26,9 +26,9 @@ export async function load({ params, cookies }) {
     const ourUser = await getUserFromSession(sessionToken);
 	const userpageData = user?.player?.info.userpage_content ?? '';
     const parsedBBCode = parseBBCodeToHtml(userpageData);
-    
+
     const sanitizedUserPage = sanitizeHtml(parsedBBCode);
-    
+
     const parsedUserPage = await parse(sanitizedUserPage, {
         async: true,
         gfm: true
@@ -93,7 +93,7 @@ export const actions = {
         const friendID = data.get('friendID');
         const relationshipStatus = data.get('relationshipStatus');
 
-        if (userID === friendID) { 
+        if (userID === friendID) {
             throw fail(302, { error: "you can't friend yourself :3c"});
         }
 
@@ -154,7 +154,7 @@ export const actions = {
 
         try {
             const mysqlDatabase = await getMySQLDatabase();
-            
+
             // verify comment ownership
             const existingComment = await mysqlDatabase('profile_comments')
                 .where('id', parseInt(commentId))
@@ -191,7 +191,7 @@ export const actions = {
 
         try {
             const mysqlDatabase = await getMySQLDatabase();
-            
+
             // verify comment ownership
             const comment = await mysqlDatabase('profile_comments')
                 .where('id', parseInt(commentId))

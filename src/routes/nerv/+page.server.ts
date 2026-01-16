@@ -57,7 +57,7 @@ export const load = async ({ cookies }) => {
         .sum('plays as total')
         .first()
         .then(result => result?.total ?? 0);
-    
+
     return {
         userCounts,
         recentAccounts,

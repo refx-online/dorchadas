@@ -4,7 +4,7 @@ import { getMySQLDatabase } from '../../../../hooks.server';
 export async function GET({ params }) {
     try {
         const mysqlDatabase = await getMySQLDatabase();
-        
+
         const comments = await mysqlDatabase('profile_comments')
             .select(
                 'profile_comments.*',

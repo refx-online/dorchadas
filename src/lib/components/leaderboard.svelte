@@ -77,7 +77,7 @@
 									{#key user}
 										<a
 											href="/u/{user.player_id}?mode={currentMode}&type={currentType}"
-											class="text-xs font-semibold {isInactive(user.latest_activity) ? 
+											class="text-xs font-semibold {isInactive(user.latest_activity) ?
 											'text-surface-400' : 'text-primary-400'}"
 										>
 											{user.name}

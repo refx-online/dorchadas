@@ -57,42 +57,42 @@
 <div class="min-h-screen bg-surface-900">
     <div class="container mx-auto p-4">
         <div class="flex justify-center gap-4 mb-4">
-            <button 
+            <button
                 class="px-4 py-1 rounded text-sm font-medium transition-colors
                        {currentType === 'vanilla' ? 'bg-zinc-500 text-white' : 'bg-surface-900 text-zinc-400 hover:bg-zinc-700'}"
                 on:click={() => changeType('vanilla')}
             >
                 Vanilla
             </button>
-            <button 
+            <button
                 class="px-4 py-1 rounded text-sm font-medium transition-colors
                        {currentType === 'relax' ? 'bg-zinc-500 text-white' : 'bg-surface-900 text-zinc-400 hover:bg-zinc-700'}"
                 on:click={() => changeType('relax')}
             >
                 Relax
             </button>
-            <button 
+            <button
                 class="px-4 py-1 rounded text-sm font-medium transition-colors
                        {currentType === 'autopilot' ? 'bg-zinc-500 text-white' : 'bg-surface-900 text-zinc-400 hover:bg-zinc-700'}"
                 on:click={() => changeType('autopilot')}
             >
                 Autopilot
             </button>
-            <button 
+            <button
                 class="px-4 py-1 rounded text-sm font-medium transition-colors
                        {currentType === 'touch' ? 'bg-zinc-500 text-white' : 'bg-surface-900 text-zinc-400 hover:bg-zinc-700'}"
                 on:click={() => changeType('touch')}
             >
                 TouchScreen
             </button>
-            <button 
+            <button
                 class="px-4 py-1 rounded text-sm font-medium transition-colors
                        {currentType === 'cheat' ? 'bg-zinc-500 text-white' : 'bg-surface-900 text-zinc-400 hover:bg-zinc-700'}"
                 on:click={() => changeType('cheat')}
             >
                 Cheat
             </button>
-            <button 
+            <button
                 class="px-4 py-1 rounded text-sm font-medium transition-colors
                        {currentType === 'cheatcheat' ? 'bg-zinc-500 text-white' : 'bg-surface-900 text-zinc-400 hover:bg-zinc-700'}"
                 on:click={() => changeType('cheatcheat')}
@@ -104,7 +104,7 @@
         <div class="flex justify-center gap-4 mb-8">
             <div class="flex gap-2">
                 {#each modes as mode}
-                    <button 
+                    <button
                         class="px-4 py-1 rounded text-sm font-medium transition-colors
                                {currentMode === mode ? 'bg-zinc-500 text-white' : 'bg-surface-900 text-zinc-400 hover:bg-zinc-700'}"
                         on:click={() => changeMode(mode)}
@@ -120,8 +120,8 @@
                 <div class="bg-zinc-900 rounded-lg overflow-hidden w-full">
                     <div class="relative h-32 bg-gray-500">
                         {#if getBeatmapCoverUrl(score.set_id)}
-                            <img 
-                                src={getBeatmapCoverUrl(score.set_id)} 
+                            <img
+                                src={getBeatmapCoverUrl(score.set_id)}
                                 alt=""
                                 class="w-full h-full object-cover"
                             />
@@ -136,7 +136,7 @@
                             </a>
                         </div>
                     </div>
-        
+
                     <div class="p-2">
                         <a href="/scores/{score.scoreid}" class="block hover:text-blue-400">
                             <div class="text-zinc-200 text-sm truncate">{score.artist} -</div>

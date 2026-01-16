@@ -6,15 +6,15 @@ import { findExistingImage, DATA_DIRECTORY } from '$lib/image';
 export const GET = async ({ params }) => {
     const userId = params.userId;
     const coverDirectory = path.join(DATA_DIRECTORY, 'cover');
-    
+
     const imageInfo = findExistingImage(coverDirectory, parseInt(userId));
-    
+
     if (!imageInfo) {
         throw error(404, 'Cover not found');
     }
 
     const imageData = await readFile(imageInfo.path);
-    return new Response(imageData, {
+    return new Response(new Uint8Array(imageData), {
         status: 200,
         headers: {
             'Content-Type': imageInfo.contentType,

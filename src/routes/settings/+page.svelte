@@ -25,21 +25,21 @@
 
     function validateFile(file: File | undefined): { valid: boolean; error?: string } {
         if (!file) return { valid: false };
-        
+
         if (!ALLOWED_TYPES.includes(file.type)) {
-            return { 
-                valid: false, 
-                error: __('Invalid file type. Only JPG, PNG, and GIF are allowed.', $userLanguage) 
+            return {
+                valid: false,
+                error: __('Invalid file type. Only JPG, PNG, and GIF are allowed.', $userLanguage)
             };
         }
-        
+
         if (file.size > MAX_SIZE) {
-            return { 
-                valid: false, 
-                error: __('File size exceeds 5MB limit', $userLanguage) 
+            return {
+                valid: false,
+                error: __('File size exceeds 5MB limit', $userLanguage)
             };
         }
-        
+
         return { valid: true };
     }
 
