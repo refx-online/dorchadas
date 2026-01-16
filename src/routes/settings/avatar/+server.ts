@@ -26,7 +26,9 @@ export const POST = async ({ request, cookies }) => {
 
         return json({ success: true, user: { id: user.id } });
     } catch (err) {
-        console.error('Avatar upload error:', err);
+        if (err && typeof err === 'object' && 'status' in err) {
+            throw err;
+        }
         throw error(500, 'Failed to upload avatar');
     }
 };
