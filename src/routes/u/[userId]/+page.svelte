@@ -806,7 +806,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="gap-6 bg-surface-800 p-4 sticky top-0 z-10 shadow-lg">
+				<div class="gap-6 bg-surface-800 p-4 sticky top-0 z-[9] shadow-lg">
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div class="flex flex-col gap-2 py-2 px-7">
@@ -959,16 +959,16 @@
 							{/if}
 						</div>
 					</div>
-					<div class="card !bg-surface-700 w-full py-3 p-6" bind:this={ranksSection}>
+					<div class="card !bg-surface-700 w-full py-3 p-6 isolate" bind:this={ranksSection}>
 						<div class="flex flex-col gap-5">
 							<p
 								class="text-lg font-bold underline underline-offset-4 decoration-2 decoration-primary-400"
+								style="position: relative; z-index: 0;"
 							>
 								{__('Ranks', $userLanguage)}
 							</p>
-							<div class="relative flex flex-col gap-5">
+							<div class="flex flex-col gap-5" style="position: relative; z-index: 1;">
 								{#key currentModeInt}
-									<!-- this implementation actually weird .. .. -->
 									<UserScores
 										title="Pinned Scores"
 										{currentMode}

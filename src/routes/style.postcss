@@ -1,0 +1,135 @@
+.bg-container {
+	min-height: 100vh;
+	width: 100%;
+	position: relative;
+	overflow: hidden;
+	background-color: #1a1a1a;
+}
+
+.bg-video {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	min-width: 100%;
+	min-height: 100%;
+	width: auto;
+	height: auto;
+	transform: translate(-50%, -50%);
+	object-fit: cover;
+	z-index: 0;
+	opacity: 0;
+	transition: opacity 1s ease-in-out;
+}
+
+.bg-video.loaded {
+	opacity: 1;
+}
+
+.video-blur-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	backdrop-filter: blur(3px);
+	-webkit-backdrop-filter: blur(3px);
+	background: rgba(43, 43, 43, 0.2);
+	z-index: 1;
+}
+
+.overlay {
+	background: linear-gradient(
+		to bottom,
+		rgba(0, 0, 0, 0.5) 0%,
+		rgba(0, 0, 0, 0.6) 50%,
+		rgba(0, 0, 0, 0.7) 100%
+	);
+	min-height: 100vh;
+	width: 100%;
+	position: relative;
+	z-index: 1;
+}
+
+:global(.variant-glass-surface) {
+	background-color: rgba(43, 43, 43, 0.75) !important;
+	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(6px);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	transition: all 0.3s ease;
+}
+
+.hover-button {
+	transition:
+		transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+		box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+		background-color 0.3s ease;
+
+	&:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
+}
+
+.hover-lift {
+	transition:
+		transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+		box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+	&:hover {
+		transform: translateY(-4px);
+		box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+	}
+}
+
+.hover-glow {
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+	&:hover {
+		background-color: rgba(0, 0, 0, 0.4);
+		box-shadow: 0 0 16px rgba(255, 255, 255, 0.15);
+		transform: translateX(4px);
+	}
+}
+
+@media (max-width: 640px) {
+	.bg-video {
+		min-width: auto;
+		width: 100%;
+		height: 100vh;
+	}
+
+	.text-xl {
+		font-size: 1.5rem;
+	}
+	.text-lg {
+		font-size: 1.25rem;
+	}
+	.text-sm {
+		font-size: 0.875rem;
+	}
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+	.bg-video {
+		width: 100vw;
+		height: auto;
+	}
+}
+
+@media (min-width: 1025px) {
+	.bg-video {
+		width: 100vw;
+		height: auto;
+	}
+}
+
+@media (min-width: 1920px) {
+	.bg-video {
+		width: 100%;
+		height: 100%;
+	}
+}

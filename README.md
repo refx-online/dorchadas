@@ -70,6 +70,7 @@ A modern frontend web application built with SvelteKit for the [bancho.py backen
 Choose one of the following setup methods:
 
 **Option 1: Docker (Recommended)**
+
 - Docker & Docker Compose
 - (Optional) GNU Make (for `make build` / `make run`)
 - MySQL server (can be external or containerized)
@@ -77,6 +78,7 @@ Choose one of the following setup methods:
 - Access to a bancho.py instance
 
 **Option 2: Local Development**
+
 - Bun runtime
 - MySQL server
 - Redis server
@@ -158,6 +160,7 @@ docker compose up -d --build
 The application will be available at `http://localhost:3000` (or the port specified in your `.env`).
 
 > **Notes:**
+>
 > - The Compose file maps `${PORT}:${PORT}`. Ensure `PORT` is set in `.env` (defaults to `3000` in `example.env`).
 > - The Compose configuration includes volume mounts for development, allowing hot-reload of code changes. For production deployments, remove the volume mounts and use a multi-stage build.
 
@@ -189,6 +192,7 @@ make run
 ```
 
 > **Notes:**
+>
 > - `make run` uses `--network=host` (Linux only) and does **not** publish ports with `-p`.
 > - `make run` mounts a named volume `meat-my-beat-i_data` to `/srv/root/.data` for persistence.
 
@@ -242,16 +246,16 @@ bun run preview
 
 ### Docker Commands
 
-| Command                          | Description                                    |
-| -------------------------------- | ---------------------------------------------- |
-| `docker compose up -d`           | Start the application in detached mode         |
-| `docker compose down`            | Stop and remove containers                     |
-| `docker compose logs -f`         | View and follow application logs               |
-| `docker compose up -d --build`   | Rebuild and restart containers                 |
-| `docker compose restart`         | Restart containers without rebuilding          |
-| `docker compose exec sveltekit bun run <cmd>` | Run commands inside the container |
-| `make build`                     | Build the `frontend:latest` image (see `Makefile`) |
-| `make run`                       | Run `frontend:latest` with host networking and `.env` |
+| Command                                       | Description                                           |
+| --------------------------------------------- | ----------------------------------------------------- |
+| `docker compose up -d`                        | Start the application in detached mode                |
+| `docker compose down`                         | Stop and remove containers                            |
+| `docker compose logs -f`                      | View and follow application logs                      |
+| `docker compose up -d --build`                | Rebuild and restart containers                        |
+| `docker compose restart`                      | Restart containers without rebuilding                 |
+| `docker compose exec sveltekit bun run <cmd>` | Run commands inside the container                     |
+| `make build`                                  | Build the `frontend:latest` image (see `Makefile`)    |
+| `make run`                                    | Run `frontend:latest` with host networking and `.env` |
 
 ## Environment Variables
 

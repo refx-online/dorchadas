@@ -55,6 +55,19 @@ const getStatusString = (status: RankedStatus): string => {
 	}
 };
 
+const getEmbedColor = (status: RankedStatus): number => {
+	switch (status) {
+		case RankedStatus.Ranked:
+		case RankedStatus.Approved:
+		case RankedStatus.Qualified:
+			return 0x6BCEFF; // cyan
+		case RankedStatus.Loved:
+			return 0xFF66AA; // pink
+		default:
+			return 0x808080; // grey
+	}
+};
+
 const sendDiscordWebhook = async (beatmap: any, user: any, newStatus: RankedStatus) => {
 	const webhookUrl = env.DISCORD_RANK_WEBHOOK;
 	if (!webhookUrl) {
@@ -62,11 +75,11 @@ const sendDiscordWebhook = async (beatmap: any, user: any, newStatus: RankedStat
 	}
 
 	const statusString = getStatusString(newStatus);
+	const color = getEmbedColor(newStatus);
 
 	const title = `${beatmap.artist} - ${beatmap.title} [${beatmap.version}] ${beatmap.diff.toFixed(2)}★`;
 	const description = `cs: ${beatmap.cs} od: ${beatmap.od} ar: ${beatmap.ar} hp: ${beatmap.hp} length: ${formatLength(beatmap.total_length)}`;
 	const url = `${pubEnv.PUBLIC_APP_URL}/beatmaps/${beatmap.id}`;
-	const color = 34573;
 
 	const embed = {
 		title,
@@ -79,7 +92,7 @@ const sendDiscordWebhook = async (beatmap: any, user: any, newStatus: RankedStat
 			icon_url: `${pubEnv.PUBLIC_AVATAR_URL}/${user.id}`
 		},
 		footer: {
-			text: `mapped by ${beatmap.creator}`
+			text: `mapped by ${beatmap.creator} | nerv`
 		},
 		image: {
 			url: `https://b.refx.online/cover/${beatmap.set_id}`

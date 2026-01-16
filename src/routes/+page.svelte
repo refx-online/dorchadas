@@ -1,4 +1,5 @@
 <script lang="ts">
+	import './style.postcss';
 	import { appName } from '$lib/env';
 	import { __ } from '$lib/language';
 	import { userLanguage, userData } from '$lib/storage';
@@ -25,8 +26,23 @@
 	let animatedTotal = 0;
 	let currentPPIndex = 0;
 	let currentAccountIndex = 0;
+	let videoLoaded = false;
+	let videoElement: HTMLVideoElement;
 
-	// please clena this up
+	const handleVideoPlay = () => {
+		if (videoElement) {
+			videoElement.play().catch((err) => {
+				document.addEventListener(
+					'touchstart',
+					() => {
+						videoElement.play();
+					},
+					{ once: true }
+				);
+			});
+		}
+	};
+
 	const nextPP = () => {
 		if (data.ppRecords) {
 			currentPPIndex = (currentPPIndex + 1) % data.ppRecords.length;
@@ -67,7 +83,6 @@
 	};
 
 	onMount(() => {
-		// funney number coun ter aahha
 		const animateCounter = (target: number, setter: (val: number) => void) => {
 			const duration = 1500;
 			const start = 0;
@@ -100,6 +115,23 @@
 </svelte:head>
 
 <div class="bg-container">
+	<video
+		bind:this={videoElement}
+		autoplay
+		muted
+		loop
+		playsinline
+		preload="auto"
+		class="bg-video"
+		class:loaded={videoLoaded}
+		on:loadeddata={() => (videoLoaded = true)}
+		on:canplay={handleVideoPlay}
+	>
+		<source src="sh.webm" type="video/webm" />
+	</video>
+
+	<div class="video-blur-overlay"></div>
+
 	<div class="overlay">
 		<div class="container mx-auto px-4 py-8 relative z-[2]">
 			<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
@@ -267,76 +299,3 @@
 		</div>
 	</div>
 </div>
-
-<style lang="scss">
-	.bg-container {
-		background-image: url('/main.jpg');
-		background-size: cover;
-		background-position: center;
-		background-repeat: no-repeat;
-		min-height: 100vh;
-		width: 100%;
-		position: relative;
-	}
-
-	.overlay {
-		background-color: rgba(0, 0, 0, 0.6);
-		min-height: 100vh;
-		width: 100%;
-		position: relative;
-		z-index: 1;
-	}
-
-	:global(.variant-glass-surface) {
-		background-color: rgba(var(--color-surface-500) / 0.8) !important;
-		backdrop-filter: blur(8px);
-	}
-
-	.hover-button {
-		transition:
-			transform 0.2s ease,
-			box-shadow 0.2s ease;
-
-		&:hover {
-			transform: translateY(-2px);
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-		}
-
-		&:active {
-			transform: translateY(0);
-		}
-	}
-
-	.hover-lift {
-		transition:
-			transform 0.2s ease,
-			box-shadow 0.2s ease;
-
-		&:hover {
-			transform: translateY(-4px);
-			box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-		}
-	}
-
-	.hover-glow {
-		transition: all 0.3s ease;
-
-		&:hover {
-			background-color: rgba(0, 0, 0, 0.3);
-			box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
-			transform: translateX(4px);
-		}
-	}
-
-	@media (max-width: 640px) {
-		.text-xl {
-			font-size: 1.5rem;
-		}
-		.text-lg {
-			font-size: 1.25rem;
-		}
-		.text-sm {
-			font-size: 0.875rem;
-		}
-	}
-</style>
