@@ -3,8 +3,6 @@
 	import {
 		AppShell,
 		Avatar,
-		type PopupSettings,
-		popup,
 		Toast,
 		initializeStores,
 		Drawer,

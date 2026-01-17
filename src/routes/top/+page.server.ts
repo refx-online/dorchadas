@@ -1,5 +1,4 @@
 import { getTopScores, getTopScoresCount } from '$lib/db';
-import { parseModsInt } from '$lib/mods';
 import { error } from '@sveltejs/kit';
 
 export async function load({ url }) {

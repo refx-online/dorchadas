@@ -60,9 +60,9 @@ const getEmbedColor = (status: RankedStatus): number => {
 		case RankedStatus.Ranked:
 		case RankedStatus.Approved:
 		case RankedStatus.Qualified:
-			return 0x6BCEFF; // cyan
+			return 0x6bceff; // cyan
 		case RankedStatus.Loved:
-			return 0xFF66AA; // pink
+			return 0xff66aa; // pink
 		default:
 			return 0x808080; // grey
 	}

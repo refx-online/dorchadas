@@ -43,7 +43,7 @@ export async function load({ params, cookies }) {
 	const logTitles = await batchFetchTitles(usersLog); // map / score titles
 
 	const ppHistoryData = await Promise.all(
-		Array.from({ length: 21 }, (_, i) => 
+		Array.from({ length: 21 }, (_, i) =>
 			getPPProfileHistory('pp', user?.player?.info.id, i).catch(() => null)
 		)
 	);
@@ -60,12 +60,12 @@ export async function load({ params, cookies }) {
 		ourPriv,
 		usersLog,
 		logTitles,
-		ppHistoryData,
+		ppHistoryData
 	};
 }
 
 export const actions = {
-	updateUserpage: async ({ request, params, locals, cookies }) => {
+	updateUserpage: async ({ request, params, cookies }) => {
 		// i just realized why didnt i just use session
 		// too bad
 		const session = await getUserFromSession(cookies.get('sessionToken'));
@@ -86,8 +86,7 @@ export const actions = {
 				.update({ userpage_content: userpageContent });
 
 			return { success: true };
-		} catch (error) {
-			console.error('failed to update userpage', error);
+		} catch {
 			throw fail(500, { error: 'Something went wrong.' });
 		}
 	},
@@ -112,8 +111,7 @@ export const actions = {
 				// follow
 				await addFriend(userID, friendID);
 			}
-		} catch (error) {
-			console.error('failed to update relationship', error);
+		} catch {
 			throw fail(500, { error: 'Something went wrong.' });
 		}
 	},
@@ -141,8 +139,7 @@ export const actions = {
 			});
 
 			return { success: true };
-		} catch (error) {
-			console.error('Failed to add comment', error);
+		} catch {
 			return fail(500, { error: 'Failed to add comment' });
 		}
 	},
@@ -177,8 +174,7 @@ export const actions = {
 			});
 
 			return { success: true };
-		} catch (error) {
-			console.error('Failed to edit comment', error);
+		} catch {
 			return fail(500, { error: 'Failed to edit comment' });
 		}
 	},
@@ -209,8 +205,7 @@ export const actions = {
 			await mysqlDatabase('profile_comments').where('id', parseInt(commentId)).delete();
 
 			return { success: true };
-		} catch (error) {
-			console.error('Failed to delete comment', error);
+		} catch {
 			return fail(500, { error: 'Failed to delete comment' });
 		}
 	}

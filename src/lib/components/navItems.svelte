@@ -6,7 +6,6 @@
 	import Popup from './Popup.svelte';
 	import { avatarUrl } from '$lib/env';
 	import { goto } from '$app/navigation';
-	import { githubUrl } from '$lib/env';
 	import { isStaff } from '$lib/privs';
 
 	export let drawerStore: DrawerStore;

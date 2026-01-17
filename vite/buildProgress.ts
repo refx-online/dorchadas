@@ -69,7 +69,9 @@ export default function viteProgressBar(): PluginOption {
 				if (!reg.test(id) && percent < 0.25) {
 					transformed++;
 					percent = +(transformed / (fileCount * 2)).toFixed(2);
-					percent < 0.8 && (lastPercent = percent);
+					if (percent < 0.8) {
+						lastPercent = percent;
+					}
 				}
 
 				if (percent >= 0.25 && lastPercent <= 0.65) {
@@ -99,7 +101,11 @@ export default function viteProgressBar(): PluginOption {
 			chunkCount++;
 
 			if (lastPercent <= 0.95) {
-				isFileExists ? runCachedData() : (lastPercent = +(lastPercent + 0.005).toFixed(4));
+				if (isFileExists) {
+					runCachedData();
+				} else {
+					lastPercent = +(lastPercent + 0.005).toFixed(4);
+				}
 			}
 			if (progressBar) {
 				progressBar.update(lastPercent * 100, {

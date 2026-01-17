@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { numberHumanReadable } from '$lib/stringUtil';
 	import type { LBUser } from '$lib/types';
-	import { scale, fade } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 	import { removeTrailingZeroes } from '$lib/regex';
 	import { __ } from '$lib/language';
 	import { userLanguage } from '$lib/storage';

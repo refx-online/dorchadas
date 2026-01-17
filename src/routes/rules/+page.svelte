@@ -1,5 +1,4 @@
 <script>
-	import { onMount } from 'svelte';
 	import { fade, slide } from 'svelte/transition';
 	import { __ } from '$lib/language';
 	import { userLanguage } from '$lib/storage';

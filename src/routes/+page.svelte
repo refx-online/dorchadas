@@ -31,7 +31,7 @@
 
 	const handleVideoPlay = () => {
 		if (videoElement) {
-			videoElement.play().catch((err) => {
+			videoElement.play().catch(() => {
 				document.addEventListener(
 					'touchstart',
 					() => {

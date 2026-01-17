@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { appName, appUrl } from '$lib/env';
+	import { appName } from '$lib/env';
 	import { __ } from '$lib/language';
 	import { userLanguage } from '$lib/storage';
 	import { focusTrap } from '@skeletonlabs/skeleton';

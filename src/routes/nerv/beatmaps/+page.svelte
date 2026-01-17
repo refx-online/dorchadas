@@ -2,11 +2,7 @@
 	import './style.postcss';
 	import { onMount } from 'svelte';
 	import { scale } from 'svelte/transition';
-	import {
-		Music,
-		AlertTriangle,
-		CheckCircle,
-	} from 'svelte-feathers';
+	import { Music, AlertTriangle, CheckCircle } from 'svelte-feathers';
 	import { RankedStatus, statusIntToString } from '$lib/beatmapStatus';
 	import type { PageData } from './$types';
 	import { getBeatmap } from '$lib/api';

@@ -44,6 +44,8 @@ export const getCacheData = (): ICacheData => {
  * @returns
  */
 export const setCacheData = (data: ICacheData) => {
-	!isDirExists && fs.mkdirSync(dirPath);
+	if (!isDirExists) {
+		fs.mkdirSync(dirPath);
+	}
 	fs.writeFileSync(filePath, JSON.stringify(data));
 };

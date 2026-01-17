@@ -174,7 +174,7 @@
 					}
 				]
 			});
-		} catch (err) {
+		} catch {
 			error = 'Failed to load history data';
 		}
 	}
@@ -192,9 +192,7 @@
 
 <div class="w-full h-16">
 	{#if !ppHistory}
-		<div class="flex items-center justify-center h-full text-surface-400 text-sm">
-			No result
-		</div>
+		<div class="flex items-center justify-center h-full text-surface-400 text-sm">No result</div>
 	{:else if error}
 		<div class="flex items-center justify-center h-full text-surface-400 text-sm">
 			{error}
