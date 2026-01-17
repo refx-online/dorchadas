@@ -81,7 +81,7 @@
 {#if usersLog.length > 0}
 	<div>
 		<h3 class="text-lg font-bold underline underline-offset-4 decoration-2 decoration-primary-400">
-			Recent Activity
+			Recent
 		</h3>
 		<div class="space-y-3">
 			{#each displayedLogs as log (log.id)}
