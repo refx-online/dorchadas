@@ -18,6 +18,8 @@
 	}
 
 	export let userId: number;
+	export let csrfToken: String;
+
 	let comments: Comment[] = [];
 	let newComment: string = '';
 	let editingCommentId: number | null = null;
@@ -103,6 +105,7 @@
 				}}
 				class="flex flex-col gap-2"
 			>
+				<input type="hidden" name="csrf_token" value={csrfToken} />
 				<input type="hidden" name="userId" value={userId} />
 				<textarea
 					name="comment"

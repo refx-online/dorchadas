@@ -1050,7 +1050,7 @@
 								{__('Comments', $userLanguage)}
 							</p>
 
-							<ProfileComments userId={data.user.info.id} />
+							<ProfileComments userId={data.user.info.id} csrfToken={data.csrfToken} />
 						</div>
 					</div>
 				</div>
