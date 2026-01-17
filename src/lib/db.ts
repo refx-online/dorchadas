@@ -1,4 +1,3 @@
-import type { User } from 'svelte-feathers';
 import { getMySQLDatabase } from '../hooks.server';
 import type { DBClan, TopScore, UserRelationship, UsersLog } from './types';
 

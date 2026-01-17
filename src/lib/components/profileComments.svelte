@@ -33,7 +33,7 @@
 			if (!response.ok) throw new Error('Failed to load comments');
 			comments = await response.json();
 			loading = false;
-		} catch (err) {
+		} catch {
 			error = 'Failed to load comments';
 			loading = false;
 		}
@@ -71,7 +71,7 @@
 			await loadComments();
 			editingCommentId = null;
 			editingContent = '';
-		} catch (err) {
+		} catch {
 			error = 'Failed to edit comment';
 		}
 	}

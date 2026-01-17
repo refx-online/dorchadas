@@ -10,7 +10,7 @@
 	import { queryParam } from 'sveltekit-search-params';
 	import Edit2 from 'svelte-feathers/Edit2.svelte';
 	import type { Clan, PlayerStatus } from '$lib/types';
-	import { getClan, getPlayerStatus, getPPProfileHistory } from '$lib/api';
+	import { getClan, getPlayerStatus } from '$lib/api';
 	import { userData, userLanguage } from '$lib/storage';
 	import { getCountryName } from '$lib/country';
 	import { numberHumanReadable } from '$lib/stringUtil';
@@ -22,10 +22,8 @@
 	import UserMostPlayed from '$lib/components/userMostPlayed.svelte';
 	import { Privileges, isDonator, privsToGroups, isStaff } from '$lib/privs';
 	import Time, { dayjs } from 'svelte-time';
-	import Edit from 'svelte-feathers/Edit.svelte';
 	import Check from 'svelte-feathers/Check.svelte';
 	import { enhance } from '$app/forms';
-	import { page } from '$app/stores';
 	import PlayCountGraph from '$lib/components/playCountGraph.svelte';
 	import { Heart, User, Users, UserPlus, Info, Layers } from 'svelte-feathers';
 	import DonatorEffect from '$lib/components/donatorEffect.svelte';
@@ -304,10 +302,10 @@
 
 <div class="container mx-auto w-full p-5 min-h-screen relative">
 	<!--
-		TODO: (data.user?.info.id && isStaff($userData?.priv))
-		gotta figure out why priv isnt passed
-		temporary solution using ourPriv.. but its kinda dumb
-	 -->
+        TODO: (data.user?.info.id && isStaff($userData?.priv))
+        gotta figure out why priv isnt passed
+        temporary solution using ourPriv.. but its kinda dumb
+     -->
 	{#if data.user?.info.id && (isStaff(data.ourPriv) || (data.user?.info.priv & Privileges.VERIFIED && data.user?.info.priv & Privileges.UNRESTRICTED))}
 		<div class="mx-auto card">
 			<div class="w-full flex flex-col">
@@ -637,9 +635,7 @@
 							{#if data.user?.info.id && typeof currentModeInt === 'number' && currentModeInt >= 0 && currentModeInt <= 20}
 								<ProfileGraph ppHistory={data.ppHistoryData?.[currentModeInt]} />
 							{:else}
-								<div class="flex items-center justify-center h-16 text-surface-400">
-									No result
-								</div>
+								<div class="flex items-center justify-center h-16 text-surface-400">No result</div>
 							{/if}
 							<div
 								class="w-full flex flex-col md:flex-row justify-around items-center md:items-end md:justify-normal gap-10"
@@ -751,7 +747,7 @@
 										};
 									}}
 									class="relative inline-flex items-center justify-center h-[40px] px-6 text-white text-sm font-semibold rounded-full
-								shadow-md transition {data.user?.info.id === $userData?.id
+                                shadow-md transition {data.user?.info.id === $userData?.id
 										? 'bg-gray-600 hover:bg-gray-200 cursor-not-allowed'
 										: relationshipColors[data.relationships.relationshipStatus]}"
 								>

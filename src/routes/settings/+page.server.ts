@@ -119,8 +119,7 @@ export const actions = {
 			);
 
 			return { success: true };
-		} catch (error) {
-			console.error('Username change error:', error);
+		} catch {
 			return fail(500, { message: 'An error occurred while updating username' });
 		}
 	},
@@ -152,7 +151,7 @@ export const actions = {
 				preferred_metric: preferredMetric
 			});
 			return { success: true };
-		} catch (error) {
+		} catch {
 			return fail(500, { message: 'An error occurred while updating ranking metric' });
 		}
 	}

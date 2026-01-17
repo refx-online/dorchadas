@@ -100,7 +100,7 @@
 				const result = await response.json();
 				showMessage(result.message || errorMsg, 'error');
 			}
-		} catch (err) {
+		} catch {
 			showMessage(errorMsg, 'error');
 		} finally {
 			isLoading = false;
@@ -170,7 +170,7 @@
 		message = '';
 		isLoading = true;
 
-		return async ({ result, update }) => {
+		return async ({ result }) => {
 			if (result.type === 'success') {
 				showMessage(__('Ranking metric updated successfully', $userLanguage), 'success');
 				await invalidateAll();

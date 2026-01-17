@@ -12,9 +12,7 @@
 	import Flag from './Flag.svelte';
 	import Mod from './Mod.svelte';
 	import Popup from './Popup.svelte';
-	import Download from 'svelte-feathers/Download.svelte';
 	import { Eye } from 'svelte-feathers';
-	import { apiUrl } from '$lib/env';
 
 	export let beatmapScores: MapScore[];
 	export let loading: boolean;
