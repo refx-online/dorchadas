@@ -634,11 +634,11 @@
 									>
 								</div>
 							</div>
-							{#if data.user?.info.id && typeof currentModeInt === 'number' && currentModeInt >= 0}
-								<ProfileGraph userId={data.user.info.id} mode={currentModeInt} />
+							{#if data.user?.info.id && typeof currentModeInt === 'number' && currentModeInt >= 0 && currentModeInt <= 20}
+								<ProfileGraph ppHistory={data.ppHistoryData?.[currentModeInt]} />
 							{:else}
 								<div class="flex items-center justify-center h-16 text-surface-400">
-									Loading chart...
+									No result
 								</div>
 							{/if}
 							<div

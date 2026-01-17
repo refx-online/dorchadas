@@ -1,6 +1,6 @@
-import { getClan, getPlayer } from '$lib/api.js';
+import { getClan, getPlayer, getPPProfileHistory } from '$lib/api';
 import { sanitizeHtml } from '$lib/html';
-import { isNumber } from '$lib/stringUtil.js';
+import { isNumber } from '$lib/stringUtil';
 import { parse } from 'marked';
 import { parseBBCodeToHtml } from '$lib/bbcode';
 import { getMySQLDatabase } from '../../../hooks.server';
@@ -17,10 +17,10 @@ import {
 import { fail, redirect } from '@sveltejs/kit';
 
 export async function load({ params, cookies }) {
-	const requestedUserId = params.userId; // now can be name too!
+	const requestedUser = params.userId; // now can be name too!
 	const sessionToken = cookies.get('sessionToken');
 
-	const user = await getPlayer(requestedUserId, 'all');
+	const user = await getPlayer(requestedUser, 'all');
 	if (!user || !user.player) return {};
 
 	const ourUser = await getUserFromSession(sessionToken);
@@ -42,6 +42,12 @@ export async function load({ params, cookies }) {
 	const usersLog = await getUsersLog(user?.player?.info.id);
 	const logTitles = await batchFetchTitles(usersLog); // map / score titles
 
+	const ppHistoryData = await Promise.all(
+		Array.from({ length: 21 }, (_, i) => 
+			getPPProfileHistory('pp', user?.player?.info.id, i).catch(() => null)
+		)
+	);
+
 	const ourPriv = ourUser?.priv;
 
 	return {
@@ -53,7 +59,8 @@ export async function load({ params, cookies }) {
 		oldUsernames,
 		ourPriv,
 		usersLog,
-		logTitles
+		logTitles,
+		ppHistoryData,
 	};
 }
 

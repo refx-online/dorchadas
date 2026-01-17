@@ -1,25 +1,15 @@
 <script lang="ts">
 	import { Chart, registerables } from 'chart.js';
-	import { getPPProfileHistory } from '$lib/api';
-	import type { ppProfileHistory, rankProfileHistory, peakrankProfileHistory } from '$lib/types';
+	import type { ppProfileHistory } from '$lib/types';
 	import { onMount } from 'svelte';
 
 	Chart.register(...registerables);
 
-	export let userId: number;
-	export let mode: number;
+	export let ppHistory: ppProfileHistory | undefined;
 
 	let chartElement: HTMLCanvasElement | null = null;
 	let error: string | null = null;
-	let ppHistory: ppProfileHistory | undefined;
-	let rankHistory: rankProfileHistory | undefined;
-	let peakRankHistory: peakrankProfileHistory | undefined;
 	let chart: Chart | null = null;
-	let query: 'pp' | 'rank' = 'rank';
-	let mounted = false;
-	let currentMode = mode;
-
-	$: isReady = mounted && userId && typeof mode === 'number' && mode >= 0;
 
 	const MAX_AGE_DAYS = 89;
 	const MS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -50,37 +40,26 @@
 		return months === 1 ? '1 month ago' : `${months} months ago`;
 	}
 
-	function formatValue(value: number, type: 'pp' | 'rank'): string {
-		if (type === 'pp') {
-			return value.toLocaleString() + 'pp';
-		}
-		return '#' + value.toLocaleString();
+	function formatValue(value: number): string {
+		return value.toLocaleString() + 'pp';
 	}
 
-	async function loadChart() {
-		if (!isReady || !chartElement) return;
+	function loadChart() {
+		if (!chartElement || !ppHistory?.data.captures) {
+			error = 'No data available';
+			return;
+		}
 
 		error = null;
 
 		try {
-			if (query === 'pp') {
-				ppHistory = await getPPProfileHistory(query, userId, mode);
-			} else {
-				const [rank, peak] = await Promise.all([
-					getPPProfileHistory('rank', userId, mode),
-					getPPProfileHistory('peak', userId, mode)
-				]);
-				rankHistory = rank as rankProfileHistory;
-				peakRankHistory = peak as peakrankProfileHistory;
-			}
-
 			if (chart) {
 				chart.destroy();
 				chart = null;
 			}
 
-			const captures = query === 'pp' ? ppHistory?.data.captures : rankHistory?.data.captures;
-			if (!captures?.length) {
+			const captures = ppHistory.data.captures;
+			if (!captures.length) {
 				error = 'No recent data';
 				return;
 			}
@@ -97,61 +76,33 @@
 
 			const dataPoints = sortedCaptures.map((c, index) => ({
 				x: index,
-				y: query === 'pp' ? (c as any).pp : (c as any).overall,
-				countryRank: query === 'rank' ? (c as any).country : null,
+				y: (c as any).pp,
 				date: c.captured_at
 			}));
-
-			const peakDataPoints =
-				query === 'rank' && peakRankHistory?.data.captures
-					? filterRecentCaptures(peakRankHistory.data.captures)
-							.sort((a, b) => new Date(a.captured_at).getTime() - new Date(b.captured_at).getTime())
-							.map((c, index) => ({
-								x: index,
-								y: c.rank,
-								date: c.captured_at
-							}))
-					: [];
 
 			if (dataPoints.length === 1) {
 				dataPoints.push({ ...dataPoints[0], x: 1 });
 			}
 
-			const datasets = [
-				{
-					label: query === 'pp' ? 'Performance Points' : 'Global Rank',
-					data: dataPoints,
-					borderColor: '#818cf8',
-					borderWidth: 2,
-					tension: 0.1,
-					pointRadius: 0,
-					pointHoverRadius: 6,
-					pointHoverBackgroundColor: '#818cf8',
-					pointHoverBorderColor: '#fff',
-					pointHoverBorderWidth: 2,
-					fill: false
-				}
-			];
-
-			if (query === 'rank' && peakDataPoints.length) {
-				datasets.push({
-					label: 'Peak Rank',
-					data: peakDataPoints,
-					borderColor: '#f87171',
-					borderWidth: 2,
-					tension: 0.1,
-					pointRadius: 0,
-					pointHoverRadius: 6,
-					pointHoverBackgroundColor: '#f87171',
-					pointHoverBorderColor: '#fff',
-					pointHoverBorderWidth: 2,
-					fill: false
-				});
-			}
-
 			chart = new Chart(chartElement, {
 				type: 'line',
-				data: { datasets },
+				data: {
+					datasets: [
+						{
+							label: 'Performance Points',
+							data: dataPoints,
+							borderColor: '#818cf8',
+							borderWidth: 2,
+							tension: 0.1,
+							pointRadius: 0,
+							pointHoverRadius: 6,
+							pointHoverBackgroundColor: '#818cf8',
+							pointHoverBorderColor: '#fff',
+							pointHoverBorderWidth: 2,
+							fill: false
+						}
+					]
+				},
 				options: {
 					responsive: true,
 					maintainAspectRatio: false,
@@ -165,7 +116,6 @@
 							display: false
 						},
 						y: {
-							reverse: query === 'rank',
 							display: false
 						}
 					},
@@ -193,19 +143,7 @@
 									return '';
 								},
 								label: (context) => {
-									if (query === 'pp') {
-										return formatValue(context.parsed.y, 'pp');
-									} else {
-										if (context.datasetIndex === 0) {
-											const point = dataPoints[context.dataIndex];
-											return [
-												'Global: ' + formatValue(point.y, 'rank'),
-												'Country: ' + formatValue(point.countryRank, 'rank')
-											];
-										} else {
-											return 'Peak: ' + formatValue(context.parsed.y, 'rank');
-										}
-									}
+									return formatValue(context.parsed.y);
 								}
 							}
 						},
@@ -237,58 +175,31 @@
 				]
 			});
 		} catch (err) {
-			console.error('Error loading history data:', err);
 			error = 'Failed to load history data';
 		}
 	}
 
 	onMount(() => {
-		mounted = true;
-		currentMode = mode;
-		if (isReady) loadChart();
+		if (ppHistory?.data.captures) {
+			loadChart();
+		}
 	});
 
-	$: if (mounted && mode !== currentMode) {
-		currentMode = mode;
-		if (isReady) loadChart();
-	}
-
-	$: if (isReady && query) {
+	$: if (ppHistory?.data.captures && chartElement) {
 		loadChart();
 	}
 </script>
 
-<div class="flex flex-col gap-3 w-full">
-	<div class="flex gap-1.5 justify-end p-1 bg-surface-200 rounded-lg w-fit ml-auto">
-		<button
-			class="px-3 py-1.5 text-sm rounded-md transition-colors font-medium {query === 'pp'
-				? 'bg-indigo-500 text-white shadow-sm'
-				: 'text-surface-400 hover:text-surface-100'}"
-			on:click={() => (query = 'pp')}
-		>
-			PP
-		</button>
-		<button
-			class="px-3 py-1.5 text-sm rounded-md transition-colors font-medium {query === 'rank'
-				? 'bg-indigo-500 text-white shadow-sm'
-				: 'text-surface-400 hover:text-surface-100'}"
-			on:click={() => (query = 'rank')}
-		>
-			Rank
-		</button>
-	</div>
-
-	<div class="w-full h-16">
-		{#if !isReady}
-			<div class="flex items-center justify-center h-full text-surface-400 text-sm">
-				Loading...
-			</div>
-		{:else if error}
-			<div class="flex items-center justify-center h-full text-surface-400 text-sm">
-				{error}
-			</div>
-		{:else}
-			<canvas bind:this={chartElement}></canvas>
-		{/if}
-	</div>
+<div class="w-full h-16">
+	{#if !ppHistory}
+		<div class="flex items-center justify-center h-full text-surface-400 text-sm">
+			No result
+		</div>
+	{:else if error}
+		<div class="flex items-center justify-center h-full text-surface-400 text-sm">
+			{error}
+		</div>
+	{:else}
+		<canvas bind:this={chartElement}></canvas>
+	{/if}
 </div>

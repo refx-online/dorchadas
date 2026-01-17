@@ -64,7 +64,7 @@
 				<strong>{t("Don't cheat")}</strong>
 				<p>
 					{t(
-						'Using any form of cheating software, hacks, or external assistance on vanilla | relax | autopilot mode is strictly prohibited and will result in a permanent ban.'
+						'Using any form of cheating software, hacks, or external assistance on vanilla | relax | autopilot | touchdevice mode is strictly prohibited and will result in a permanent ban.'
 					)}
 				</p>
 			</li>
