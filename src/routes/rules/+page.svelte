@@ -1,4 +1,5 @@
 <script>
+	import './style.postcss';
 	import { fade, slide } from 'svelte/transition';
 	import { __ } from '$lib/language';
 	import { userLanguage } from '$lib/storage';
@@ -85,81 +86,3 @@
 		</p>
 	</section>
 </div>
-
-<style>
-	:global(body) {
-		background-color: #121212;
-		color: #e0e0e0;
-		overflow-x: hidden;
-		position: relative;
-		z-index: 1;
-	}
-
-	.content {
-		position: relative;
-		z-index: 2;
-	}
-
-	.section {
-		background: rgba(30, 30, 30, 0.7);
-		backdrop-filter: blur(15px);
-		border-radius: 12px;
-		padding: 2rem;
-		margin-bottom: 1.5rem;
-		border: 1px solid rgba(255, 255, 255, 0.1);
-		box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-		position: relative;
-		z-index: 3;
-	}
-
-	.header-container {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
-		margin-bottom: 1rem;
-	}
-
-	.header-logo {
-		width: 48px;
-		height: 48px;
-		background-color: #4a90e2;
-		border-radius: 50%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		color: white;
-		font-weight: bold;
-	}
-
-	h1 {
-		color: #f0f0f0;
-		font-weight: 700;
-	}
-
-	.subtitle {
-		color: #4a90e2;
-		margin-bottom: 1rem;
-		font-style: italic;
-	}
-
-	p,
-	li {
-		color: #a0a0a0;
-		line-height: 1.6;
-		margin-bottom: 0.5rem;
-	}
-
-	.list-decimal {
-		color: #4a90e2;
-		padding-left: 2rem;
-	}
-
-	.list-decimal li {
-		padding-left: 0.5rem;
-		margin-bottom: 1rem;
-	}
-
-	strong {
-		color: #4a90e2;
-	}
-</style>
