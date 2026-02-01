@@ -1,0 +1,307 @@
+<script lang="ts">
+	import { goto } from '$app/navigation';
+	import { getPlayerScores } from '$lib/api';
+	import { parseModsInt } from '$lib/mods';
+	import { removeTrailingZeroes } from '$lib/regex';
+	import type { PlayerScores, PlayerScore } from '$lib/types';
+	import { ProgressRadial } from '@skeletonlabs/skeleton';
+	import { onMount } from 'svelte';
+	import ChevronDown from 'svelte-feathers/ChevronDown.svelte';
+	import Download from 'svelte-feathers/Download.svelte';
+	import MoreVertical from 'svelte-feathers/MoreVertical.svelte';
+	import Popup from './Popup.svelte';
+	import { apiUrl } from '$lib/env';
+	import { __ } from '$lib/language';
+	import { userLanguage } from '$lib/storage';
+	import { scale } from 'svelte/transition';
+	import Time, { dayjs } from 'svelte-time';
+	import { Heart } from 'svelte-feathers';
+	import Mod from './Mod.svelte';
+
+	export let title: string;
+	export let userId: number;
+	export let scoresType: 'best' | 'recent' | 'first' | 'pinned';
+	export let scoreAmount: number;
+	export let currentMode: string;
+	export let currentType: string;
+	export let csrfToken: string;
+	export let currentUserId: any;
+
+	let scores: PlayerScores | undefined;
+	let loading = false;
+	let amount = 0;
+	let openMenuIndex: number | null = null;
+
+	const loadMoreScores = async () => {
+		if (loading) return;
+		loading = true;
+
+		amount += scoreAmount;
+
+		let mode = 0;
+		switch (currentMode) {
+			case 'taiko':
+				mode += 1;
+				break;
+			case 'catch':
+				mode += 2;
+				break;
+			case 'mania':
+				mode += 3;
+				break;
+		}
+
+		switch (currentType) {
+			case 'relax':
+				mode += 4;
+				break;
+			case 'autopilot':
+				mode += 8;
+				break;
+			case 'cheat':
+				mode = 12;
+				break;
+			case 'cheatcheat':
+				mode = 16;
+				break;
+			case 'touch':
+				mode = 20;
+				break;
+		}
+
+		const recentScoresRequest = await getPlayerScores({
+			userId: userId,
+			limit: amount,
+			offset: 0,
+			mode: mode,
+			scope: scoresType
+		});
+		if (recentScoresRequest) scores = recentScoresRequest;
+		loading = false;
+	};
+
+	onMount(loadMoreScores);
+
+	const toggleMenu = (index: number) => {
+		openMenuIndex = openMenuIndex === index ? null : index;
+	};
+
+	const handlePinScore = async (score: PlayerScore) => {
+		try {
+			const response = await fetch('/api/v1/pin_score', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRF-Token': csrfToken
+				},
+				body: JSON.stringify({
+					score_id: score.id,
+					pinned: score.pinned === 1,
+					current_user_id: currentUserId,
+					user_id: userId
+				})
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to pin/unpin score');
+			}
+
+			// TODO: we should not reload the page, but rather update the scores list
+			location.reload();
+			openMenuIndex = null;
+		} catch (error) {
+			throw error;
+		}
+	};
+
+	// pasted from soemwhere
+	function clickOutside(node: HTMLElement, callback: () => void) {
+		const handleClick = (event: MouseEvent) => {
+			if (!node.contains(event.target as Node)) {
+				callback();
+			}
+		};
+
+		document.addEventListener('click', handleClick, true);
+
+		return {
+			destroy() {
+				document.removeEventListener('click', handleClick, true);
+			}
+		};
+	}
+</script>
+
+<div class="relative flex flex-col gap-1">
+	<p
+		class="text-sm font-bold w-max ms-2 before:-ms-2 before:content-[''] before:h-[.65em] before:mt-[.45em] before:absolute before:w-[3px] before:rounded-lg before:bg-primary-400"
+	>
+		{__(title, $userLanguage)}
+	</p>
+	<div class="flex flex-col gap-1 justify-center">
+		<div class="flex flex-col gap-1 transition-all{loading ? ' blur-sm' : ' blur-none'}">
+			{#if scores}
+				{#each scores.scores as score, idx}
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
+					<div class="relative z-0 group" class:z-50={openMenuIndex === idx}>
+						<div
+							class="relative w-full flex flex-col md:flex-row items-stretch md:items-center justify-between gap-1 p-2 py-1 bg-surface-500 rounded-lg hover:scale-[1.005] active:scale-[0.995] transition-transform cursor-pointer group"
+							transition:scale={{ start: 0.99, duration: 200 * (idx - (amount - scoreAmount) + 1) }}
+						>
+							<div
+								class="absolute h-full w-full top-0 left-0 bg-no-repeat bg-center blur-[3px] opacity-5"
+								style="background-image: url('https://assets.ppy.sh/beatmaps/{score.beatmap
+									.set_id}/covers/cover@2x.jpg');"
+							></div>
+							<div
+								class="flex flex-row gap-2 items-center justify-center z-10 flex-grow"
+								on:click={() => goto(`/scores/${score.id}`)}
+							>
+								<div
+									class="w-10 md:w-8 text-center !text-4xl md:!text-2xl font-bold grade grade-{score.grade.toLowerCase()}"
+								>
+									{score.grade.replaceAll('XH', 'SS').replaceAll('X', 'SS').replaceAll('SH', 'S')}
+								</div>
+								<div class="flex flex-col w-full truncate">
+									<div class="flex flex-col lg:flex-row lg:items-center lg:gap-1 mb-1">
+										<div class="text-sm font-bold truncate max-w-full" title={score.beatmap.title}>
+											{score.beatmap.title.length > 30
+												? score.beatmap.title.slice(0, 30) + '...'
+												: score.beatmap.title}
+										</div>
+										<div
+											class="text-xs font-semibold truncate max-w-full"
+											title={score.beatmap.artist}
+										>
+											by {score.beatmap.artist.length > 20
+												? score.beatmap.artist.slice(0, 20) + '...'
+												: score.beatmap.artist}
+										</div>
+									</div>
+									<div class="flex flex-col lg:flex-row lg:gap-3">
+										<span
+											class="text-xs font-semibold text-yellow-600 truncate max-w-full"
+											title={score.beatmap.version}
+										>
+											{score.beatmap.version.length > 25
+												? score.beatmap.version.slice(0, 25) + '...'
+												: score.beatmap.version}
+										</span>
+										<Popup placement="right">
+											<div class="text-xs font-semibold text-surface-300">
+												<Time timestamp={dayjs(score.play_time).locale($userLanguage)} relative />
+											</div>
+											<svelte:fragment slot="popup">
+												<div
+													class="hidden md:block card variant-filled-surface px-2 py-1 text-xs z-[9999]"
+												>
+													{new Date(score.play_time).toUTCString()}
+												</div>
+											</svelte:fragment>
+										</Popup>
+									</div>
+								</div>
+							</div>
+							<div
+								class="flex flex-col md:flex-row gap-1 md:justify-start items-center mt-2 md:mt-0 md:items-center"
+							>
+								<div class="flex flex-row gap-1 md:gap-0 items-center">
+									{#each parseModsInt(score.mods, score.mods_json) as mod}
+										<Mod {mod} size={20} tooltip={true} showSettings={true}></Mod>
+									{/each}
+								</div>
+								<div class="flex flex-col items-center md:items-start ms-3">
+									<div class="flex flex-row gap-3">
+										<span class="min-w-12 text-sm font-bold text-yellow-500"
+											>{removeTrailingZeroes(score.acc)}%</span
+										>
+										{#if scoresType == 'best'}
+											<span class="min-w-12 text-sm font-bold"
+												>{Math.round(score.pp * Math.pow(0.95, idx))}pp</span
+											>
+										{/if}
+									</div>
+									{#if scoresType == 'best'}
+										<span class="text-xs font-semibold">
+											{__('weighted {{val}}%', $userLanguage, {
+												val: Math.round(Math.pow(0.95, idx) * 100)
+											})}
+										</span>
+									{/if}
+								</div>
+								<div
+									class="min-w-[80px] flex flex-row items-center justify-center text-primary-400 py-1 font-bold bg-black/50 rounded-lg"
+								>
+									{Math.round(score.pp)}<span class="text-primary-300 text-xs">pp</span>
+								</div>
+								<!-- ts pmo -->
+								<div
+									class="flex flex-col md:flex-row gap-1 md:justify-start items-center mt-2 md:mt-0 md:items-center"
+								>
+									<div class="relative ml-2">
+										<button
+											class="btn variant-soft-surface cursor-pointer rounded-lg p-2 justify-center items-center"
+											on:click|stopPropagation={() => toggleMenu(idx)}
+											title={__('More Options', $userLanguage)}
+										>
+											<MoreVertical class="pointer-events-none" />
+										</button>
+										{#if openMenuIndex === idx}
+											<div
+												class="absolute z-[9999] right-0 top-full mt-1 bg-surface-600 rounded-lg shadow-lg border border-surface-400 w-max"
+												use:clickOutside={() => (openMenuIndex = null)}
+											>
+												{#if currentUserId === userId}
+													<button
+														class="flex items-center w-full px-4 py-2 text-sm hover:bg-surface-500 text-start whitespace-nowrap"
+														on:click|stopPropagation={() => handlePinScore(score)}
+													>
+														<Heart
+															class="mr-2"
+															fill={score.pinned === 1 ? 'currentColor' : 'none'}
+															stroke={score.pinned === 1 ? 'none' : 'currentColor'}
+														/>
+														{score.pinned === 1
+															? __('Unpin Score', $userLanguage)
+															: __('Pin Score', $userLanguage)}
+													</button>
+												{/if}
+												{#if score.status > 0 && score.grade != 'F'}
+													<a
+														href="{apiUrl}/v1/get_play?id={score.id}"
+														class="flex items-center w-full px-4 py-2 text-sm hover:bg-surface-500 text-start whitespace-nowrap"
+														title={__('Download Replay', $userLanguage)}
+														on:click|stopPropagation
+													>
+														<Download class="mr-2" />
+														{__('Download Replay', $userLanguage)}
+													</a>
+												{/if}
+											</div>
+										{/if}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				{/each}
+			{/if}
+		</div>
+		<button
+			class="flex flex-row text-center justify-center items-center btn w-48 mx-auto variant-filled-surface px-4 py-1 mt-2 text-[0.7rem] leading-5"
+			on:click={loadMoreScores}
+			disabled={loading || !scores}
+		>
+			{#if loading || !scores}
+				<div>
+					<ProgressRadial width="w-5" />
+				</div>
+			{:else if (scores.scores.length >= 5 && !loading) || scores}
+				<ChevronDown class="pointer-events-none text-surface-400" size={16} />
+				<span class="font-semibold">{__('show more', $userLanguage)}</span>
+				<ChevronDown class="pointer-events-none text-surface-400" size={16} />
+			{/if}
+		</button>
+	</div>
+</div>

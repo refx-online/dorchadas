@@ -1,0 +1,181 @@
+---
+alwaysApply: true
+---
+
+These rules apply to a Bun + Svelte frontend with many routes.
+They enforce clean architecture, strict naming, and production-safe error handling.
+
+## Global Rules (All Files)
+
+### Naming Conventions (Strict)
+
+Files & folders:
+- kebab-case
+- Examples:
+  - user-profile.ts
+  - auth-store.ts
+  - fetch-user.ts
+
+Variables:
+- camelCase
+- Descriptive names only
+- No abbreviations
+- Bad: res, tmp, data2
+- Good: userResponse, requestTimeoutMs
+
+Constants:
+- SCREAMING_SNAKE_CASE
+- Declared at the top of the file
+
+Functions:
+- verbNoun format
+- Must describe intent
+- Bad: handle, process, doThing
+- Good: fetchUserProfile, validateLoginForm
+
+Types / Interfaces / Enums:
+- PascalCase
+- No I-prefix
+- Bad: IUser, user_type
+- Good: User, AuthStatus
+
+Booleans:
+- Must start with is / has / can / should
+- Bad: loggedIn
+- Good: isLoggedIn
+
+## src/routes/** (Pages & Layouts)
+
+Rules:
+- Routes must be thin
+- No business logic
+- No direct API calls except via lib/
+
+Allowed:
+- Calling lib functions
+- Wiring data to UI
+- Minimal orchestration
+
+Forbidden:
+- Data transformation logic
+- Complex conditionals
+- Shared state definitions
+
+Naming:
+- loadUserPageData
+- submitLoginAction
+
+## src/lib/api/v1/** (Network Layer)
+
+Rules:
+- One API domain per file
+- No UI logic
+- No store access
+- No side effects outside requests
+
+Naming:
+- Files: fetch-user.ts, update-profile.ts
+- Functions must start with:
+  - fetch
+  - create
+  - update
+  - delete
+
+Error Handling:
+- Do not throw raw errors
+- Normalize errors before returning
+- API functions must return typed results or typed errors
+
+## src/lib/stores/** (State Management)
+
+Rules:
+- One store per file
+- State must be explicitly typed
+- No derived logic inside components
+
+Naming:
+- Store file: auth-store.ts
+- Store creator: createAuthStore
+- Store instance: authStore
+
+## src/lib/utils/** (Utilities)
+
+Rules:
+- Pure functions only
+- No stores
+- No API calls
+- No browser APIs unless explicitly required
+
+Naming:
+- formatDate
+- calculateChecksum
+- parseJwtPayload
+
+## src/lib/types/** (Shared Types)
+
+Rules:
+- Types only
+- No logic
+- No runtime imports
+
+Naming:
+- One domain per file
+- user.types.ts
+- auth.types.ts
+
+## src/components/** (UI Components)
+
+Rules:
+- No business logic
+- No API calls
+- Minimal local state
+- Props must be explicitly typed
+
+Naming:
+- Components: PascalCase.svelte
+- Props: camelCase
+- Event handlers: handleClick, handleSubmit
+
+## Error Handling (Client-Side Strict)
+
+- DO NOT use console.log, console.error, console.warn in client code
+- Browser console must stay clean in production
+- Errors must be:
+  - handled silently
+  - shown via UI state
+  - reported via server-side logging or error reporting services
+
+Allowed:
+- Returning normalized error objects
+- Updating error stores
+- Showing user-safe messages
+
+Forbidden:
+- Logging errors to Chrome DevTools
+- Exposing stack traces to users
+- Throwing uncaught errors in UI code
+
+## Async & Performance
+
+- Use async/await consistently
+- Prefer Promise.all for parallel work
+- Abort in-flight requests on unmount using AbortController
+- Lazy-load routes and heavy components
+
+## Absolute Rules (No Exceptions)
+
+- No any
+- No unused imports
+- No circular dependencies
+- No module-scope side effects
+- No vague naming
+- No client-side console logging
+
+## Goal
+
+The codebase must remain:
+- Maintainable
+- Type-safe
+- Scalable
+- Readable
+- Production-ready
