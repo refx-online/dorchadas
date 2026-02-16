@@ -7,6 +7,7 @@
 	import { avatarUrl } from '$lib/env';
 	import { goto } from '$app/navigation';
 	import { isStaff } from '$lib/privs';
+	import { User, Settings, Users, LogOut, LogIn, UserPlus } from 'svelte-feathers';
 
 	export let drawerStore: DrawerStore;
 
@@ -18,10 +19,12 @@
 <div class="flex flex-col md:flex-row p-3 md:p-0 gap-2 h-full w-full">
 	<div class="md:hidden ms-auto">
 		<Popup event="click" placement="bottom">
-			<Avatar
-				src="{avatarUrl}/{$userData?.id ?? 0}"
-				class="!w-10 select-none cursor-pointer hover:ring hover:ring-surface-600 transition-all"
-			/>
+			<button class="rounded-full" aria-label="User menu">
+				<Avatar
+					src="{avatarUrl}/{$userData?.id ?? 0}"
+					class="!w-10 select-none cursor-pointer hover:ring hover:ring-surface-600 transition-all"
+				/>
+			</button>
 			<svelte:fragment slot="popup">
 				<div class="card p-4 variant-filled-surface">
 					<div class="flex flex-col gap-2">
@@ -31,40 +34,56 @@
 								on:click={() => {
 									goto(`/u/${$userData?.id}`);
 									drawerStore.close();
-								}}>{__('Profile', $userLanguage)}</button
+								}}
 							>
+								<User class="w-4 h-4 mr-2" />
+								{__('Profile', $userLanguage)}
+							</button>
 							<button
 								class="w-32 btn variant-filled-surface rounded-lg"
 								on:click={() => {
 									goto(`/settings`);
 									drawerStore.close();
-								}}>{__('Settings', $userLanguage)}</button
+								}}
 							>
+								<Settings class="w-4 h-4 mr-2" />
+								{__('Settings', $userLanguage)}
+							</button>
 							<button
 								class="w-32 btn variant-filled-surface rounded-lg"
 								on:click={() => {
 									goto(`/friends`);
 									drawerStore.close();
-								}}>{__('Friends', $userLanguage)}</button
+								}}
 							>
-							<a class="w-32 btn variant-filled-surface rounded-lg" href="/logout"
-								>{__('Logout', $userLanguage)}</a
-							>
+								<Users class="w-4 h-4 mr-2" />
+								{__('Friends', $userLanguage)}
+							</button>
+							<a class="w-32 btn variant-filled-surface rounded-lg" href="/logout">
+								<LogOut class="w-4 h-4 mr-2" />
+								{__('Logout', $userLanguage)}
+							</a>
 						{:else}
 							<button
 								class="w-32 btn variant-filled-surface rounded-lg"
 								on:click={() => {
 									goto('/signin');
 									drawerStore.close();
-								}}>{__('Sign In', $userLanguage)}</button
+								}}
 							>
+								<LogIn class="w-4 h-4 mr-2" />
+								{__('Sign In', $userLanguage)}
+							</button>
 							<button
 								class="w-32 btn variant-filled-surface rounded-lg"
 								on:click={() => {
 									goto('/signup');
 									drawerStore.close();
-								}}>{__('Sign Up', $userLanguage)}</button
+								}}
 							>
+								<UserPlus class="w-4 h-4 mr-2" />
+								{__('Sign Up', $userLanguage)}
+							</button>
 						{/if}
 					</div>
 					<div
@@ -102,7 +121,13 @@
 					: 'hover:variant-outline-surface '}rounded-lg"
 			>
 				{__('Play', $userLanguage)}
-				<svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<svg
+					class="w-4 h-4 ml-1"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+					aria-hidden="true"
+				>
 					<path
 						stroke-linecap="round"
 						stroke-linejoin="round"
@@ -215,12 +240,12 @@
 	<div class="h-full w-full flex flex-row justify-between items-end mt-auto">
 		<div class="md:hidden ms-auto">
 			<Popup event="click" placement="bottom">
-				<button class="btn px-2 py-2 rounded-lg variant-ghost-surface">
+				<button class="btn px-2 py-2 rounded-lg variant-ghost-surface" aria-label="Select Language">
 					<img
 						width="30"
 						class="pointer-events-none"
 						src="/flags/{$userLanguage}.png"
-						alt="language"
+						alt="Current language: {$userLanguage}"
 					/>
 				</button>
 				<svelte:fragment slot="popup">
