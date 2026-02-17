@@ -36,9 +36,17 @@
 	import { userData, userLanguage } from '$lib/storage';
 	import { onMount } from 'svelte';
 	import { appName, avatarUrl, apiUrl } from '$lib/env';
-	import Menu from 'svelte-feathers/Menu.svelte';
-	import Search from 'svelte-feathers/Search.svelte';
-	import Heart from 'svelte-feathers/Heart.svelte';
+	import {
+		Menu,
+		Search,
+		Heart,
+		User,
+		Settings,
+		Users,
+		LogOut,
+		LogIn,
+		UserPlus
+	} from 'svelte-feathers';
 	import NavItems from '$lib/components/navItems.svelte';
 	import type { UserData } from '$lib/types';
 	import Popup from '$lib/components/Popup.svelte';
@@ -275,17 +283,21 @@
 							<button
 								class="btn px-2 py-2 rounded-lg variant-ghost-surface hidden md:block"
 								on:click={() => goto('/donate')}
+								aria-label="Donate"
 							>
 								<Heart class="pointer-events-none" size={20} />
 							</button>
 							<div class="hidden md:block">
 								<Popup event="click" placement="bottom">
-									<button class="btn px-2 py-2 rounded-lg variant-ghost-surface">
+									<button
+										class="btn px-2 py-2 rounded-lg variant-ghost-surface"
+										aria-label="Select Language"
+									>
 										<img
 											width="30"
 											class="pointer-events-none"
 											src="/flags/{$userLanguage}.png"
-											alt="language"
+											alt="Current language: {$userLanguage}"
 										/>
 									</button>
 									<svelte:fragment slot="popup">
@@ -312,6 +324,7 @@
 							</div>
 							<button
 								class="btn px-5 variant-ghost-surface"
+								aria-label="Search users"
 								on:click={() =>
 									drawerStore.open({
 										id: 'search',
@@ -326,36 +339,61 @@
 							</button>
 							<div class="hidden md:block">
 								<Popup event="click" placement="bottom">
-									<Avatar
-										src="{avatarUrl}/{$userData?.id ?? 0}"
-										class="!w-10 select-none cursor-pointer hover:ring hover:ring-surface-600 transition-all"
-									/>
+									<button
+										class="appearance-none bg-transparent border-none p-0 cursor-pointer"
+										aria-label="User menu"
+									>
+										<Avatar
+											src="{avatarUrl}/{$userData?.id ?? 0}"
+											class="!w-10 select-none cursor-pointer hover:ring hover:ring-surface-600 transition-all"
+										/>
+									</button>
 									<svelte:fragment slot="popup">
 										<div class="card p-4 variant-filled-surface">
 											<div class="flex flex-col gap-2">
 												{#if $userData}
 													<button
-														class="w-32 btn variant-filled-surface rounded-lg"
+														class="w-32 btn variant-filled-surface rounded-lg flex items-center justify-center gap-2"
 														on:click={() => goto(`/u/${$userData?.id}`)}
-														>{__('Profile', $userLanguage)}</button
 													>
-													<a class="w-32 btn variant-filled-surface rounded-lg" href="/settings"
-														>{__('Settings', $userLanguage)}</a
+														<User size="16" />
+														{__('Profile', $userLanguage)}</button
 													>
-													<a class="w-32 btn variant-filled-surface rounded-lg" href="/friends"
-														>{__('Friends', $userLanguage)}</a
+													<a
+														class="w-32 btn variant-filled-surface rounded-lg flex items-center justify-center gap-2"
+														href="/settings"
 													>
-													<a class="w-32 btn variant-filled-surface rounded-lg" href="/logout"
-														>{__('Logout', $userLanguage)}</a
+														<Settings size="16" />
+														{__('Settings', $userLanguage)}</a
+													>
+													<a
+														class="w-32 btn variant-filled-surface rounded-lg flex items-center justify-center gap-2"
+														href="/friends"
+													>
+														<Users size="16" />
+														{__('Friends', $userLanguage)}</a
+													>
+													<a
+														class="w-32 btn variant-filled-surface rounded-lg flex items-center justify-center gap-2"
+														href="/logout"
+													>
+														<LogOut size="16" />
+														{__('Logout', $userLanguage)}</a
 													>
 												{:else}
 													<button
-														class="w-32 btn variant-filled-surface rounded-lg"
-														on:click={() => goto('/signin')}>{__('Sign In', $userLanguage)}</button
+														class="w-32 btn variant-filled-surface rounded-lg flex items-center justify-center gap-2"
+														on:click={() => goto('/signin')}
+													>
+														<LogIn size="16" />
+														{__('Sign In', $userLanguage)}</button
 													>
 													<button
-														class="w-32 btn variant-filled-surface rounded-lg"
-														on:click={() => goto('/signup')}>{__('Sign Up', $userLanguage)}</button
+														class="w-32 btn variant-filled-surface rounded-lg flex items-center justify-center gap-2"
+														on:click={() => goto('/signup')}
+													>
+														<UserPlus size="16" />
+														{__('Sign Up', $userLanguage)}</button
 													>
 												{/if}
 											</div>
@@ -369,6 +407,7 @@
 							<div class="md:hidden">
 								<button
 									class="btn btn-icon variant-ghost-surface rounded-lg"
+									aria-label="Open menu"
 									on:click={() =>
 										drawerStore.open({
 											id: 'nav',
