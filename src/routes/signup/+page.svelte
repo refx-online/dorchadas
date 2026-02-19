@@ -105,8 +105,9 @@
 		<a
 			class="block bg-white/5 hover:bg-white/10 transition-colors cursor-pointer rounded-full p-2 w-fit"
 			href="/"
+			aria-label={__('Back to Home', $userLanguage)}
 		>
-			<ChevronLeft class="pointer-events-none" />
+			<ChevronLeft class="pointer-events-none" aria-hidden="true" />
 		</a>
 		<div class="p-10 h-full">
 			{#if !passwordMask}
@@ -117,7 +118,7 @@
 					use:focusTrap={true}
 				>
 					<div in:scale={{ start: 0.9, delay: 200, duration: 400 }}>
-						<User size={45} class="!outline-none !border-none" />
+						<User size={45} class="!outline-none !border-none" aria-hidden="true" />
 					</div>
 					<div class="text-center">
 						<p class="text-2xl font-normal">{__('Sign Up', $userLanguage)}</p>
@@ -126,6 +127,7 @@
 					<input
 						id="username"
 						type="text"
+						aria-label={__('Username', $userLanguage)}
 						placeholder={__('Username', $userLanguage)}
 						on:input={() => (errored = false)}
 						on:keypress={(e) => {
@@ -177,7 +179,7 @@
 					use:focusTrap={true}
 				>
 					<div in:scale={{ start: 0.9, delay: 200, duration: 400 }}>
-						<Key size={45} />
+						<Key size={45} aria-hidden="true" />
 					</div>
 					<p class="text-2xl font-normal">{__('Welcome', $userLanguage)}</p>
 					<p
@@ -189,14 +191,16 @@
 					<input
 						id="password"
 						type="password"
+						aria-label={__('password', $userLanguage)}
 						placeholder={__('password', $userLanguage)}
 						class="border border-surface-700 !ring-pink-700 focus:!border-pink-700 bg-surface-900 rounded-lg p-4 text-[17px] w-full mb-2"
 						bind:value={registerData.password}
 						disabled={loading}
 					/>
 					<input
-						id="password"
+						id="password-confirm"
 						type="password"
+						aria-label={__('repeat password', $userLanguage)}
 						placeholder={__('repeat password', $userLanguage)}
 						class="border border-surface-700 !ring-pink-700 focus:!border-pink-700 bg-surface-900 rounded-lg p-4 text-[17px] w-full mb-2"
 						bind:value={registerData.passwordConfirm}
