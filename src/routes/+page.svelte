@@ -8,6 +8,7 @@
 	import type { DBUser, PlayerCounts } from '$lib/types';
 	import { ChevronsUp, ChevronLeft, ChevronRight } from 'svelte-feathers';
 	import { env } from '$env/dynamic/public';
+	import { fade, fly } from 'svelte/transition';
 
 	export let data: {
 		userCounts?: PlayerCounts;
@@ -135,17 +136,17 @@
 	<div class="overlay">
 		<div class="container mx-auto px-4 py-8 relative z-[2]">
 			<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-				<div class="col-span-1 md:col-span-4 variant-glass-surface rounded-2xl p-6">
-					<h2 class="text-xl md:text-2xl font-bold text-white mb-4">{appName}</h2>
-					<p class="text-white/80">
+				<div class="col-span-1 md:col-span-12 variant-glass-surface rounded-2xl p-6 text-center mb-4" in:fly={{ y: -30, duration: 800, delay: 100 }}>
+					<h2 class="text-2xl md:text-3xl font-bold text-white mb-4">{appName}</h2>
+					<p class="text-white/80 max-w-2xl mx-auto">
 						a rich-feature osu! private server. we serve stable - our custom client - aeris - even
 						lazer. as of today; 12-01-2026. refx-stack has become stable!
 					</p>
 				</div>
 
-				<div class="col-span-1 md:col-span-4">
+				<div class="col-span-1 md:col-span-6 space-y-6">
 					{#if data.userCounts?.counts}
-						<div class="grid grid-cols-2 gap-4 mb-6">
+						<div class="grid grid-cols-2 gap-4" in:fly={{ x: -30, duration: 800, delay: 200 }}>
 							<div class="variant-glass-surface rounded-xl p-3 text-center hover-lift">
 								<h3 class="text-sm text-white/80 mb-1">{__('Online Users', $userLanguage)}</h3>
 								<p class="text-xl font-bold text-primary-400">
@@ -162,7 +163,7 @@
 					{/if}
 
 					{#if $userData}
-						<div class="variant-glass-surface rounded-2xl p-4 mb-6 space-y-4">
+						<div class="variant-glass-surface rounded-2xl p-4 space-y-4" in:fly={{ x: -30, duration: 800, delay: 300 }}>
 							<div class="flex flex-col space-y-4">
 								<a href="/u/{$userData.id}" class="btn variant-filled-primary w-full hover-button">
 									{__('View Profile', $userLanguage)}
@@ -173,7 +174,7 @@
 							</div>
 						</div>
 					{:else}
-						<div class="variant-glass-surface rounded-2xl p-4 mb-6 space-y-4">
+						<div class="variant-glass-surface rounded-2xl p-4 space-y-4" in:fly={{ x: -30, duration: 800, delay: 300 }}>
 							<div class="flex flex-col space-y-4">
 								<a href="/signup" class="btn variant-filled-primary w-full hover-button">
 									{__('Sign Up', $userLanguage)}
@@ -187,7 +188,8 @@
 
 					{#if data.rankedMapsCount}
 						<div
-							class="variant-glass-surface rounded-2xl p-4 mb-6 flex items-center justify-between hover-lift"
+							class="variant-glass-surface rounded-2xl p-4 flex items-center justify-between hover-lift"
+							in:fly={{ x: -30, duration: 800, delay: 400 }}
 						>
 							<div>
 								<h3 class="text-lg font-semibold text-white/80 mb-2">
@@ -200,9 +202,11 @@
 							<ChevronsUp class="pointer-events-none text-blue-400" />
 						</div>
 					{/if}
+				</div>
 
+				<div class="col-span-1 md:col-span-6 space-y-6">
 					{#if data.ppRecords && data.ppRecords.length}
-						<div class="variant-glass-surface rounded-2xl p-4">
+						<div class="variant-glass-surface rounded-2xl p-4" in:fly={{ x: 30, duration: 800, delay: 200 }}>
 							<div class="flex justify-between items-center mb-4">
 								<h2 class="text-lg font-bold text-white">{__('PP Records', $userLanguage)}</h2>
 								<div class="flex gap-2">
@@ -212,7 +216,7 @@
 									<button class="btn btn-sm variant-soft-primary p-1" on:click={nextPP}>
 										<ChevronRight class="w-4 h-4" />
 									</button>
-								</div>
+							</div>
 							</div>
 							{#if data.ppRecords[currentPPIndex]}
 								{@const score = data.ppRecords[currentPPIndex]}
@@ -232,7 +236,7 @@
 										<p class="text-xs text-white/60">
 											{modeNames[score.mode]};
 										</p>
-									</div>
+								</div>
 									<span class="text-secondary-400 font-bold text-sm">
 										{score.pp.toFixed(2)}pp
 									</span>
@@ -240,11 +244,9 @@
 							{/if}
 						</div>
 					{/if}
-				</div>
 
-				<div class="col-span-1 md:col-span-4">
 					{#if data.recentAccounts && data.recentAccounts.length}
-						<div class="variant-glass-surface rounded-2xl p-4 mb-4">
+						<div class="variant-glass-surface rounded-2xl p-4" in:fly={{ x: 30, duration: 800, delay: 300 }}>
 							<div class="flex justify-between items-center mb-4">
 								<h2 class="text-lg font-bold text-white">
 									{__('Recently Created Accounts', $userLanguage)}
@@ -282,7 +284,7 @@
 						</div>
 					{/if}
 
-					<div class="variant-glass-surface rounded-2xl p-4 mb-6">
+					<div class="variant-glass-surface rounded-2xl p-4" in:fly={{ x: 30, duration: 800, delay: 400 }}>
 						<iframe
 							src="https://discord.com/widget?id={env.PUBLIC_DISCORD_SERVER_ID}&theme=dark"
 							width="100%"
