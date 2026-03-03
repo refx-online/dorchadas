@@ -540,12 +540,23 @@
 						></span>
 					</div>
 					<div class="flex flex-col my-auto gap-1 md:gap-2 ms-2 md:ms-36 z-[5]">
-						<div class="flex flex-row items-center gap-1 text-xl md:text-2xl">
+						<div class="flex flex-row items-center gap-2 text-xl md:text-2xl">
 							{#if clan}
 								<a
-									class="chip variant-soft-primary hover:variant-filled-primary"
-									href="/clan/{clan.id}">{clan.tag}</a
+									class="h-8"
+									href="/clan/{clan.id}"
 								>
+									<img
+										src="/api/clan/{clan.id}/flag"
+										alt={clan.tag}
+										class="h-full rounded-sm object-cover"
+										on:error={(e) => {
+											e.currentTarget.style.display = 'none';
+											e.currentTarget.nextElementSibling.style.display = 'inline-block';
+										}}
+									/>
+									<span class="chip variant-soft-primary hover:variant-filled-primary" style="display: none;">{clan.tag}</span>
+								</a>
 							{/if}
 
 							<span

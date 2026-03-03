@@ -71,10 +71,21 @@
 									<Flag country={user.country} size={15} tooltip={true}></Flag>
 									{#if user.clan_tag}
 										<a
-											class="chip !text-xs p-1.5 py-0.5 min-w-7 variant-soft-primary hover:variant-filled-primary"
+											class="!text-xs p-1.5 py-0.5 min-w-7 !h-6"
 											href="/clan/{user.clan_id}"
 										>
-											{user.clan_tag}
+											<img
+												src="/api/clan/{user.clan_id}/flag"
+												alt={user.clan_tag}
+												class="h-full rounded-sm object-cover"
+												on:error={(e) => {
+													e.currentTarget.style.display = 'none';
+													e.currentTarget.nextElementSibling.style.display = 'inline-block';
+												}}
+											/>
+											<span class="chip !text-xs p-1.5 py-0.5 min-w-7 variant-soft-primary hover:variant-filled-primary" style="display: none;">
+												{user.clan_tag}
+											</span>
 										</a>
 									{/if}
 									{#key user}

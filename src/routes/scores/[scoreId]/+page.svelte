@@ -286,13 +286,29 @@
 								class="w-full h-full object-cover"
 							/>
 						</div>
-						<div>
+						<div class="flex items-center gap-2">
+							{#if data.clanData}
+								<a class="h-6" href="/clan/{data.clanData.id}">
+									<img
+										src="/api/clan/{data.clanData.id}/flag"
+										alt={data.clanData.tag}
+										class="h-full rounded-sm object-cover"
+										on:error={(e) => {
+											e.currentTarget.style.display = 'none';
+											e.currentTarget.nextElementSibling.style.display = 'inline-block';
+										}}
+									/>
+									<span class="chip !text-sm p-1.5 py-0.5 min-w-7 variant-soft-primary hover:variant-filled-primary" style="display: none;">
+										{data.clan}
+									</span>
+								</a>
+							{/if}
 							<a
 								href="/u/{data.score.userid}"
 								class="text-white font-semibold text-base sm:text-lg hover:text-blue-400 transition-colors cursor-pointer break-all"
 							>
-								{data.clan} {data.player?.name}</a
-							>
+								{data.player?.name}
+							</a>
 						</div>
 					</div>
 					<div class="flex gap-3 w-full sm:w-auto">

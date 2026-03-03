@@ -24,13 +24,31 @@
 		{@const members = data.clan.members.filter((member) => member.id != owner.id).length}
 		<div class="mx-auto card overflow-hidden">
 			<div class="w-full flex flex-col">
-				<div class="relative flex flex-row bg-surface-600 p-3">
+				<div class="relative flex flex-row justify-between bg-surface-600 p-3">
 					<div class="flex flex-col my-auto gap-1 md:gap-2 ms-2 z-10">
-						<div class="flex flex-row items-center gap-1 text-xl md:text-2xl">
-							<p class="chip cursor-auto variant-filled-primary">{data.clan.tag}</p>
+						<div class="flex flex-row items-center gap-2 text-xl md:text-2xl">
+							<div class="h-8">
+								<img
+									src="/api/clan/{data.clan.id}/flag"
+									alt={data.clan.tag}
+									class="h-full rounded-sm object-cover"
+									on:error={(e) => {
+										e.currentTarget.style.display = 'none';
+										e.currentTarget.nextElementSibling.style.display = 'inline-block';
+									}}
+								/>
+								<p class="chip cursor-auto variant-filled-primary" style="display: none;">{data.clan.tag}</p>
+							</div>
 							{data.clan.name}
 						</div>
 					</div>
+					{#if data.isOwner}
+						<div class="flex items-center gap-2">
+							<a href="/clan/{data.clan.id}/settings" class="btn variant-filled-surface">
+								{__('Settings', $userLanguage)}
+							</a>
+						</div>
+					{/if}
 				</div>
 				<div class="w-full flex flex-col gap-3 items-center justify-center p-3 bg-surface-800">
 					<div class="w-full text-center">

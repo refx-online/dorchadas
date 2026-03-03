@@ -8,6 +8,7 @@
 	import type { DBUser, PlayerCounts } from '$lib/types';
 	import { ChevronsUp, ChevronLeft, ChevronRight } from 'svelte-feathers';
 	import { env } from '$env/dynamic/public';
+	import { fade, fly, scale } from 'svelte/transition';
 
 	export let data: {
 		userCounts?: PlayerCounts;
@@ -133,168 +134,134 @@
 	<div class="video-blur-overlay"></div>
 
 	<div class="overlay">
-		<div class="container mx-auto px-4 py-8 relative z-[2]">
-			<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-				<div class="col-span-1 md:col-span-4 variant-glass-surface rounded-2xl p-6">
-					<h2 class="text-xl md:text-2xl font-bold text-white mb-4">{appName}</h2>
-					<p class="text-white/80">
-						a rich-feature osu! private server. we serve stable - our custom client - aeris - even
-						lazer. as of today; 12-01-2026. refx-stack has become stable!
-					</p>
+		<div class="container mx-auto px-4 py-8 relative z-[2] min-h-screen flex flex-col items-center justify-center">
+
+			<!-- Minimal Centered Hero -->
+			<div class="w-full max-w-3xl text-center mb-10" in:scale={{ duration: 1000, start: 0.95, delay: 100 }}>
+				<h1 class="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">{appName}</h1>
+				<p class="text-lg md:text-xl text-white/80 leading-relaxed" in:fly={{ y: 20, duration: 800, delay: 300 }}>
+					a rich-feature osu! private server. we serve stable - our custom client - aeris - even
+					lazer. as of today; 12-01-2026. refx-stack has become stable!
+				</p>
+			</div>
+
+			<!-- Stats Row -->
+			{#if data.userCounts?.counts}
+				<div class="grid grid-cols-2 gap-6 w-full max-w-2xl mx-auto mb-6" in:fly={{ y: 30, duration: 800, delay: 500 }}>
+					<div class="variant-glass-surface rounded-xl p-6 text-center hover-lift">
+						<h3 class="text-lg font-bold text-primary-400 mb-2">{__('Online', $userLanguage)}</h3>
+						<p class="text-2xl font-semibold text-white">
+							{animatedOnline.toLocaleString()}
+						</p>
+					</div>
+					<div class="variant-glass-surface rounded-xl p-6 text-center hover-lift">
+						<h3 class="text-lg font-bold text-secondary-400 mb-2">{__('Registered', $userLanguage)}</h3>
+						<p class="text-2xl font-semibold text-white">
+							{animatedTotal.toLocaleString()}
+						</p>
+					</div>
+				</div>
+			{/if}
+
+			<!-- Auth Buttons -->
+			<div class="grid grid-cols-2 gap-6 w-full max-w-2xl mx-auto mb-16" in:fly={{ y: 30, duration: 800, delay: 700 }}>
+				{#if $userData}
+					<a href="/u/{$userData.id}" class="btn bg-surface-500/50 hover:bg-surface-500/70 text-white font-medium py-3 rounded-lg hover-button backdrop-blur-sm border border-white/10">
+						{__('Profile', $userLanguage)}
+					</a>
+					<a href="/settings" class="btn bg-primary-500/80 hover:bg-primary-500 text-white font-medium py-3 rounded-lg hover-button backdrop-blur-sm shadow-lg">
+						{__('Settings', $userLanguage)}
+					</a>
+				{:else}
+					<a href="/signup" class="btn bg-surface-500/50 hover:bg-surface-500/70 text-white font-medium py-3 rounded-lg hover-button backdrop-blur-sm border border-white/10">
+						{__('Register', $userLanguage)}
+					</a>
+					<a href="/signin" class="btn bg-primary-400/80 hover:bg-primary-400 text-white font-medium py-3 rounded-lg hover-button backdrop-blur-sm shadow-lg">
+						{__('Login', $userLanguage)}
+					</a>
+				{/if}
+			</div>
+
+			<!-- Lower Balanced Section (Discord + Stats stack) -->
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl mx-auto opacity-90 hover:opacity-100 transition-opacity" in:fly={{ y: 40, duration: 1000, delay: 900 }}>
+
+				<!-- Discord Widget -->
+				<div class="variant-glass-surface rounded-xl p-4 h-full min-h-[300px] flex flex-col">
+					<h3 class="text-sm font-semibold text-white/60 mb-3 ml-1">{__('Community Server', $userLanguage)}</h3>
+					<iframe
+						src="https://discord.com/widget?id={env.PUBLIC_DISCORD_SERVER_ID}&theme=dark"
+						width="100%"
+						height="100%"
+						class="rounded-lg flex-grow"
+						frameborder="0"
+						title="disc"
+						sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+						style="background-color: transparent;"
+					>
+					</iframe>
 				</div>
 
-				<div class="col-span-1 md:col-span-4">
-					{#if data.userCounts?.counts}
-						<div class="grid grid-cols-2 gap-4 mb-6">
-							<div class="variant-glass-surface rounded-xl p-3 text-center hover-lift">
-								<h3 class="text-sm text-white/80 mb-1">{__('Online Users', $userLanguage)}</h3>
-								<p class="text-xl font-bold text-primary-400">
-									{animatedOnline.toLocaleString()}
-								</p>
-							</div>
-							<div class="variant-glass-surface rounded-xl p-3 text-center hover-lift">
-								<h3 class="text-sm text-white/80 mb-1">{__('Registered Users', $userLanguage)}</h3>
-								<p class="text-xl font-bold text-secondary-400">
-									{animatedTotal.toLocaleString()}
-								</p>
-							</div>
-						</div>
-					{/if}
+				<!-- Stats Stack -->
+				<div class="flex flex-col gap-6 h-full justify-between">
 
-					{#if $userData}
-						<div class="variant-glass-surface rounded-2xl p-4 mb-6 space-y-4">
-							<div class="flex flex-col space-y-4">
-								<a href="/u/{$userData.id}" class="btn variant-filled-primary w-full hover-button">
-									{__('View Profile', $userLanguage)}
-								</a>
-								<a href="/settings" class="btn variant-soft-secondary w-full hover-button">
-									{__('Settings', $userLanguage)}
-								</a>
-							</div>
-						</div>
-					{:else}
-						<div class="variant-glass-surface rounded-2xl p-4 mb-6 space-y-4">
-							<div class="flex flex-col space-y-4">
-								<a href="/signup" class="btn variant-filled-primary w-full hover-button">
-									{__('Sign Up', $userLanguage)}
-								</a>
-								<a href="/signin" class="btn variant-soft-secondary w-full hover-button">
-									{__('Sign In', $userLanguage)}
-								</a>
-							</div>
-						</div>
-					{/if}
-
+					<!-- Ranked Maps -->
 					{#if data.rankedMapsCount}
-						<div
-							class="variant-glass-surface rounded-2xl p-4 mb-6 flex items-center justify-between hover-lift"
-						>
-							<div>
-								<h3 class="text-lg font-semibold text-white/80 mb-2">
-									{__('Maps Ranked', $userLanguage)}
-								</h3>
-								<p class="text-2xl md:text-3xl font-bold text-tertiary-400">
-									{data.rankedMapsCount.toLocaleString()}
-								</p>
+						<div class="variant-glass-surface rounded-xl p-4 flex flex-col justify-center flex-1">
+							<div class="flex justify-between items-center">
+								<h3 class="text-sm font-semibold text-white/60">{__('Maps Ranked', $userLanguage)}</h3>
+								<ChevronsUp class="text-blue-400/50 w-5 h-5" />
 							</div>
-							<ChevronsUp class="pointer-events-none text-blue-400" />
+							<p class="text-xl font-bold text-tertiary-400 mt-1">{data.rankedMapsCount.toLocaleString()}</p>
 						</div>
 					{/if}
 
+					<!-- PP Records Mini -->
 					{#if data.ppRecords && data.ppRecords.length}
-						<div class="variant-glass-surface rounded-2xl p-4">
-							<div class="flex justify-between items-center mb-4">
-								<h2 class="text-lg font-bold text-white">{__('PP Records', $userLanguage)}</h2>
-								<div class="flex gap-2">
-									<button class="btn btn-sm variant-soft-primary p-1" on:click={prevPP}>
-										<ChevronLeft class="w-4 h-4" />
-									</button>
-									<button class="btn btn-sm variant-soft-primary p-1" on:click={nextPP}>
-										<ChevronRight class="w-4 h-4" />
-									</button>
+						<div class="variant-glass-surface rounded-xl p-4 flex flex-col justify-center flex-1">
+							<div class="flex justify-between items-center mb-2">
+								<h3 class="text-sm font-semibold text-white/60">{__('PP Record', $userLanguage)}</h3>
+								<div class="flex gap-1">
+									<button class="btn btn-sm variant-soft-primary p-1 rounded" on:click={prevPP}><ChevronLeft class="w-3 h-3" /></button>
+									<button class="btn btn-sm variant-soft-primary p-1 rounded" on:click={nextPP}><ChevronRight class="w-3 h-3" /></button>
 								</div>
 							</div>
 							{#if data.ppRecords[currentPPIndex]}
 								{@const score = data.ppRecords[currentPPIndex]}
-								<div class="flex items-center bg-black/20 rounded-xl p-3 hover-glow">
-									<img
-										src={`${avatarUrl}/${score.id}`}
-										alt="{score.name}'s avatar"
-										class="w-8 h-8 rounded-full mr-3 object-cover"
-									/>
-									<div class="flex-grow">
-										<a
-											href={`/scores/${score.score_id}`}
-											class="text-sm font-semibold text-white hover:text-primary-400 transition-colors"
-										>
-											{score.name}
-										</a>
-										<p class="text-xs text-white/60">
-											{modeNames[score.mode]};
-										</p>
+								<div class="flex items-center gap-3">
+									<img src={`${avatarUrl}/${score.id}`} alt="{score.name}'s avatar" class="w-8 h-8 rounded-full object-cover" />
+									<div class="flex-col overflow-hidden">
+										<a href={`/scores/${score.score_id}`} class="text-sm font-bold text-white hover:text-primary-400 truncate block">{score.name}</a>
+										<span class="text-xs text-secondary-400 font-bold">{score.pp.toFixed(0)}pp</span>
 									</div>
-									<span class="text-secondary-400 font-bold text-sm">
-										{score.pp.toFixed(2)}pp
-									</span>
 								</div>
 							{/if}
 						</div>
 					{/if}
-				</div>
 
-				<div class="col-span-1 md:col-span-4">
+					<!-- Recent Accounts Mini -->
 					{#if data.recentAccounts && data.recentAccounts.length}
-						<div class="variant-glass-surface rounded-2xl p-4 mb-4">
-							<div class="flex justify-between items-center mb-4">
-								<h2 class="text-lg font-bold text-white">
-									{__('Recently Created Accounts', $userLanguage)}
-								</h2>
-								<div class="flex gap-2">
-									<button class="btn btn-sm variant-soft-primary p-1" on:click={prevAccount}>
-										<ChevronLeft class="w-4 h-4" />
-									</button>
-									<button class="btn btn-sm variant-soft-primary p-1" on:click={nextAccount}>
-										<ChevronRight class="w-4 h-4" />
-									</button>
+						<div class="variant-glass-surface rounded-xl p-4 flex flex-col justify-center flex-1">
+							<div class="flex justify-between items-center mb-2">
+								<h3 class="text-sm font-semibold text-white/60">{__('New Player', $userLanguage)}</h3>
+								<div class="flex gap-1">
+									<button class="btn btn-sm variant-soft-primary p-1 rounded" on:click={prevAccount}><ChevronLeft class="w-3 h-3" /></button>
+									<button class="btn btn-sm variant-soft-primary p-1 rounded" on:click={nextAccount}><ChevronRight class="w-3 h-3" /></button>
 								</div>
 							</div>
 							{#if data.recentAccounts[currentAccountIndex]}
 								{@const account = data.recentAccounts[currentAccountIndex]}
-								<div class="flex items-center bg-black/20 rounded-xl p-3 hover-glow">
-									<img
-										src={`${avatarUrl}/${account.id}`}
-										alt="{account.name}'s avatar"
-										class="w-8 h-8 rounded-full mr-3 object-cover"
-									/>
-									<div>
-										<a
-											href={`/u/${account.id}`}
-											class="text-sm font-semibold text-white hover:text-primary-400 transition-colors truncate max-w-[150px]"
-										>
-											{account.name}
-										</a>
-										<p class="text-xs text-white/60">
-											{new Date(account.creation_time * 1000).toLocaleDateString()}
-										</p>
+								<div class="flex items-center gap-3">
+									<img src={`${avatarUrl}/${account.id}`} alt="{account.name}'s avatar" class="w-8 h-8 rounded-full object-cover" />
+									<div class="flex-col overflow-hidden">
+										<a href={`/u/${account.id}`} class="text-sm font-bold text-white hover:text-primary-400 truncate block">{account.name}</a>
+										<span class="text-xs text-white/40">{new Date(account.creation_time * 1000).toLocaleDateString()}</span>
 									</div>
 								</div>
 							{/if}
 						</div>
 					{/if}
-
-					<div class="variant-glass-surface rounded-2xl p-4 mb-6">
-						<iframe
-							src="https://discord.com/widget?id={env.PUBLIC_DISCORD_SERVER_ID}&theme=dark"
-							width="100%"
-							height="320"
-							frameborder="0"
-							title="disc"
-							sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
-							style="background-color: transparent;"
-						>
-						</iframe>
-					</div>
 				</div>
+
 			</div>
 		</div>
 	</div>
