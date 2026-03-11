@@ -105,6 +105,7 @@
 		<a
 			class="block bg-white/5 hover:bg-white/10 transition-colors cursor-pointer rounded-full p-2 w-fit"
 			href="/"
+			aria-label={__('Back to Home', $userLanguage)}
 		>
 			<ChevronLeft class="pointer-events-none" />
 		</a>
@@ -127,6 +128,7 @@
 						id="username"
 						type="text"
 						placeholder={__('Username', $userLanguage)}
+						aria-label={__('Username', $userLanguage)}
 						on:input={() => (errored = false)}
 						on:keypress={(e) => {
 							if (e.key === 'Enter') {
@@ -190,14 +192,16 @@
 						id="password"
 						type="password"
 						placeholder={__('password', $userLanguage)}
+						aria-label={__('Password', $userLanguage)}
 						class="border border-surface-700 !ring-pink-700 focus:!border-pink-700 bg-surface-900 rounded-lg p-4 text-[17px] w-full mb-2"
 						bind:value={registerData.password}
 						disabled={loading}
 					/>
 					<input
-						id="password"
+						id="passwordConfirm"
 						type="password"
 						placeholder={__('repeat password', $userLanguage)}
+						aria-label={__('repeat password', $userLanguage)}
 						class="border border-surface-700 !ring-pink-700 focus:!border-pink-700 bg-surface-900 rounded-lg p-4 text-[17px] w-full mb-2"
 						bind:value={registerData.passwordConfirm}
 						disabled={loading}
