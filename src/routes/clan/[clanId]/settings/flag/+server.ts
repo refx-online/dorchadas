@@ -1,7 +1,7 @@
 import { error, json } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
 import { getClan } from '$lib/api';
-import { validateImageFile, deleteExistingImages, saveImageFile, DATA_DIRECTORY, ensureDirectoryExists } from '$lib/image';
+import { validateImageFile, deleteExistingImages, saveProcessedImage, DATA_DIRECTORY, ensureDirectoryExists } from '$lib/image';
 import path from 'path';
 
 export const POST = async ({ request, cookies, params }) => {
@@ -39,7 +39,7 @@ export const POST = async ({ request, cookies, params }) => {
 		await ensureDirectoryExists(flagDirectory);
 
 		await deleteExistingImages(flagDirectory, clanId);
-		await saveImageFile(file, flagDirectory, clanId);
+		await saveProcessedImage(file, flagDirectory, clanId);
 
 		return json({ success: true, clan: { id: clanId } });
 	} catch (err) {

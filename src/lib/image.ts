@@ -3,6 +3,7 @@ import { writeFile, unlink, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
 import { env } from '$env/dynamic/private';
+import sharp from 'sharp';
 
 export const DATA_DIRECTORY = env.DATA_DIRECTORY || '/app/.data';
 
@@ -63,6 +64,21 @@ export async function saveImageFile(file: File, directory: string, userId: numbe
 	const buffer = new Uint8Array(await file.arrayBuffer());
 	await writeFile(filePath, buffer);
 	return extension;
+}
+
+export async function saveProcessedImage(file: File, directory: string, userId: number) {
+	const buffer = Buffer.from(await file.arrayBuffer());
+	const filePath = path.join(directory, `${userId}.png`);
+
+	await sharp(buffer)
+		.resize(256, 170, {
+			fit: 'cover',
+			position: 'center'
+		})
+		.png()
+		.toFile(filePath);
+
+	return 'png';
 }
 
 export function findExistingImage(

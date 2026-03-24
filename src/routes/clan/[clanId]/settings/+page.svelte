@@ -10,6 +10,8 @@
 	let message = '';
 	let messageType: 'success' | 'error' = 'success';
 	let isLoading = false;
+	let clanName = data.clan.name;
+	let clanTag = data.clan.tag;
 
 	const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
 	const MAX_SIZE = 5 * 1024 * 1024; // 5MB
@@ -97,6 +99,34 @@
 			__('An error occurred while uploading the flag', $userLanguage)
 		);
 	}
+
+	async function handleSettingsUpdate() {
+		isLoading = true;
+		try {
+			const response = await fetch(`/clan/${data.clan.id}/settings/update`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					name: clanName,
+					tag: clanTag
+				})
+			});
+
+			if (response.ok) {
+				showMessage(__('Settings updated successfully!', $userLanguage), 'success');
+				await invalidateAll();
+			} else {
+				const result = await response.json();
+				showMessage(result.message || __('Failed to update settings', $userLanguage), 'error');
+			}
+		} catch {
+			showMessage(__('An error occurred while updating settings', $userLanguage), 'error');
+		} finally {
+			isLoading = false;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -126,6 +156,42 @@
 				<h3 class="h3 mb-4">{__('Appearance', $userLanguage)}</h3>
 
 				<div class="space-y-8">
+					<!-- General Settings -->
+					<div class="mb-8 space-y-4">
+						<h3 class="text-lg font-medium">{__('General Info', $userLanguage)}</h3>
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<label class="label">
+								<span>{__('Clan Name', $userLanguage)}</span>
+								<input
+									type="text"
+									class="input"
+									bind:value={clanName}
+									placeholder={__('Enter clan name', $userLanguage)}
+									disabled={isLoading}
+								/>
+							</label>
+							<label class="label">
+								<span>{__('Clan Tag', $userLanguage)}</span>
+								<input
+									type="text"
+									class="input"
+									bind:value={clanTag}
+									placeholder={__('Enter clan tag', $userLanguage)}
+									disabled={isLoading}
+								/>
+							</label>
+						</div>
+						<button
+							class="btn variant-filled-primary"
+							on:click={handleSettingsUpdate}
+							disabled={isLoading || (clanName === data.clan.name && clanTag === data.clan.tag)}
+						>
+							{isLoading ? __('Saving...', $userLanguage) : __('Save Settings', $userLanguage)}
+						</button>
+					</div>
+
+					<hr class="opacity-25" />
+
 					<!-- Flag Image -->
 					<div class="mb-8">
 						<h3 class="text-lg font-medium mb-4">{__('Clan Flag', $userLanguage)}</h3>
@@ -134,7 +200,7 @@
 								<img
 									src={getPreviewUrl(flagFile?.[0], `/api/clan/${data.clan.id}/flag`)}
 									alt="Flag"
-									class="h-16 w-16 md:w-auto md:h-16 rounded object-cover border-4 border-surface-300-600-token"
+									class="h-16 aspect-[3/2] rounded-md object-cover border-4 border-surface-300-600-token"
 									on:error={(e) => {
 										e.currentTarget.style.display = 'none';
 									}}

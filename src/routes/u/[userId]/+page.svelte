@@ -549,7 +549,7 @@
 									<img
 										src="/api/clan/{clan.id}/flag"
 										alt={clan.tag}
-										class="h-full rounded-sm object-cover"
+										class="h-full aspect-[3/2] rounded-md object-cover"
 										on:error={(e) => {
 											e.currentTarget.style.display = 'none';
 											e.currentTarget.nextElementSibling.style.display = 'inline-block';
