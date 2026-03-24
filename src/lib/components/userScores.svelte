@@ -10,7 +10,7 @@
 	import Download from 'svelte-feathers/Download.svelte';
 	import MoreVertical from 'svelte-feathers/MoreVertical.svelte';
 	import Popup from './Popup.svelte';
-	import { apiUrl } from '$lib/env';
+	import { getReplayUrl } from '$lib/env';
 	import { __ } from '$lib/language';
 	import { userLanguage } from '$lib/storage';
 	import { scale } from 'svelte/transition';
@@ -269,7 +269,7 @@
 												{/if}
 												{#if score.status > 0 && score.grade != 'F'}
 													<a
-														href="{apiUrl}/v1/get_play?id={score.id}"
+														href="{getReplayUrl}?score_id={score.id}"
 														class="flex items-center w-full px-4 py-2 text-sm hover:bg-surface-500 text-start whitespace-nowrap"
 														title={__('Download Replay', $userLanguage)}
 														on:click|stopPropagation
