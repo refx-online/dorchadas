@@ -20,6 +20,7 @@ export async function load({ params }) {
 		score: scoreInfo?.score,
 		player: player?.player?.info,
 		beatmap: beatmap?.map,
-		clan: clanName
+		clan: clanName,
+		clanData: clan
 	};
 }

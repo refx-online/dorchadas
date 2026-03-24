@@ -10,7 +10,7 @@
 	import Clans from '$lib/components/clans.svelte';
 
 	const modes = ['osu', 'taiko', 'catch', 'mania'];
-	const types = ['vanilla', 'relax', 'autopilot'];
+	const types = ['vanilla', 'relax', 'autopilot', 'cheat', 'cheatcheat', 'touch'];
 
 	let currentLeaderboard: DBClan[] = [];
 	const clansPerPage = 50;
@@ -47,6 +47,10 @@
 		let mode = 0;
 		const urlParams = new URLSearchParams();
 
+		if (currentType == 'relax' && currentMode == 'mania') currentMode = 'osu';
+		if (currentType == 'autopilot' && currentMode != 'osu') currentMode = 'osu';
+		if (currentType == 'touch' && currentMode != 'osu') currentMode = 'osu';
+
 		queryMode.set(currentMode);
 		queryType.set(currentType);
 		queryPage.set(currentPage.toFixed(0));
@@ -66,6 +70,18 @@
 		switch (currentType) {
 			case 'relax':
 				mode += 4;
+				break;
+			case 'autopilot':
+				mode += 8;
+				break;
+			case 'cheat':
+				mode = 12;
+				break;
+			case 'cheatcheat':
+				mode = 16;
+				break;
+			case 'touch':
+				mode = 20;
 				break;
 		}
 
@@ -128,24 +144,60 @@
 	<div class=" flex flex-col justify-center">
 		<div class="bg-surface-700 rounded-t-lg">
 			<div class="grid md:grid-cols-[auto_auto] gap-2 p-3">
-				<div class="w-full flex justify-center md:justify-start rounded-lg">
+				<div class="w-full flex flex-wrap justify-center md:justify-start rounded-lg">
 					<button
-						class="w-[100%] md:w-[25%] !scale-100 btn {currentType == 'vanilla'
+						class="w-auto px-4 !scale-100 btn {currentType == 'vanilla'
 							? 'bg-surface-500'
-							: 'bg-surface-600'} rounded-lg rounded-r-none"
+							: 'bg-surface-600'} rounded-lg md:rounded-r-none"
 						on:click={() => setType('vanilla')}
 						disabled={loading || failed}
 					>
-						001
+						Vanilla
 					</button>
 					<button
-						class="w-[100%] md:w-[25%] !scale-100 btn {currentType == 'relax'
+						class="w-auto px-4 !scale-100 btn {currentType == 'relax'
 							? 'bg-surface-500'
-							: 'bg-surface-600'} rounded-none"
+							: 'bg-surface-600'} rounded-lg md:rounded-none"
 						on:click={() => setType('relax')}
 						disabled={currentMode == 'mania' || loading || failed}
 					>
-						002
+						Relax
+					</button>
+					<button
+						class="w-auto px-4 !scale-100 btn {currentType == 'autopilot'
+							? 'bg-surface-500'
+							: 'bg-surface-600'} rounded-lg md:rounded-none"
+						on:click={() => setType('autopilot')}
+						disabled={currentMode != 'osu' || loading || failed}
+					>
+						Autopilot
+					</button>
+					<button
+						class="w-auto px-4 !scale-100 btn {currentType == 'cheat'
+							? 'bg-surface-500'
+							: 'bg-surface-600'} rounded-lg md:rounded-none"
+						on:click={() => setType('cheat')}
+						disabled={loading || failed}
+					>
+						Cheat
+					</button>
+					<button
+						class="w-auto px-4 !scale-100 btn {currentType == 'cheatcheat'
+							? 'bg-surface-500'
+							: 'bg-surface-600'} rounded-lg md:rounded-none"
+						on:click={() => setType('cheatcheat')}
+						disabled={loading || failed}
+					>
+						CheatCheat
+					</button>
+					<button
+						class="w-auto px-4 !scale-100 btn {currentType == 'touch'
+							? 'bg-surface-500'
+							: 'bg-surface-600'} rounded-lg md:rounded-l-none"
+						on:click={() => setType('touch')}
+						disabled={currentMode != 'osu' || loading || failed}
+					>
+						Touch
 					</button>
 				</div>
 				<div class="w-full flex rounded-lg">
