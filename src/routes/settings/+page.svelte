@@ -339,19 +339,22 @@
 					</h2>
 
 					<!-- Clan Settings -->
-					{#if data.user.clanId}
-						<div class="mb-8">
-							<h3 class="text-lg font-medium mb-4">{__('Clan', $userLanguage)}</h3>
-							<div class="flex items-center gap-4">
+					<div class="mb-8">
+						<h3 class="text-lg font-medium mb-4">{__('Clan', $userLanguage)}</h3>
+						<div class="flex items-center gap-4">
+							{#if data.user.clanId}
 								<a
 									href="/clan/{data.user.clanId}/settings"
 									class="btn variant-filled-secondary"
 								>
 									{__('Go to Clan Settings', $userLanguage)}
 								</a>
-							</div>
+							{/if}
+							<a href="/settings/invites" class="btn variant-filled-primary">
+								{__('Clan Invites', $userLanguage)}
+							</a>
 						</div>
-					{/if}
+					</div>
 
 					<!-- Username Change -->
 					<div class="mb-8">

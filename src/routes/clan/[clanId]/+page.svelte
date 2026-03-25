@@ -4,7 +4,42 @@
 	import { userLanguage } from '$lib/storage';
 	import Frown from 'svelte-feathers/Frown.svelte';
 
+	import { invalidateAll } from '$app/navigation';
 	export let data;
+
+	let isLoading = false;
+
+	async function handleClanLeave() {
+		if (
+			!confirm(
+				data.isOwner
+					? __('Are you sure you want to delete this clan?', $userLanguage)
+					: __('Are you sure you want to leave this clan?', $userLanguage)
+			)
+		) {
+			return;
+		}
+
+		isLoading = true;
+		try {
+			const response = await fetch(`/clan/${data.clan.id}/leave`, {
+				method: 'POST',
+				headers: {
+					'x-csrf-token': data.csrfToken
+				}
+			});
+
+			if (response.ok) {
+				window.location.href = '/';
+			} else {
+				alert(__('An error occurred while leaving the clan', $userLanguage));
+			}
+		} catch {
+			alert(__('An error occurred while leaving the clan', $userLanguage));
+		} finally {
+			isLoading = false;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -42,13 +77,22 @@
 							{data.clan.name}
 						</div>
 					</div>
-					{#if data.isOwner}
-						<div class="flex items-center gap-2">
+					<div class="flex items-center gap-2">
+						{#if data.isOwner}
 							<a href="/clan/{data.clan.id}/settings" class="btn variant-filled-surface">
 								{__('Settings', $userLanguage)}
 							</a>
-						</div>
-					{/if}
+						{/if}
+						{#if data.isMember}
+							<button
+								class="btn {data.isOwner ? 'variant-filled-error' : 'variant-filled-surface'}"
+								on:click={handleClanLeave}
+								disabled={isLoading}
+							>
+								{data.isOwner ? __('Delete Clan', $userLanguage) : __('Leave Clan', $userLanguage)}
+							</button>
+						{/if}
+					</div>
 				</div>
 				<div class="w-full flex flex-col gap-3 items-center justify-center p-3 bg-surface-800">
 					<div class="w-full text-center">
