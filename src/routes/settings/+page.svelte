@@ -342,10 +342,7 @@
 						<h3 class="text-lg font-medium mb-4">{__('Clan', $userLanguage)}</h3>
 						<div class="flex items-center gap-4">
 							{#if data.user.clanId}
-								<a
-									href="/clan/{data.user.clanId}/settings"
-									class="btn variant-filled-secondary"
-								>
+								<a href="/clan/{data.user.clanId}/settings" class="btn variant-filled-secondary">
 									{__('Go to Clan Settings', $userLanguage)}
 								</a>
 							{/if}

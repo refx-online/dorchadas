@@ -107,7 +107,7 @@
 			const response = await fetch(`/clan/${data.clan.id}/settings/update`, {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json',
+					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
 					name: clanName,
@@ -136,7 +136,7 @@
 			const response = await fetch(`/clan/${data.clan.id}/settings/invite`, {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json',
+					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
 					username: inviteUsername
@@ -164,7 +164,7 @@
 			const response = await fetch(`/clan/${data.clan.id}/settings/invites/cancel`, {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json',
+					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
 					inviteId
@@ -180,6 +180,39 @@
 			}
 		} catch {
 			showMessage(__('An error occurred while cancelling invite', $userLanguage), 'error');
+		} finally {
+			isLoading = false;
+		}
+	}
+
+	async function handleRespondRequest(requestId: number, status: 'accepted' | 'rejected') {
+		isLoading = true;
+		try {
+			const response = await fetch(`/clan/${data.clan.id}/settings/requests/respond`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					requestId,
+					status
+				})
+			});
+
+			if (response.ok) {
+				showMessage(
+					status === 'accepted'
+						? __('Request accepted!', $userLanguage)
+						: __('Request rejected!', $userLanguage),
+					'success'
+				);
+				await invalidateAll();
+			} else {
+				const result = await response.json();
+				showMessage(result.message || __('Failed to respond to request', $userLanguage), 'error');
+			}
+		} catch {
+			showMessage(__('An error occurred while responding to request', $userLanguage), 'error');
 		} finally {
 			isLoading = false;
 		}
@@ -201,7 +234,9 @@
 
 		{#if message}
 			<div
-				class="alert mb-6 {messageType === 'success' ? 'variant-filled-success' : 'variant-filled-error'}"
+				class="alert mb-6 {messageType === 'success'
+					? 'variant-filled-success'
+					: 'variant-filled-error'}"
 			>
 				<p>{message}</p>
 			</div>
@@ -302,6 +337,49 @@
 
 					<hr class="opacity-25" />
 
+					<div class="mb-8 space-y-4">
+						<h3 class="text-lg font-medium">{__('Join Requests', $userLanguage)}</h3>
+						{#if data.requests && data.requests.length > 0}
+							<div class="table-container">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th>{__('Username', $userLanguage)}</th>
+											<th>{__('Action', $userLanguage)}</th>
+										</tr>
+									</thead>
+									<tbody>
+										{#each data.requests as request}
+											<tr>
+												<td>{request.username}</td>
+												<td class="flex gap-2">
+													<button
+														class="btn btn-sm variant-filled-success"
+														on:click={() => handleRespondRequest(request.id, 'accepted')}
+														disabled={isLoading}
+													>
+														{__('Accept', $userLanguage)}
+													</button>
+													<button
+														class="btn btn-sm variant-filled-error"
+														on:click={() => handleRespondRequest(request.id, 'rejected')}
+														disabled={isLoading}
+													>
+														{__('Reject', $userLanguage)}
+													</button>
+												</td>
+											</tr>
+										{/each}
+									</tbody>
+								</table>
+							</div>
+						{:else}
+							<p class="opacity-75">{__('No pending join requests.', $userLanguage)}</p>
+						{/if}
+					</div>
+
+					<hr class="opacity-25" />
+
 					<div class="mb-8">
 						<h3 class="text-lg font-medium mb-4">{__('Clan Flag', $userLanguage)}</h3>
 						<div class="flex flex-col md:flex-row gap-6 items-start">
@@ -328,9 +406,7 @@
 									on:click={handleFlagUpload}
 									disabled={!flagFile?.[0] || isLoading}
 								>
-									{isLoading
-										? __('Uploading...', $userLanguage)
-										: __('Upload Flag', $userLanguage)}
+									{isLoading ? __('Uploading...', $userLanguage) : __('Upload Flag', $userLanguage)}
 								</button>
 								<p class="text-sm opacity-75">
 									{__('Maximum size: 5MB. Supported formats: JPG, PNG, GIF', $userLanguage)}

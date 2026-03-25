@@ -9,6 +9,8 @@
 	import { userLanguage } from '$lib/storage';
 	import Clans from '$lib/components/clans.svelte';
 
+	export let data;
+
 	const modes = ['osu', 'taiko', 'catch', 'mania'];
 	const types = ['vanilla', 'relax', 'autopilot', 'cheat', 'cheatcheat', 'touch'];
 
@@ -141,6 +143,14 @@
 </svelte:head>
 
 <div class="container mx-auto w-full p-5">
+	<div class="flex justify-between items-center mb-4">
+		<h1 class="h1">Clans</h1>
+		{#if data.currentUser && data.currentUser.clanId === 0}
+			<a href="/clans/create" class="btn variant-filled-primary">
+				{__('Create Clan', $userLanguage)}
+			</a>
+		{/if}
+	</div>
 	<div class=" flex flex-col justify-center">
 		<div class="bg-surface-700 rounded-t-lg">
 			<div class="grid md:grid-cols-[auto_auto] gap-2 p-3">

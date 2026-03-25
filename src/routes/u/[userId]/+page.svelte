@@ -542,10 +542,7 @@
 					<div class="flex flex-col my-auto gap-1 md:gap-2 ms-2 md:ms-36 z-[5]">
 						<div class="flex flex-row items-center gap-2 text-xl md:text-2xl">
 							{#if clan}
-								<a
-									class="h-8"
-									href="/clan/{clan.id}"
-								>
+								<a class="h-8" href="/clan/{clan.id}">
 									<img
 										src="/api/clan/{clan.id}/flag"
 										alt={clan.tag}
@@ -555,7 +552,10 @@
 											e.currentTarget.nextElementSibling.style.display = 'inline-block';
 										}}
 									/>
-									<span class="chip variant-soft-primary hover:variant-filled-primary" style="display: none;">{clan.tag}</span>
+									<span
+										class="chip variant-soft-primary hover:variant-filled-primary"
+										style="display: none;">{clan.tag}</span
+									>
 								</a>
 							{/if}
 

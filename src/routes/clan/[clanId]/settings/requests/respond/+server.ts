@@ -1,14 +1,7 @@
 import { error, json } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
 import { getClan } from '$lib/api';
-import {
-	validateImageFile,
-	deleteExistingImages,
-	saveProcessedImage,
-	DATA_DIRECTORY,
-	ensureDirectoryExists
-} from '$lib/image';
-import path from 'path';
+import { respondToJoinRequest } from '$lib/db';
 
 export const POST = async ({ request, cookies, params }) => {
 	try {
@@ -33,25 +26,23 @@ export const POST = async ({ request, cookies, params }) => {
 		}
 
 		if (clan.owner.id !== user.id) {
-			throw error(403, 'Only the clan owner can change the flag');
+			throw error(403, 'Only the clan owner can respond to requests');
 		}
 
-		const formData = await request.formData();
-		const file = formData.get('flag') as File;
+		const { requestId, status } = await request.json();
 
-		await validateImageFile(file);
+		if (!requestId || !status || !['accepted', 'rejected'].includes(status)) {
+			return json({ message: 'Invalid request data' }, { status: 400 });
+		}
 
-		const flagDirectory = path.join(DATA_DIRECTORY, 'clan_flag');
-		await ensureDirectoryExists(flagDirectory);
+		await respondToJoinRequest(requestId, clanId, status);
 
-		await deleteExistingImages(flagDirectory, clanId);
-		const extension = await saveProcessedImage(file, flagDirectory, clanId);
-
-		return json({ success: true, clan: { id: clanId, extension } });
+		return json({ success: true });
 	} catch (err) {
 		if (err && typeof err === 'object' && 'status' in err) {
 			throw err;
 		}
-		throw error(500, 'Failed to upload flag');
+		console.error('Failed to respond to join request:', err);
+		throw error(500, 'Failed to respond to join request');
 	}
 };
