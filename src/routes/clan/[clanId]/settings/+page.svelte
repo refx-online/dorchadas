@@ -73,6 +73,9 @@
 		try {
 			const response = await fetch(endpoint, {
 				method: 'POST',
+				headers: {
+					'x-csrf-token': data.csrfToken
+				},
 				body: formData
 			});
 
@@ -108,7 +111,8 @@
 			const response = await fetch(`/clan/${data.clan.id}/settings/update`, {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/json',
+					'x-csrf-token': data.csrfToken
 				},
 				body: JSON.stringify({
 					name: clanName,
@@ -137,7 +141,8 @@
 			const response = await fetch(`/clan/${data.clan.id}/settings/invite`, {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/json',
+					'x-csrf-token': data.csrfToken
 				},
 				body: JSON.stringify({
 					username: inviteUsername
@@ -165,7 +170,8 @@
 			const response = await fetch(`/clan/${data.clan.id}/settings/invites/cancel`, {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/json',
+					'x-csrf-token': data.csrfToken
 				},
 				body: JSON.stringify({
 					inviteId

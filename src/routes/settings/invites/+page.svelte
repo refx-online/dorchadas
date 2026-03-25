@@ -24,7 +24,8 @@
 			const response = await fetch('/settings/invites/respond', {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/json',
+					'x-csrf-token': data.csrfToken
 				},
 				body: JSON.stringify({
 					inviteId,

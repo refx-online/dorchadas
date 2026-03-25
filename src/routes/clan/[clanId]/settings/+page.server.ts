@@ -4,7 +4,7 @@ import { getClan } from '$lib/api';
 import { isNumber } from '$lib/stringUtil';
 import { getClanInvites } from '$lib/db';
 
-export const load = async ({ cookies, params }) => {
+export const load = async ({ cookies, params, locals }) => {
 	const sessionToken = cookies.get('sessionToken');
 	if (!sessionToken) {
 		redirect(302, '/signin');
@@ -38,6 +38,7 @@ export const load = async ({ cookies, params }) => {
 			username: user.name
 		},
 		clan,
-		invites
+		invites,
+		csrfToken: locals.csrfToken
 	};
 };

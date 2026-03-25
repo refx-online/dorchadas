@@ -2,7 +2,7 @@ import { getClan } from '$lib/api';
 import { isNumber } from '$lib/stringUtil.js';
 import { getUserFromSession } from '$lib/user';
 
-export async function load({ params, cookies }) {
+export async function load({ params, cookies, locals }) {
 	const clanId = params.clanId;
 	if (!isNumber(clanId)) return {};
 	const clan = await getClan(parseInt(clanId));
@@ -26,6 +26,7 @@ export async function load({ params, cookies }) {
 	return {
 		clan,
 		isOwner,
-		isMember
+		isMember,
+		csrfToken: locals.csrfToken
 	};
 }

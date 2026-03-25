@@ -2,7 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
 import { getUserInvites } from '$lib/db';
 
-export const load = async ({ cookies }) => {
+export const load = async ({ cookies, locals }) => {
 	const sessionToken = cookies.get('sessionToken');
 	if (!sessionToken) {
 		redirect(302, '/signin');
@@ -20,6 +20,7 @@ export const load = async ({ cookies }) => {
 			id: user.id,
 			username: user.name
 		},
-		invites
+		invites,
+		csrfToken: locals.csrfToken
 	};
 };
