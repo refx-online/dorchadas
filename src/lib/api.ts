@@ -14,44 +14,37 @@ import type {
 	User
 } from './types';
 
-export const getClan = async (clanId: number): Promise<Clan | undefined> => {
+const handleFetch = async <T>(url: string, description: string): Promise<T | undefined> => {
 	try {
-		const requestedClanData = await fetch(`${apiUrl}/v1/get_clan?id=${clanId}`);
-		if (!requestedClanData.ok) return undefined;
-		return (await requestedClanData.json()) as Clan;
-	} catch {
+		const response = await fetch(url);
+		if (!response.ok) {
+			console.error(`Error fetching ${description}: ${response.status} ${response.statusText}`);
+			return undefined;
+		}
+		return (await response.json()) as T;
+	} catch (error) {
+		console.error(`Error fetching ${description}:`, error);
 		return undefined;
 	}
+};
+
+export const getClan = async (clanId: number): Promise<Clan | undefined> => {
+	return handleFetch<Clan>(`${apiUrl}/v1/get_clan?id=${clanId}`, `clan ${clanId}`);
 };
 
 export const getBeatmap = async (beatmapId: number): Promise<MapInfo | undefined> => {
-	try {
-		const requestedMapData = await fetch(`${apiUrl}/v1/get_map_info?id=${beatmapId}`);
-		if (!requestedMapData.ok) return undefined;
-		return (await requestedMapData.json()) as MapInfo;
-	} catch {
-		return undefined;
-	}
+	return handleFetch<MapInfo>(`${apiUrl}/v1/get_map_info?id=${beatmapId}`, `beatmap ${beatmapId}`);
 };
 
 export const getBeatmapMd5 = async (hash: string): Promise<MapInfo | undefined> => {
-	try {
-		const requestedMapData = await fetch(`${apiUrl}/v1/get_map_info?md5=${hash}`);
-		if (!requestedMapData.ok) return undefined;
-		return (await requestedMapData.json()) as MapInfo;
-	} catch {
-		return undefined;
-	}
+	return handleFetch<MapInfo>(`${apiUrl}/v1/get_map_info?md5=${hash}`, `beatmap md5 ${hash}`);
 };
 
 export const getScoresInfo = async (scoreId: number): Promise<getScoreInfo | undefined> => {
-	try {
-		const requestedPlayerData = await fetch(`${apiUrl}/v1/get_score_info?id=${scoreId}`);
-		if (!requestedPlayerData.ok) return undefined;
-		return (await requestedPlayerData.json()) as getScoreInfo;
-	} catch {
-		return undefined;
-	}
+	return handleFetch<getScoreInfo>(
+		`${apiUrl}/v1/get_score_info?id=${scoreId}`,
+		`score info ${scoreId}`
+	);
 };
 
 export const getBeatmapScores = async (opts: {
@@ -59,15 +52,10 @@ export const getBeatmapScores = async (opts: {
 	mode: number;
 	scope: 'best' | 'recent';
 }): Promise<MapScores | undefined> => {
-	try {
-		const requestedMapData = await fetch(
-			`${apiUrl}/v1/get_map_scores?md5=${opts.beatmapMd5}&mode=${opts.mode}&limit=50&scope=${opts.scope}`
-		);
-		if (!requestedMapData.ok) return undefined;
-		return (await requestedMapData.json()) as MapScores;
-	} catch {
-		return undefined;
-	}
+	return handleFetch<MapScores>(
+		`${apiUrl}/v1/get_map_scores?md5=${opts.beatmapMd5}&mode=${opts.mode}&limit=50&scope=${opts.scope}`,
+		`beatmap scores for ${opts.beatmapMd5}`
+	);
 };
 
 export const getPlayerScores = async (opts: {
@@ -79,17 +67,12 @@ export const getPlayerScores = async (opts: {
 	includeFailed?: boolean;
 	scope: 'best' | 'recent' | 'first' | 'pinned';
 }): Promise<PlayerScores | undefined> => {
-	try {
-		const requestedMapData = await fetch(
-			`${apiUrl}/v1/get_player_scores?id=${opts.userId}&mode=${opts.mode}&limit=${opts.limit}&offset=${opts.offset}&include_failed=${
-				opts.includeFailed ?? true
-			}&include_loved=${opts.includeLoved ?? false}&scope=${opts.scope}`
-		);
-		if (!requestedMapData.ok) return undefined;
-		return (await requestedMapData.json()) as PlayerScores;
-	} catch {
-		return undefined;
-	}
+	return handleFetch<PlayerScores>(
+		`${apiUrl}/v1/get_player_scores?id=${opts.userId}&mode=${opts.mode}&limit=${opts.limit}&offset=${opts.offset}&include_failed=${
+			opts.includeFailed ?? true
+		}&include_loved=${opts.includeLoved ?? false}&scope=${opts.scope}`,
+		`player scores for ${opts.userId}`
+	);
 };
 
 export const getPlayerMostPlayed = async (opts: {
@@ -97,35 +80,18 @@ export const getPlayerMostPlayed = async (opts: {
 	mode: number;
 	limit: number;
 }): Promise<PlayerMostPlayed | undefined> => {
-	try {
-		const requestedMapData = await fetch(
-			`${apiUrl}/v1/get_player_most_played?id=${opts.userId}&mode=${opts.mode}&limit=${opts.limit}`
-		);
-		if (!requestedMapData.ok) return undefined;
-		return (await requestedMapData.json()) as PlayerMostPlayed;
-	} catch {
-		return undefined;
-	}
+	return handleFetch<PlayerMostPlayed>(
+		`${apiUrl}/v1/get_player_most_played?id=${opts.userId}&mode=${opts.mode}&limit=${opts.limit}`,
+		`player most played for ${opts.userId}`
+	);
 };
 
 export const getPlayerCounts = async (): Promise<PlayerCounts | undefined> => {
-	try {
-		const requestedPlayerData = await fetch(`${apiUrl}/v1/get_player_count`);
-		if (!requestedPlayerData.ok) return undefined;
-		return (await requestedPlayerData.json()) as PlayerCounts;
-	} catch {
-		return undefined;
-	}
+	return handleFetch<PlayerCounts>(`${apiUrl}/v1/get_player_count`, 'player counts');
 };
 
 export const getPlayerStatus = async (uid: number): Promise<PlayerStatus | undefined> => {
-	try {
-		const requestedPlayerData = await fetch(`${apiUrl}/v1/get_player_status?id=${uid}`);
-		if (!requestedPlayerData.ok) return undefined;
-		return (await requestedPlayerData.json()) as PlayerStatus;
-	} catch {
-		return undefined;
-	}
+	return handleFetch<PlayerStatus>(`${apiUrl}/v1/get_player_status?id=${uid}`, `player status ${uid}`);
 };
 
 export const getPlayer = async (
@@ -143,8 +109,10 @@ export const getPlayer = async (
 		);
 		if (byName.ok) return (await byName.json()) as User;
 
+		console.error(`Error fetching player ${uid}: Not found or API error`);
 		return undefined;
-	} catch {
+	} catch (error) {
+		console.error(`Error fetching player ${uid}:`, error);
 		return undefined;
 	}
 };
@@ -158,27 +126,21 @@ export const getPPProfileHistory = async (
 ): Promise<ProfileHistoryResponse | undefined> => {
 	if (!uid) return undefined;
 
-	try {
-		const requestedPlayerData = await fetch(
-			`${apiUrl}/v1/get_player_history?scope=${scope}&id=${uid}&mode=${mode}`
-		);
+	const data = await handleFetch<any>(
+		`${apiUrl}/v1/get_player_history?scope=${scope}&id=${uid}&mode=${mode}`,
+		`profile history (scope: ${scope}, uid: ${uid})`
+	);
 
-		if (!requestedPlayerData.ok) return undefined;
+	if (!data) return undefined;
 
-		const data = await requestedPlayerData.json();
-
-		switch (scope) {
-			case 'pp':
-				return data as ppProfileHistory;
-			case 'rank':
-				return data as rankProfileHistory;
-			case 'peak':
-				return data as peakrankProfileHistory;
-			default:
-				return undefined;
-		}
-	} catch (error) {
-		console.error('Error fetching profile history:', error);
-		return undefined;
+	switch (scope) {
+		case 'pp':
+			return data as ppProfileHistory;
+		case 'rank':
+			return data as rankProfileHistory;
+		case 'peak':
+			return data as peakrankProfileHistory;
+		default:
+			return undefined;
 	}
 };
