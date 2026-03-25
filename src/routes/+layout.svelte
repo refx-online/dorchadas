@@ -342,6 +342,13 @@
 													<a class="w-32 btn variant-filled-surface rounded-lg" href="/settings"
 														>{__('Settings', $userLanguage)}</a
 													>
+													{#if $userData?.clanId}
+														<a
+															class="w-32 btn variant-filled-surface rounded-lg"
+															href="/clan/{$userData?.clanId}/settings"
+															>{__('Clan', $userLanguage)}</a
+														>
+													{/if}
 													<a class="w-32 btn variant-filled-surface rounded-lg" href="/friends"
 														>{__('Friends', $userLanguage)}</a
 													>

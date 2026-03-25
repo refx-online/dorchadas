@@ -26,7 +26,8 @@ export async function load({ url, cookies, locals }) {
 				currentUser: {
 					id: user.id,
 					username: user.name,
-					priv: user.priv
+					priv: user.priv,
+					clanId: user.clan_id
 				}
 			};
 		}

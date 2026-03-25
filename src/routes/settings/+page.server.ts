@@ -53,7 +53,8 @@ export const load = async ({ cookies }) => {
 		user: {
 			id: user.id,
 			username: user.name,
-			preferredMetric: user.preferred_metric
+			preferredMetric: user.preferred_metric,
+			clanId: user.clan_id
 		}
 	};
 };
