@@ -50,7 +50,9 @@ export default [
 				requestAnimationFrame: 'readonly',
 				cancelAnimationFrame: 'readonly',
 				performance: 'readonly',
-				location: 'readonly'
+				location: 'readonly',
+				confirm: 'readonly',
+				alert: 'readonly'
 			}
 		},
 		plugins: {
@@ -103,7 +105,9 @@ export default [
 				requestAnimationFrame: 'readonly',
 				cancelAnimationFrame: 'readonly',
 				performance: 'readonly',
-				location: 'readonly'
+				location: 'readonly',
+				confirm: 'readonly',
+				alert: 'readonly'
 			}
 		},
 		plugins: {

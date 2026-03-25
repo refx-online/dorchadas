@@ -392,7 +392,7 @@ export const respondToInvite = async (
 		await trx('clan_invites').where('id', inviteId).update({ status });
 
 		if (status === 'accepted') {
-			await trx('users').where('id', userId).update({ clan_id: invite.clan_id });
+			await trx('users').where('id', userId).update({ clan_id: invite.clan_id, clan_priv: 1 });
 			// Cancel all other pending invites and join requests for this user
 			await trx('clan_invites')
 				.where('user_id', userId)
@@ -406,7 +406,7 @@ export const leaveClan = async (userId: number): Promise<void> => {
 	const mysqlDB = await getMySQLDatabase();
 	if (!mysqlDB) return;
 
-	await mysqlDB('users').where('id', userId).update({ clan_id: 0 });
+	await mysqlDB('users').where('id', userId).update({ clan_id: 0, clan_priv: 0 });
 };
 
 export const deleteClan = async (clanId: number): Promise<void> => {
@@ -438,7 +438,7 @@ export const createClan = async (name: string, tag: string, ownerId: number): Pr
 			owner: ownerId
 		});
 
-		await trx('users').where('id', ownerId).update({ clan_id: clanId });
+		await trx('users').where('id', ownerId).update({ clan_id: clanId, clan_priv: 3 });
 
 		return clanId;
 	});
@@ -492,7 +492,7 @@ export const respondToJoinRequest = async (
 		await trx('clan_invites').where('id', requestId).update({ status: finalStatus });
 
 		if (status === 'accepted') {
-			await trx('users').where('id', request.user_id).update({ clan_id: clanId });
+			await trx('users').where('id', request.user_id).update({ clan_id: clanId, clan_priv: 1 });
 			// Cancel all other pending invites and join requests for this user
 			await trx('clan_invites')
 				.where('user_id', request.user_id)
@@ -500,6 +500,45 @@ export const respondToJoinRequest = async (
 				.update({ status: 'rejected' });
 		}
 	});
+};
+
+export const updateClanMemberPriv = async (userId: number, priv: number): Promise<void> => {
+	const mysqlDB = await getMySQLDatabase();
+	if (!mysqlDB) return;
+
+	await mysqlDB('users').where('id', userId).update({ clan_priv: priv });
+};
+
+export const transferClanOwnership = async (clanId: number, newOwnerId: number): Promise<void> => {
+	const mysqlDB = await getMySQLDatabase();
+	if (!mysqlDB) return;
+
+	await mysqlDB.transaction(async (trx) => {
+		const clan = await trx('clans').where('id', clanId).first();
+		if (!clan) return;
+
+		const oldOwnerId = clan.owner;
+
+		await trx('clans').where('id', clanId).update({ owner: newOwnerId });
+		await trx('users').where('id', newOwnerId).update({ clan_priv: 3 });
+		await trx('users').where('id', oldOwnerId).update({ clan_priv: 2 });
+	});
+};
+
+export const getClanMembersWithPriv = async (clanId: number): Promise<any[]> => {
+	const mysqlDB = await getMySQLDatabase();
+	if (!mysqlDB) return [];
+
+	return await mysqlDB('users')
+		.select('id', 'name', 'country', 'clan_priv')
+		.where('clan_id', clanId);
+};
+
+export const kickClanMember = async (userId: number): Promise<void> => {
+	const mysqlDB = await getMySQLDatabase();
+	if (!mysqlDB) return;
+
+	await mysqlDB('users').where('id', userId).update({ clan_id: 0, clan_priv: 0 });
 };
 
 export const getUserJoinRequests = async (userId: number): Promise<any[]> => {
