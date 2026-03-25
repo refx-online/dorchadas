@@ -50,8 +50,7 @@
 			method: 'POST',
 			body: JSON.stringify(loginData),
 			headers: {
-				'Content-Type': 'application/json',
-				'X-CSRF-Token': data.csrfToken
+				'Content-Type': 'application/json'
 			}
 		});
 		const loginResponse = await loginRequest.json();

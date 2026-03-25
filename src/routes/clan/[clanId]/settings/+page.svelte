@@ -68,14 +68,10 @@
 		isLoading = true;
 		const formData = new FormData();
 		formData.append(fieldName, file);
-		formData.append('csrf_token', data.csrfToken);
 
 		try {
 			const response = await fetch(endpoint, {
 				method: 'POST',
-				headers: {
-					'x-csrf-token': data.csrfToken
-				},
 				body: formData
 			});
 
@@ -112,7 +108,6 @@
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					'X-CSRF-Token': data.csrfToken,
 				},
 				body: JSON.stringify({
 					name: clanName,
@@ -142,7 +137,6 @@
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					'x-csrf-token': data.csrfToken
 				},
 				body: JSON.stringify({
 					username: inviteUsername
@@ -171,7 +165,6 @@
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					'x-csrf-token': data.csrfToken
 				},
 				body: JSON.stringify({
 					inviteId

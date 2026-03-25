@@ -83,7 +83,6 @@
 		try {
 			const formData = new FormData();
 			formData.append(fieldName, file);
-			formData.append('csrf_token', data.csrfToken);
 
 			const response = await fetch(endpoint, {
 				method: 'POST',
@@ -365,7 +364,6 @@
 							use:enhance={handleUsernameSubmit}
 							class="space-y-4"
 						>
-							<input type="hidden" name="csrf_token" value={data.csrfToken} />
 							<div class="space-y-2">
 								<label for="new-username" class="label font-medium">
 									{__('New Username', $userLanguage)}
@@ -405,7 +403,6 @@
 							use:enhance={handleMetricSubmit}
 							class="space-y-4"
 						>
-							<input type="hidden" name="csrf_token" value={data.csrfToken} />
 							<div class="space-y-2">
 								<label for="preferred-metric" class="label font-medium">
 									{__('Preferred Ranking Metric', $userLanguage)}

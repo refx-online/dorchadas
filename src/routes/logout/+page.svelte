@@ -11,10 +11,7 @@
 
 	onMount(async () => {
 		const result = await fetch('/logout', {
-			method: 'POST',
-			headers: {
-				'X-CSRF-Token': data.csrfToken
-			}
+			method: 'POST'
 		});
 		goto('/');
 		if (result.ok) {

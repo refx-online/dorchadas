@@ -1,7 +1,8 @@
 import type { Handle } from '@sveltejs/kit';
 import { error, json } from '@sveltejs/kit';
-import { generateCsrfToken, validateAndConsumeCsrfToken, storeCsrfToken } from '$lib/csrf';
+import { generateCsrfToken, validateCsrfToken, storeCsrfToken } from '$lib/csrf';
 import { env } from '$env/dynamic/private';
+import { makeid } from '$lib/stringUtil';
 import chalk from 'chalk';
 import knex_pkg from 'knex';
 import redis from 'redis';
@@ -9,6 +10,7 @@ import redis from 'redis';
 const { knex } = knex_pkg;
 
 const CSRF_COOKIE_NAME = 'csrf_token';
+const CSRF_ID_COOKIE_NAME = 'csrf_id';
 const STATE_CHANGING_METHODS = ['POST', 'PUT', 'PATCH', 'DELETE'];
 
 let mysqlDatabase: knex_pkg.Knex | undefined;
@@ -107,16 +109,28 @@ export const getRedisClient = async (): Promise<redis.RedisClientType<
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const { request, cookies, url } = event;
-	const sessionToken = cookies.get('sessionToken');
 
 	const isProduction = process.env.NODE_ENV === 'production';
 	const isSecureContext = url.protocol === 'https:' || isProduction;
-	const cookieMaxAge = 60 * 2;
+	const csrfCookieMaxAge = 60 * 60 * 24 * 7; // 7 days
 
 	const redisClient = await getRedisClient();
 
 	if (!redisClient) {
 		return error(500, 'Redis connection failed');
+	}
+
+	let csrfId = cookies.get(CSRF_ID_COOKIE_NAME);
+	if (!csrfId) {
+		csrfId = makeid(64);
+		cookies.set(CSRF_ID_COOKIE_NAME, csrfId, {
+			path: '/',
+			httpOnly: true,
+			sameSite: isSecureContext ? 'strict' : 'lax',
+			secure: isSecureContext,
+			maxAge: csrfCookieMaxAge,
+			priority: 'high'
+		});
 	}
 
 	if (STATE_CHANGING_METHODS.includes(request.method)) {
@@ -148,7 +162,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			);
 		}
 
-		const isValid = await validateAndConsumeCsrfToken(redisClient, tokenFromRequest, sessionToken);
+		const isValid = await validateCsrfToken(redisClient, tokenFromRequest, csrfId);
 
 		if (!isValid) {
 			return json(
@@ -159,41 +173,25 @@ export const handle: Handle = async ({ event, resolve }) => {
 				}
 			);
 		}
+	}
 
-		const newCsrfToken = generateCsrfToken();
-		await storeCsrfToken(redisClient, newCsrfToken, sessionToken, cookieMaxAge);
+	let csrfToken = cookies.get(CSRF_COOKIE_NAME);
 
-		cookies.set(CSRF_COOKIE_NAME, newCsrfToken, {
+	if (!csrfToken) {
+		csrfToken = generateCsrfToken();
+		await storeCsrfToken(redisClient, csrfToken, csrfId, csrfCookieMaxAge);
+
+		cookies.set(CSRF_COOKIE_NAME, csrfToken, {
 			path: '/',
-			httpOnly: true,
+			httpOnly: false, // allow client-side to read token
 			sameSite: isSecureContext ? 'strict' : 'lax',
 			secure: isSecureContext,
-			maxAge: cookieMaxAge,
+			maxAge: csrfCookieMaxAge,
 			priority: 'high'
 		});
-
-		event.locals.csrfToken = newCsrfToken;
-	} else {
-		let existingToken = cookies.get(CSRF_COOKIE_NAME);
-
-		if (!existingToken) {
-			const newCsrfToken = generateCsrfToken();
-			await storeCsrfToken(redisClient, newCsrfToken, sessionToken, cookieMaxAge);
-
-			cookies.set(CSRF_COOKIE_NAME, newCsrfToken, {
-				path: '/',
-				httpOnly: true,
-				sameSite: isSecureContext ? 'strict' : 'lax',
-				secure: isSecureContext,
-				maxAge: cookieMaxAge,
-				priority: 'high'
-			});
-
-			event.locals.csrfToken = newCsrfToken;
-		} else {
-			event.locals.csrfToken = existingToken;
-		}
 	}
+
+	event.locals.csrfToken = csrfToken;
 
 	return resolve(event);
 };

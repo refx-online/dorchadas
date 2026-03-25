@@ -23,10 +23,7 @@
 		isLoading = true;
 		try {
 			const response = await fetch(`/clan/${data.clan.id}/leave`, {
-				method: 'POST',
-				headers: {
-					'x-csrf-token': data.csrfToken
-				}
+				method: 'POST'
 			});
 
 			if (response.ok) {

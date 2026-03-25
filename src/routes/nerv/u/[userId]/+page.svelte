@@ -71,7 +71,6 @@
 		const action = isUserRestricted ? 'unrestrict' : 'restrict';
 		const form = new FormData();
 		form.append('userId', data.user.id.toString());
-		form.append('csrf_token', data.csrfToken);
 
 		const res = await fetch(`?/${action}User`, {
 			method: 'POST',
@@ -94,7 +93,6 @@
 		form.append('userId', data.user.id.toString());
 		form.append('duration', silenceDuration.toString());
 		form.append('reason', silenceReason);
-		form.append('csrf_token', data.csrfToken);
 
 		const res = await fetch('?/silenceUser', {
 			method: 'POST',
@@ -112,7 +110,6 @@
 	const handleUnsilence = async () => {
 		const form = new FormData();
 		form.append('userId', data.user.id.toString());
-		form.append('csrf_token', data.csrfToken);
 
 		await fetch('?/unsilenceUser', {
 			method: 'POST',
@@ -132,7 +129,6 @@
 
 		const form = new FormData();
 		form.append('userId', data.user.id.toString());
-		form.append('csrf_token', data.csrfToken);
 
 		await fetch('?/wipeUser', {
 			method: 'POST',
@@ -268,7 +264,6 @@
 						};
 					}}
 				>
-					<input type="hidden" name="csrf_token" value={data.csrfToken} />
 					<input type="hidden" name="userId" value={data.user.id} />
 					<input
 						type="password"
@@ -329,7 +324,6 @@
 							};
 						}}
 					>
-						<input type="hidden" name="csrf_token" value={data.csrfToken} />
 						<input type="hidden" name="userId" value={data.user.id} />
 						<input type="hidden" name="field" value={field.key} />
 
@@ -393,7 +387,6 @@
 						};
 					}}
 				>
-					<input type="hidden" name="csrf_token" value={data.csrfToken} />
 					<input type="hidden" name="userId" value={data.user.id} />
 					<input type="hidden" name="field" value="priv" />
 					<input type="hidden" name="value" value={editValues['priv']} />

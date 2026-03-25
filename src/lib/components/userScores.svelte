@@ -24,7 +24,6 @@
 	export let scoreAmount: number;
 	export let currentMode: string;
 	export let currentType: string;
-	export let csrfToken: string;
 	export let currentUserId: any;
 
 	let scores: PlayerScores | undefined;
@@ -91,8 +90,7 @@
 			const response = await fetch('/api/v1/pin_score', {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json',
-					'X-CSRF-Token': csrfToken
+					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
 					score_id: score.id,
