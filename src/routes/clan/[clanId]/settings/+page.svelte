@@ -112,7 +112,7 @@
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					'x-csrf-token': data.csrfToken
+					'X-CSRF-Token': data.csrfToken,
 				},
 				body: JSON.stringify({
 					name: clanName,
