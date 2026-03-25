@@ -45,6 +45,38 @@ export async function storeCsrfToken(
 }
 
 /**
+ * Validates a CSRF token from Redis without consuming it.
+ * This function checks if the token exists and validates session binding.
+ *
+ * @param redisClient - Redis client instance
+ * @param token - The token to validate
+ * @param sessionValue - The session value to validate against (e.g. session token or CSRF ID)
+ * @returns true if token exists and is valid, false otherwise
+ */
+export async function validateCsrfToken(
+	redisClient: RedisClient,
+	token: string,
+	sessionValue: string
+): Promise<boolean> {
+	if (!token) {
+		return false;
+	}
+
+	try {
+		const key = `${CSRF_REDIS_KEY_PREFIX}${token}`;
+		const storedSessionValue = await redisClient.get(key);
+
+		if (storedSessionValue === null) {
+			return false;
+		}
+
+		return storedSessionValue === sessionValue;
+	} catch {
+		return false;
+	}
+}
+
+/**
  * Validates and consumes a one-time CSRF token from Redis.
  * This function checks if the token exists, validates session binding,
  * and then deletes the token to ensure it can only be used once.
@@ -59,26 +91,15 @@ export async function validateAndConsumeCsrfToken(
 	token: string,
 	sessionToken: string | undefined
 ): Promise<boolean> {
-	if (!token) {
+	const expectedSessionValue = sessionToken || 'guest';
+	const isValid = await validateCsrfToken(redisClient, token, expectedSessionValue);
+
+	if (!isValid) {
 		return false;
 	}
 
 	try {
 		const key = `${CSRF_REDIS_KEY_PREFIX}${token}`;
-
-		const storedSessionToken = await redisClient.get(key);
-
-		if (storedSessionToken === null) {
-			return false;
-		}
-
-		const expectedSessionValue = sessionToken || 'guest';
-		if (storedSessionToken !== expectedSessionValue) {
-			await redisClient.del(key);
-
-			return false;
-		}
-
 		const deleted = await redisClient.del(key);
 
 		// Return true only if we successfully deleted the token

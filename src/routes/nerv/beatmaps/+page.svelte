@@ -173,8 +173,7 @@
 			const response = await fetch('/api/v1/beatmaps/rank', {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json',
-					'X-CSRF-Token': data.csrfToken
+					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
 					status: statusString,

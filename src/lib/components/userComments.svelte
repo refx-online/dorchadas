@@ -19,7 +19,6 @@
 	}
 
 	export let userId: number;
-	export let csrfToken: String;
 
 	let comments: Comment[] = [];
 	let newComment: string = '';
@@ -50,7 +49,7 @@
 		editingContent = '';
 	}
 
-	async function saveEdit(commentId: number, csrfToken: String) {
+	async function saveEdit(commentId: number) {
 		if (!editingContent.trim()) {
 			return;
 		}
@@ -58,7 +57,6 @@
 		const formData = new FormData();
 		formData.append('commentId', commentId.toString());
 		formData.append('comment', editingContent);
-		formData.append('csrf_token', csrfToken.toString());
 
 		try {
 			const response = await fetch('?/editComment', {
@@ -109,7 +107,6 @@
 				}}
 				class="flex flex-col gap-2"
 			>
-				<input type="hidden" name="csrf_token" value={csrfToken} />
 				<input type="hidden" name="userId" value={userId} />
 				<textarea
 					name="comment"
@@ -170,7 +167,7 @@
 										{#if editingCommentId === comment.id}
 											<button
 												class="btn btn-icon variant-filled-success h-8 w-8"
-												on:click={() => saveEdit(comment.id, csrfToken)}
+												on:click={() => saveEdit(comment.id)}
 											>
 												<Check size={16} />
 											</button>
@@ -197,7 +194,6 @@
 													};
 												}}
 											>
-												<input type="hidden" name="csrf_token" value={csrfToken} />
 												<input type="hidden" name="commentId" value={comment.id} />
 												<button type="submit" class="btn btn-icon variant-filled-error h-8 w-8">
 													<Trash2 size={16} />

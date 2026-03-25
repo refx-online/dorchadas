@@ -107,6 +107,87 @@
 	$: isNervPath = $page.url.pathname.startsWith('/nerv');
 
 	onMount(() => {
+		// Automate CSRF token injection
+		const getCsrfToken = () => {
+			return document.cookie
+				.split('; ')
+				.find((row) => row.startsWith('csrf_token='))
+				?.split('=')[1];
+		};
+
+		const isSameOrigin = (url: string | URL | Request) => {
+			try {
+				const target =
+					url instanceof Request ? url.url : typeof url === 'string' ? url : url.toString();
+				if (target.startsWith('/') || target.startsWith(window.location.origin)) {
+					return true;
+				}
+				const targetUrl = new URL(target, window.location.origin);
+				return targetUrl.origin === window.location.origin;
+			} catch {
+				return false;
+			}
+		};
+
+		const originalFetch = window.fetch;
+		window.fetch = async (input, init) => {
+			let method = 'GET';
+			if (input instanceof Request) {
+				method = input.method.toUpperCase();
+			} else if (init?.method) {
+				method = init.method.toUpperCase();
+			}
+
+			const stateChangingMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
+
+			if (stateChangingMethods.includes(method) && isSameOrigin(input)) {
+				const csrfToken = getCsrfToken();
+				if (csrfToken) {
+					if (input instanceof Request) {
+						if (!input.headers.has('X-CSRF-Token')) {
+							input.headers.set('X-CSRF-Token', csrfToken);
+						}
+					} else {
+						init = init || {};
+						init.headers = init.headers || {};
+
+						if (init.headers instanceof Headers) {
+							if (!init.headers.has('X-CSRF-Token')) {
+								init.headers.set('X-CSRF-Token', csrfToken);
+							}
+						} else if (Array.isArray(init.headers)) {
+							if (!init.headers.some(([key]) => key.toLowerCase() === 'x-csrf-token')) {
+								init.headers.push(['X-CSRF-Token', csrfToken]);
+							}
+						} else {
+							if (!init.headers['X-CSRF-Token'] && !init.headers['x-csrf-token']) {
+								init.headers['X-CSRF-Token'] = csrfToken;
+							}
+						}
+					}
+				}
+			}
+			return originalFetch(input, init);
+		};
+
+		window.addEventListener('submit', (event) => {
+			const form = event.target as HTMLFormElement;
+			const method = form.method.toUpperCase();
+			const action = form.getAttribute('action') || '';
+			const stateChangingMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
+
+			if (stateChangingMethods.includes(method) && isSameOrigin(action)) {
+				const csrfToken = getCsrfToken();
+				if (csrfToken && !form.querySelector('input[name="csrf_token"]')) {
+					const input = document.createElement('input');
+					input.type = 'hidden';
+					input.name = 'csrf_token';
+					input.value = csrfToken;
+					form.appendChild(input);
+				}
+			}
+		});
+
 		const pageMain = document.getElementById('page');
 		if (pageMain) {
 			showStickyNav = pageMain.scrollTop > 100;

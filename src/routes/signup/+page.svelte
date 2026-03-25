@@ -66,8 +66,7 @@
 			method: 'POST',
 			body: JSON.stringify(registerData),
 			headers: {
-				'Content-Type': 'application/json',
-				'X-CSRF-Token': data.csrfToken
+				'Content-Type': 'application/json'
 			}
 		});
 		const loginResponse = await loginRequest.json();

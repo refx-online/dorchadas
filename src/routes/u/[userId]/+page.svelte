@@ -757,7 +757,6 @@
 										? 'bg-gray-600 hover:bg-gray-200 cursor-not-allowed'
 										: relationshipColors[data.relationships.relationshipStatus]}"
 								>
-									<input type="hidden" name="csrf_token" value={data.csrfToken} />
 									<input type="hidden" name="friendID" value={data.user?.info.id} />
 									<input
 										type="hidden"
@@ -934,7 +933,6 @@
 													};
 												}}
 											>
-												<input type="hidden" name="csrf_token" value={data.csrfToken} />
 												<input type="hidden" name="userpage" value={editedUserpage} />
 												<button type="submit" class="btn btn-icon variant-filled-primary h-10 w-10">
 													<Check class="pointer-events-none" size={20} />
@@ -982,7 +980,6 @@
 										scoreAmount={5}
 										scoresType="pinned"
 										currentUserId={$userData?.id}
-										csrfToken={data.csrfToken}
 									/>
 
 									<UserScores
@@ -993,7 +990,6 @@
 										scoreAmount={5}
 										scoresType="best"
 										currentUserId={$userData?.id}
-										csrfToken={data.csrfToken}
 									/>
 
 									<UserScores
@@ -1004,7 +1000,6 @@
 										scoreAmount={5}
 										scoresType="first"
 										currentUserId={$userData?.id}
-										csrfToken={data.csrfToken}
 									/>
 
 									<UserScores
@@ -1015,7 +1010,6 @@
 										scoreAmount={5}
 										scoresType="recent"
 										currentUserId={$userData?.id}
-										csrfToken={data.csrfToken}
 									/>
 								{/key}
 							</div>
@@ -1059,7 +1053,7 @@
 								{__('Comments', $userLanguage)}
 							</p>
 
-							<UserComments userId={data.user.info.id} csrfToken={data.csrfToken} />
+							<UserComments userId={data.user.info.id} />
 						</div>
 					</div>
 				</div>
