@@ -67,6 +67,7 @@
 		isLoading = true;
 		const formData = new FormData();
 		formData.append(fieldName, file);
+		formData.append('csrf_token', data.csrfToken);
 
 		try {
 			const response = await fetch(endpoint, {
