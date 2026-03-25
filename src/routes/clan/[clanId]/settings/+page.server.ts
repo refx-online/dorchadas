@@ -2,7 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
 import { getClan } from '$lib/api';
 import { isNumber } from '$lib/stringUtil';
-import { getClanInvites } from '$lib/db';
+import { getClanInvites, getClanJoinRequests } from '$lib/db';
 
 export const load = async ({ cookies, params, locals }) => {
 	const sessionToken = cookies.get('sessionToken');
@@ -31,6 +31,7 @@ export const load = async ({ cookies, params, locals }) => {
 	}
 
 	const invites = await getClanInvites(clan.id);
+	const requests = await getClanJoinRequests(clan.id);
 
 	return {
 		user: {
@@ -39,6 +40,7 @@ export const load = async ({ cookies, params, locals }) => {
 		},
 		clan,
 		invites,
+		requests,
 		csrfToken: locals.csrfToken
 	};
 };

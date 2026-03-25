@@ -298,7 +298,10 @@
 											e.currentTarget.nextElementSibling.style.display = 'inline-block';
 										}}
 									/>
-									<span class="chip !text-sm p-1.5 py-0.5 min-w-7 variant-soft-primary hover:variant-filled-primary" style="display: none;">
+									<span
+										class="chip !text-sm p-1.5 py-0.5 min-w-7 variant-soft-primary hover:variant-filled-primary"
+										style="display: none;"
+									>
 										{data.clan}
 									</span>
 								</a>

@@ -70,10 +70,7 @@
 								<td class="flex flex-row gap-2 items-center content-center">
 									<Flag country={user.country} size={15} tooltip={true}></Flag>
 									{#if user.clan_tag}
-										<a
-											class="!text-xs p-1.5 py-0.5 min-w-7 !h-6"
-											href="/clan/{user.clan_id}"
-										>
+										<a class="!text-xs p-1.5 py-0.5 min-w-7 !h-6" href="/clan/{user.clan_id}">
 											<img
 												src="/api/clan/{user.clan_id}/flag"
 												alt={user.clan_tag}
@@ -83,7 +80,10 @@
 													e.currentTarget.nextElementSibling.style.display = 'inline-block';
 												}}
 											/>
-											<span class="chip !text-xs p-1.5 py-0.5 min-w-7 variant-soft-primary hover:variant-filled-primary" style="display: none;">
+											<span
+												class="chip !text-xs p-1.5 py-0.5 min-w-7 variant-soft-primary hover:variant-filled-primary"
+												style="display: none;"
+											>
 												{user.clan_tag}
 											</span>
 										</a>

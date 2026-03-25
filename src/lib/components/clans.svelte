@@ -35,8 +35,10 @@
 				<div class="flex flex-row items-center gap-2">
 					<!-- left side of the leaderboard entry-->
 					<div class="min-w-10 text-center">#{rank + (page - 1) * usersPerPage + 1}</div>
-					<div class="h-10 bg-surface-800 rounded-lg overflow-hidden shadow inline-flex items-center justify-center px-2">
-						<img src="/api/clan/{clan.id}/flag" class="h-full w-auto" alt="flag"/>
+					<div
+						class="h-10 bg-surface-800 rounded-lg overflow-hidden shadow inline-flex items-center justify-center px-2"
+					>
+						<img src="/api/clan/{clan.id}/flag" class="h-full w-auto" alt="flag" />
 					</div>
 					<div
 						class="min-w-56 text-primary-400 hover:text-primary-200 font-semibold transition-colors cursor-pointer"

@@ -59,12 +59,10 @@ export const POST = async ({ request, cookies, params }) => {
 			}
 		}
 
-		await mysqlDB('clans')
-			.where('id', clanId)
-			.update({
-				name: name,
-				tag: tag
-			});
+		await mysqlDB('clans').where('id', clanId).update({
+			name: name,
+			tag: tag
+		});
 
 		return json({ success: true });
 	} catch (err) {

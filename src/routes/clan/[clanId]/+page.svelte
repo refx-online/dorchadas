@@ -37,6 +37,27 @@
 			isLoading = false;
 		}
 	}
+
+	async function handleClanRequest() {
+		isLoading = true;
+		try {
+			const response = await fetch(`/clan/${data.clan.id}/request`, {
+				method: 'POST'
+			});
+
+			if (response.ok) {
+				alert(__('Request sent successfully!', $userLanguage));
+				invalidateAll();
+			} else {
+				const result = await response.json();
+				alert(result.message || __('An error occurred while requesting to join', $userLanguage));
+			}
+		} catch {
+			alert(__('An error occurred while requesting to join', $userLanguage));
+		} finally {
+			isLoading = false;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -69,7 +90,9 @@
 										e.currentTarget.nextElementSibling.style.display = 'inline-block';
 									}}
 								/>
-								<p class="chip cursor-auto variant-filled-primary" style="display: none;">{data.clan.tag}</p>
+								<p class="chip cursor-auto variant-filled-primary" style="display: none;">
+									{data.clan.tag}
+								</p>
 							</div>
 							{data.clan.name}
 						</div>
@@ -88,6 +111,20 @@
 							>
 								{data.isOwner ? __('Delete Clan', $userLanguage) : __('Leave Clan', $userLanguage)}
 							</button>
+						{:else if data.currentUser && data.currentUser.clanId === 0}
+							{#if data.hasPendingRequest}
+								<button class="btn variant-filled-surface" disabled>
+									{__('Request Pending', $userLanguage)}
+								</button>
+							{:else}
+								<button
+									class="btn variant-filled-primary"
+									on:click={handleClanRequest}
+									disabled={isLoading}
+								>
+									{__('Join Clan', $userLanguage)}
+								</button>
+							{/if}
 						{/if}
 					</div>
 				</div>

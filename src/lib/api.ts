@@ -91,7 +91,10 @@ export const getPlayerCounts = async (): Promise<PlayerCounts | undefined> => {
 };
 
 export const getPlayerStatus = async (uid: number): Promise<PlayerStatus | undefined> => {
-	return handleFetch<PlayerStatus>(`${apiUrl}/v1/get_player_status?id=${uid}`, `player status ${uid}`);
+	return handleFetch<PlayerStatus>(
+		`${apiUrl}/v1/get_player_status?id=${uid}`,
+		`player status ${uid}`
+	);
 };
 
 export const getPlayer = async (

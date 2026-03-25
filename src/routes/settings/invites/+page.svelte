@@ -67,7 +67,9 @@
 
 		{#if message}
 			<div
-				class="alert mb-6 {messageType === 'success' ? 'variant-filled-success' : 'variant-filled-error'}"
+				class="alert mb-6 {messageType === 'success'
+					? 'variant-filled-success'
+					: 'variant-filled-error'}"
 			>
 				<p>{message}</p>
 			</div>
@@ -76,7 +78,9 @@
 		{#if data.invites && data.invites.length > 0}
 			<div class="grid grid-cols-1 gap-4">
 				{#each data.invites as invite}
-					<div class="card p-4 variant-soft flex flex-col md:flex-row justify-between items-center gap-4">
+					<div
+						class="card p-4 variant-soft flex flex-col md:flex-row justify-between items-center gap-4"
+					>
 						<div class="flex items-center gap-4">
 							<img
 								src="/api/clan/{invite.clan_id}/flag"
@@ -88,7 +92,9 @@
 							/>
 							<div>
 								<p class="text-lg font-bold">{invite.clan_name} [{invite.clan_tag}]</p>
-								<p class="text-sm opacity-75">{__('Invited you to join their clan', $userLanguage)}</p>
+								<p class="text-sm opacity-75">
+									{__('Invited you to join their clan', $userLanguage)}
+								</p>
 							</div>
 						</div>
 						<div class="flex gap-2">

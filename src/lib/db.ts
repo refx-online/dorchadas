@@ -362,7 +362,12 @@ export const getClanInvites = async (clanId: number): Promise<any[]> => {
 	if (!mysqlDB) return [];
 
 	return await mysqlDB('clan_invites')
-		.select('clan_invites.id', 'users.name as username', 'clan_invites.user_id', 'clan_invites.status')
+		.select(
+			'clan_invites.id',
+			'users.name as username',
+			'clan_invites.user_id',
+			'clan_invites.status'
+		)
 		.join('users', 'clan_invites.user_id', 'users.id')
 		.where('clan_invites.clan_id', clanId)
 		.andWhere('clan_invites.status', 'pending');
@@ -388,6 +393,11 @@ export const respondToInvite = async (
 
 		if (status === 'accepted') {
 			await trx('users').where('id', userId).update({ clan_id: invite.clan_id });
+			// Cancel all other pending invites and join requests for this user
+			await trx('clan_invites')
+				.where('user_id', userId)
+				.whereIn('status', ['pending', 'request_pending'])
+				.update({ status: 'rejected' });
 		}
 	});
 };
@@ -415,4 +425,95 @@ export const cancelInvite = async (inviteId: number, clanId: number): Promise<vo
 	if (!mysqlDB) return;
 
 	await mysqlDB('clan_invites').where('id', inviteId).andWhere('clan_id', clanId).del();
+};
+
+export const createClan = async (name: string, tag: string, ownerId: number): Promise<number> => {
+	const mysqlDB = await getMySQLDatabase();
+	if (!mysqlDB) return 0;
+
+	return await mysqlDB.transaction(async (trx) => {
+		const [clanId] = await trx('clans').insert({
+			name,
+			tag,
+			owner: ownerId
+		});
+
+		await trx('users').where('id', ownerId).update({ clan_id: clanId });
+
+		return clanId;
+	});
+};
+
+export const requestToJoinClan = async (clanId: number, userId: number): Promise<void> => {
+	const mysqlDB = await getMySQLDatabase();
+	if (!mysqlDB) return;
+
+	await mysqlDB('clan_invites').insert({
+		clan_id: clanId,
+		user_id: userId,
+		status: 'request_pending'
+	});
+};
+
+export const getClanJoinRequests = async (clanId: number): Promise<any[]> => {
+	const mysqlDB = await getMySQLDatabase();
+	if (!mysqlDB) return [];
+
+	return await mysqlDB('clan_invites')
+		.select(
+			'clan_invites.id',
+			'users.name as username',
+			'clan_invites.user_id',
+			'clan_invites.status'
+		)
+		.join('users', 'clan_invites.user_id', 'users.id')
+		.where('clan_invites.clan_id', clanId)
+		.andWhere('clan_invites.status', 'request_pending');
+};
+
+export const respondToJoinRequest = async (
+	requestId: number,
+	clanId: number,
+	status: 'accepted' | 'rejected'
+): Promise<void> => {
+	const mysqlDB = await getMySQLDatabase();
+	if (!mysqlDB) return;
+
+	const request = await mysqlDB('clan_invites')
+		.where('id', requestId)
+		.andWhere('clan_id', clanId)
+		.andWhere('status', 'request_pending')
+		.first();
+
+	if (!request) return;
+
+	await mysqlDB.transaction(async (trx) => {
+		const finalStatus = status === 'accepted' ? 'accepted' : 'rejected';
+		await trx('clan_invites').where('id', requestId).update({ status: finalStatus });
+
+		if (status === 'accepted') {
+			await trx('users').where('id', request.user_id).update({ clan_id: clanId });
+			// Cancel all other pending invites and join requests for this user
+			await trx('clan_invites')
+				.where('user_id', request.user_id)
+				.whereIn('status', ['pending', 'request_pending'])
+				.update({ status: 'rejected' });
+		}
+	});
+};
+
+export const getUserJoinRequests = async (userId: number): Promise<any[]> => {
+	const mysqlDB = await getMySQLDatabase();
+	if (!mysqlDB) return [];
+
+	return await mysqlDB('clan_invites')
+		.select(
+			'clan_invites.id',
+			'clans.name as clan_name',
+			'clans.tag as clan_tag',
+			'clan_invites.clan_id'
+		)
+		.join('clans', 'clan_invites.clan_id', 'clans.id')
+		.where('clan_invites.user_id', userId)
+		.andWhere('clan_invites.status', 'request_pending');
 };
