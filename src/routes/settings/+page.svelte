@@ -240,6 +240,7 @@
 									bind:files={avatarFile}
 									class="input"
 									disabled={isLoading}
+									aria-label={__('Upload Avatar', $userLanguage)}
 								/>
 								<button
 									class="btn variant-filled-primary"
@@ -277,6 +278,7 @@
 									bind:files={coverFile}
 									class="input"
 									disabled={isLoading}
+									aria-label={__('Upload Cover', $userLanguage)}
 								/>
 								<button
 									class="btn variant-filled-primary"
@@ -314,6 +316,7 @@
 									bind:files={bgFile}
 									class="input"
 									disabled={isLoading}
+									aria-label={__('Upload Background', $userLanguage)}
 								/>
 								<button
 									class="btn variant-filled-primary"
