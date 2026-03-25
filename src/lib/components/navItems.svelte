@@ -40,6 +40,15 @@
 									drawerStore.close();
 								}}>{__('Settings', $userLanguage)}</button
 							>
+							{#if $userData?.clanId}
+								<button
+									class="w-32 btn variant-filled-surface rounded-lg"
+									on:click={() => {
+										goto(`/clan/${$userData?.clanId}/settings`);
+										drawerStore.close();
+									}}>{__('Clan', $userLanguage)}</button
+								>
+							{/if}
 							<button
 								class="w-32 btn variant-filled-surface rounded-lg"
 								on:click={() => {

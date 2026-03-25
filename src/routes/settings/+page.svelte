@@ -338,6 +338,21 @@
 						{__('Account Settings', $userLanguage)}
 					</h2>
 
+					<!-- Clan Settings -->
+					{#if data.user.clanId}
+						<div class="mb-8">
+							<h3 class="text-lg font-medium mb-4">{__('Clan', $userLanguage)}</h3>
+							<div class="flex items-center gap-4">
+								<a
+									href="/clan/{data.user.clanId}/settings"
+									class="btn variant-filled-secondary"
+								>
+									{__('Go to Clan Settings', $userLanguage)}
+								</a>
+							</div>
+						</div>
+					{/if}
+
 					<!-- Username Change -->
 					<div class="mb-8">
 						<h3 class="text-lg font-medium mb-4">{__('Change Username', $userLanguage)}</h3>
