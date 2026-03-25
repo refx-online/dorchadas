@@ -329,3 +329,90 @@ export const batchFetchTitles = async (logs: UsersLog[]): Promise<Record<number,
 
 	return results;
 };
+
+export const createClanInvite = async (clanId: number, userId: number): Promise<void> => {
+	const mysqlDB = await getMySQLDatabase();
+	if (!mysqlDB) return;
+
+	await mysqlDB('clan_invites').insert({
+		clan_id: clanId,
+		user_id: userId,
+		status: 'pending'
+	});
+};
+
+export const getUserInvites = async (userId: number): Promise<any[]> => {
+	const mysqlDB = await getMySQLDatabase();
+	if (!mysqlDB) return [];
+
+	return await mysqlDB('clan_invites')
+		.select(
+			'clan_invites.id',
+			'clans.name as clan_name',
+			'clans.tag as clan_tag',
+			'clan_invites.clan_id'
+		)
+		.join('clans', 'clan_invites.clan_id', 'clans.id')
+		.where('clan_invites.user_id', userId)
+		.andWhere('clan_invites.status', 'pending');
+};
+
+export const getClanInvites = async (clanId: number): Promise<any[]> => {
+	const mysqlDB = await getMySQLDatabase();
+	if (!mysqlDB) return [];
+
+	return await mysqlDB('clan_invites')
+		.select('clan_invites.id', 'users.name as username', 'clan_invites.user_id', 'clan_invites.status')
+		.join('users', 'clan_invites.user_id', 'users.id')
+		.where('clan_invites.clan_id', clanId)
+		.andWhere('clan_invites.status', 'pending');
+};
+
+export const respondToInvite = async (
+	inviteId: number,
+	userId: number,
+	status: 'accepted' | 'rejected'
+): Promise<void> => {
+	const mysqlDB = await getMySQLDatabase();
+	if (!mysqlDB) return;
+
+	const invite = await mysqlDB('clan_invites')
+		.where('id', inviteId)
+		.andWhere('user_id', userId)
+		.first();
+
+	if (!invite) return;
+
+	await mysqlDB.transaction(async (trx) => {
+		await trx('clan_invites').where('id', inviteId).update({ status });
+
+		if (status === 'accepted') {
+			await trx('users').where('id', userId).update({ clan_id: invite.clan_id });
+		}
+	});
+};
+
+export const leaveClan = async (userId: number): Promise<void> => {
+	const mysqlDB = await getMySQLDatabase();
+	if (!mysqlDB) return;
+
+	await mysqlDB('users').where('id', userId).update({ clan_id: 0 });
+};
+
+export const deleteClan = async (clanId: number): Promise<void> => {
+	const mysqlDB = await getMySQLDatabase();
+	if (!mysqlDB) return;
+
+	await mysqlDB.transaction(async (trx) => {
+		await trx('users').where('clan_id', clanId).update({ clan_id: 0 });
+		await trx('clan_invites').where('clan_id', clanId).del();
+		await trx('clans').where('id', clanId).del();
+	});
+};
+
+export const cancelInvite = async (inviteId: number, clanId: number): Promise<void> => {
+	const mysqlDB = await getMySQLDatabase();
+	if (!mysqlDB) return;
+
+	await mysqlDB('clan_invites').where('id', inviteId).andWhere('clan_id', clanId).del();
+};

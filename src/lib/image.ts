@@ -68,17 +68,22 @@ export async function saveImageFile(file: File, directory: string, userId: numbe
 
 export async function saveProcessedImage(file: File, directory: string, userId: number) {
 	const buffer = Buffer.from(await file.arrayBuffer());
-	const filePath = path.join(directory, `${userId}.png`);
+	const isGif = file.type === 'image/gif';
+	const extension = isGif ? 'gif' : 'png';
+	const filePath = path.join(directory, `${userId}.${extension}`);
 
-	await sharp(buffer)
-		.resize(256, 170, {
-			fit: 'cover',
-			position: 'center'
-		})
-		.png()
-		.toFile(filePath);
+	const sharpInstance = sharp(buffer, { animated: isGif }).resize(256, 170, {
+		fit: 'cover',
+		position: 'center'
+	});
 
-	return 'png';
+	if (isGif) {
+		await sharpInstance.gif().toFile(filePath);
+	} else {
+		await sharpInstance.png().toFile(filePath);
+	}
+
+	return extension;
 }
 
 export function findExistingImage(

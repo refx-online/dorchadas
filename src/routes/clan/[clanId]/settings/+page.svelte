@@ -12,6 +12,7 @@
 	let isLoading = false;
 	let clanName = data.clan.name;
 	let clanTag = data.clan.tag;
+	let inviteUsername = '';
 
 	const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
 	const MAX_SIZE = 5 * 1024 * 1024; // 5MB
@@ -128,6 +129,62 @@
 			isLoading = false;
 		}
 	}
+
+	async function handleInvite() {
+		if (!inviteUsername) return;
+		isLoading = true;
+		try {
+			const response = await fetch(`/clan/${data.clan.id}/settings/invite`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					username: inviteUsername
+				})
+			});
+
+			if (response.ok) {
+				showMessage(__('Invite sent successfully!', $userLanguage), 'success');
+				inviteUsername = '';
+				await invalidateAll();
+			} else {
+				const result = await response.json();
+				showMessage(result.message || __('Failed to send invite', $userLanguage), 'error');
+			}
+		} catch {
+			showMessage(__('An error occurred while sending invite', $userLanguage), 'error');
+		} finally {
+			isLoading = false;
+		}
+	}
+
+	async function handleCancelInvite(inviteId: number) {
+		isLoading = true;
+		try {
+			const response = await fetch(`/clan/${data.clan.id}/settings/invites/cancel`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					inviteId
+				})
+			});
+
+			if (response.ok) {
+				showMessage(__('Invite cancelled successfully!', $userLanguage), 'success');
+				await invalidateAll();
+			} else {
+				const result = await response.json();
+				showMessage(result.message || __('Failed to cancel invite', $userLanguage), 'error');
+			}
+		} catch {
+			showMessage(__('An error occurred while cancelling invite', $userLanguage), 'error');
+		} finally {
+			isLoading = false;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -152,14 +209,11 @@
 		{/if}
 
 		<div class="grid grid-cols-1 gap-8">
-			<!-- Media Settings -->
 			<div class="card p-4 variant-soft">
-				<h3 class="h3 mb-4">{__('Appearance', $userLanguage)}</h3>
+				<h3 class="h3 mb-4">{__('General Info', $userLanguage)}</h3>
 
 				<div class="space-y-8">
-					<!-- General Settings -->
 					<div class="mb-8 space-y-4">
-						<h3 class="text-lg font-medium">{__('General Info', $userLanguage)}</h3>
 						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<label class="label">
 								<span>{__('Clan Name', $userLanguage)}</span>
@@ -193,7 +247,62 @@
 
 					<hr class="opacity-25" />
 
-					<!-- Flag Image -->
+					<div class="mb-8 space-y-4">
+						<h3 class="text-lg font-medium">{__('Invite Users', $userLanguage)}</h3>
+						<div class="flex gap-4">
+							<input
+								type="text"
+								class="input"
+								bind:value={inviteUsername}
+								placeholder={__('Enter username to invite', $userLanguage)}
+								disabled={isLoading}
+							/>
+							<button
+								class="btn variant-filled-primary"
+								on:click={handleInvite}
+								disabled={isLoading || !inviteUsername}
+							>
+								{__('Invite', $userLanguage)}
+							</button>
+						</div>
+
+						{#if data.invites && data.invites.length > 0}
+							<div class="mt-4">
+								<h4 class="h4 mb-2">{__('Pending Invites', $userLanguage)}</h4>
+								<div class="table-container">
+									<table class="table table-hover">
+										<thead>
+											<tr>
+												<th>{__('Username', $userLanguage)}</th>
+												<th>{__('Status', $userLanguage)}</th>
+												<th>{__('Action', $userLanguage)}</th>
+											</tr>
+										</thead>
+										<tbody>
+											{#each data.invites as invite}
+												<tr>
+													<td>{invite.username}</td>
+													<td><span class="chip variant-soft-warning">{invite.status}</span></td>
+													<td>
+														<button
+															class="btn btn-sm variant-filled-error"
+															on:click={() => handleCancelInvite(invite.id)}
+															disabled={isLoading}
+														>
+															{__('Cancel', $userLanguage)}
+														</button>
+													</td>
+												</tr>
+											{/each}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						{/if}
+					</div>
+
+					<hr class="opacity-25" />
+
 					<div class="mb-8">
 						<h3 class="text-lg font-medium mb-4">{__('Clan Flag', $userLanguage)}</h3>
 						<div class="flex flex-col md:flex-row gap-6 items-start">

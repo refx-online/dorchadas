@@ -1,8 +1,7 @@
 import { error, json } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
+import { cancelInvite } from '$lib/db';
 import { getClan } from '$lib/api';
-import { validateImageFile, deleteExistingImages, saveProcessedImage, DATA_DIRECTORY, ensureDirectoryExists } from '$lib/image';
-import path from 'path';
 
 export const POST = async ({ request, cookies, params }) => {
 	try {
@@ -27,25 +26,23 @@ export const POST = async ({ request, cookies, params }) => {
 		}
 
 		if (clan.owner.id !== user.id) {
-			throw error(403, 'Only the clan owner can change the flag');
+			throw error(403, 'Only the clan owner can cancel invites');
 		}
 
-		const formData = await request.formData();
-		const file = formData.get('flag') as File;
+		const { inviteId } = await request.json();
 
-		await validateImageFile(file);
+		if (!inviteId) {
+			return json({ message: 'Invite ID is required' }, { status: 400 });
+		}
 
-		const flagDirectory = path.join(DATA_DIRECTORY, 'clan_flag');
-		await ensureDirectoryExists(flagDirectory);
+		await cancelInvite(inviteId, clanId);
 
-		await deleteExistingImages(flagDirectory, clanId);
-		const extension = await saveProcessedImage(file, flagDirectory, clanId);
-
-		return json({ success: true, clan: { id: clanId, extension } });
+		return json({ success: true });
 	} catch (err) {
 		if (err && typeof err === 'object' && 'status' in err) {
 			throw err;
 		}
-		throw error(500, 'Failed to upload flag');
+		console.error('Failed to cancel invite:', err);
+		throw error(500, 'Failed to cancel invite');
 	}
 };

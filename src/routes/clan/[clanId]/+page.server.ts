@@ -9,16 +9,23 @@ export async function load({ params, cookies }) {
 
 	const sessionToken = cookies.get('sessionToken');
 	let isOwner = false;
+	let isMember = false;
 
 	if (sessionToken && clan) {
 		const user = await getUserFromSession(sessionToken);
-		if (user && user.id === clan.owner.id) {
-			isOwner = true;
+		if (user) {
+			if (user.id === clan.owner.id) {
+				isOwner = true;
+			}
+			if (user.clan_id === clan.id) {
+				isMember = true;
+			}
 		}
 	}
 
 	return {
 		clan,
-		isOwner
+		isOwner,
+		isMember
 	};
 }
