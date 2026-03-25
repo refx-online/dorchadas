@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { appName, appUrl, apiUrl, avatarUrl } from '$lib/env';
+	import { appName, appUrl, getReplayUrl, avatarUrl } from '$lib/env';
 
 	import Download from 'svelte-feathers/Download.svelte';
 	import Star from 'svelte-feathers/Star.svelte';
@@ -313,7 +313,7 @@
 					</div>
 					<div class="flex gap-3 w-full sm:w-auto">
 						<a
-							href="{apiUrl}/v1/get_play?id={data.score.id}"
+							href="{getReplayUrl}?score_id={data.score.id}"
 							class="bg-gray-600 hover:bg-gray-700 text-white px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 flex-1 sm:flex-initial"
 						>
 							<Download size={16} />
