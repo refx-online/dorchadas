@@ -27,6 +27,16 @@ export const POST = async ({ cookies, params }) => {
 
 		if (clan.owner.id === user.id) {
 			// Owner is deleting the clan
+			// But they can only delete if they are the last member
+			if (clan.members.length > 1) {
+				return json(
+					{
+						success: false,
+						message: 'You must transfer ownership before leaving or deleting the clan.'
+					},
+					{ status: 400 }
+				);
+			}
 			await deleteClan(clanId);
 			return json({ success: true, action: 'deleted' });
 		} else {

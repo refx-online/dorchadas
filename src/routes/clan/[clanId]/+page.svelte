@@ -29,7 +29,8 @@
 			if (response.ok) {
 				window.location.href = '/';
 			} else {
-				alert(__('An error occurred while leaving the clan', $userLanguage));
+				const result = await response.json();
+				alert(result.message || __('An error occurred while leaving the clan', $userLanguage));
 			}
 		} catch {
 			alert(__('An error occurred while leaving the clan', $userLanguage));
@@ -57,6 +58,60 @@
 		} finally {
 			isLoading = false;
 		}
+	}
+
+	async function performAction(endpoint: string, targetUserId: number, confirmMsg: string) {
+		if (!confirm(confirmMsg)) return;
+		isLoading = true;
+		try {
+			const response = await fetch(`/clan/${data.clan.id}/settings/members/${endpoint}`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ targetUserId })
+			});
+			if (response.ok) {
+				invalidateAll();
+			} else {
+				const result = await response.json();
+				alert(result.message || __('An error occurred', $userLanguage));
+			}
+		} catch {
+			alert(__('An error occurred', $userLanguage));
+		} finally {
+			isLoading = false;
+		}
+	}
+
+	function handleKick(userId: number, userName: string) {
+		performAction(
+			'kick',
+			userId,
+			`${__('Are you sure you want to kick', $userLanguage)} ${userName}?`
+		);
+	}
+
+	function handlePromote(userId: number, userName: string) {
+		performAction(
+			'promote',
+			userId,
+			`${__('Are you sure you want to promote', $userLanguage)} ${userName} ${__('to officer?', $userLanguage)}`
+		);
+	}
+
+	function handleDemote(userId: number, userName: string) {
+		performAction(
+			'demote',
+			userId,
+			`${__('Are you sure you want to demote', $userLanguage)} ${userName} ${__('to member?', $userLanguage)}`
+		);
+	}
+
+	function handleTransfer(userId: number, userName: string) {
+		performAction(
+			'transfer',
+			userId,
+			`${__('Are you sure you want to transfer ownership to', $userLanguage)} ${userName}? ${__('You will become an officer.', $userLanguage)}`
+		);
 	}
 </script>
 
@@ -184,6 +239,64 @@
 												class="text-primary-500 hover:text-primary-300 transition-colors"
 												href="/u/{member.id}">{member.name}</a
 											>
+											{#if member.clan_priv === 2}
+												<span class="chip variant-soft-secondary"
+													>{__('Officer', $userLanguage)}</span
+												>
+											{/if}
+
+											<div class="ms-auto flex gap-2">
+												{#if data.isOfficer && data.currentUser}
+													{#if data.isOwner}
+														{#if member.clan_priv === 1}
+															<button
+																class="btn btn-sm variant-filled-secondary"
+																on:click={() => handlePromote(member.id, member.name)}
+																disabled={isLoading}
+															>
+																{__('Promote', $userLanguage)}
+															</button>
+														{:else if member.clan_priv === 2}
+															<button
+																class="btn btn-sm variant-filled-warning"
+																on:click={() => handleDemote(member.id, member.name)}
+																disabled={isLoading}
+															>
+																{__('Demote', $userLanguage)}
+															</button>
+														{/if}
+														<button
+															class="btn btn-sm variant-filled-primary"
+															on:click={() => handleTransfer(member.id, member.name)}
+															disabled={isLoading}
+														>
+															{__('Transfer', $userLanguage)}
+														</button>
+														<button
+															class="btn btn-sm variant-filled-error"
+															on:click={() => handleKick(member.id, member.name)}
+															disabled={isLoading}
+														>
+															{__('Kick', $userLanguage)}
+														</button>
+													{:else if data.currentUser.clanPriv === 2 && member.clan_priv === 1}
+														<button
+															class="btn btn-sm variant-filled-secondary"
+															on:click={() => handlePromote(member.id, member.name)}
+															disabled={isLoading}
+														>
+															{__('Promote', $userLanguage)}
+														</button>
+														<button
+															class="btn btn-sm variant-filled-error"
+															on:click={() => handleKick(member.id, member.name)}
+															disabled={isLoading}
+														>
+															{__('Kick', $userLanguage)}
+														</button>
+													{/if}
+												{/if}
+											</div>
 										</div>
 									{/if}
 								{/each}
