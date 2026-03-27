@@ -209,6 +209,16 @@
 		{__('Top Plays', $userLanguage)}
 	</a>
 
+	<a
+		href="/ai-girlfriend"
+		class="btn {$page.data.url == '/ai-girlfriend'
+			? 'variant-ghost-surface '
+			: 'hover:variant-outline-surface '}rounded-lg"
+		on:click={() => drawerStore.close()}
+	>
+		{__('AI Girlfriend', $userLanguage)}
+	</a>
+
 	{#if isUserStaff}
 		<a
 			href="/nerv"
