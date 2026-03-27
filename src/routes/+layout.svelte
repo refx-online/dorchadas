@@ -47,7 +47,6 @@
 	import { elasticOut } from 'svelte/easing';
 	import { isRestricted } from '$lib/privs';
 	import { discordUrl } from '$lib/env';
-	import AiGirlfriend from '$lib/components/aiGirlfriend.svelte';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 	initializeStores();
@@ -331,8 +330,6 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-missing-attribute -->
-<AiGirlfriend />
-
 <AppShell>
 	<svelte:fragment slot="header">
 		{#if ($page.data.url != '/signin' && $page.data.url != '/signup' && $page.data.url != '/nerv') || $page.status != 200}
