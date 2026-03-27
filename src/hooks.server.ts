@@ -82,7 +82,7 @@ export const getRedisClient = async (): Promise<redis.RedisClientType<
 		console.log(chalk.gray('Connecting to Redis...'));
 		const tempRedisClient = redis.createClient({
 			url: redisUrl,
-			database: parseInt(redisDb)
+			database: parseInt(redisDb.toString())
 		});
 
 		tempRedisClient.on('error', (error) => {
@@ -135,11 +135,12 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	if (STATE_CHANGING_METHODS.includes(request.method)) {
 		const contentType = request.headers.get('content-type') || '';
-		let tokenFromRequest: string | null = null;
+		let tokenFromRequest: string | null = request.headers.get('x-csrf-token');
 
 		if (
-			contentType.includes('application/x-www-form-urlencoded') ||
-			contentType.includes('multipart/form-data')
+			!tokenFromRequest &&
+			(contentType.includes('application/x-www-form-urlencoded') ||
+				contentType.includes('multipart/form-data'))
 		) {
 			try {
 				const clonedRequest = request.clone();
@@ -148,8 +149,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 			} catch (err) {
 				return json({ error: 'Invalid form data' }, { status: 400 });
 			}
-		} else {
-			tokenFromRequest = request.headers.get('x-csrf-token');
 		}
 
 		if (!tokenFromRequest) {
