@@ -153,7 +153,7 @@
 						</div>
 					</div>
 					<div class="flex items-center gap-2">
-						{#if data.isOwner}
+						{#if data.isOfficer}
 							<a href="/clan/{data.clan.id}/settings" class="btn variant-filled-surface">
 								{__('Settings', $userLanguage)}
 							</a>
