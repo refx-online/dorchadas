@@ -244,42 +244,44 @@
 
 		<div class="grid grid-cols-1 gap-8">
 			<div class="card p-4 variant-soft">
-				<h3 class="h3 mb-4">{__('General Info', $userLanguage)}</h3>
-
 				<div class="space-y-8">
-					<div class="mb-8 space-y-4">
-						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-							<label class="label">
-								<span>{__('Clan Name', $userLanguage)}</span>
-								<input
-									type="text"
-									class="input"
-									bind:value={clanName}
-									placeholder={__('Enter clan name', $userLanguage)}
-									disabled={isLoading}
-								/>
-							</label>
-							<label class="label">
-								<span>{__('Clan Tag', $userLanguage)}</span>
-								<input
-									type="text"
-									class="input"
-									bind:value={clanTag}
-									placeholder={__('Enter clan tag', $userLanguage)}
-									disabled={isLoading}
-								/>
-							</label>
-						</div>
-						<button
-							class="btn variant-filled-primary"
-							on:click={handleSettingsUpdate}
-							disabled={isLoading || (clanName === data.clan.name && clanTag === data.clan.tag)}
-						>
-							{isLoading ? __('Saving...', $userLanguage) : __('Save Settings', $userLanguage)}
-						</button>
-					</div>
+					{#if data.clan.owner.id === data.user.id}
+						<h3 class="h3 mb-4">{__('General Info', $userLanguage)}</h3>
 
-					<hr class="opacity-25" />
+						<div class="mb-8 space-y-4">
+							<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+								<label class="label">
+									<span>{__('Clan Name', $userLanguage)}</span>
+									<input
+										type="text"
+										class="input"
+										bind:value={clanName}
+										placeholder={__('Enter clan name', $userLanguage)}
+										disabled={isLoading}
+									/>
+								</label>
+								<label class="label">
+									<span>{__('Clan Tag', $userLanguage)}</span>
+									<input
+										type="text"
+										class="input"
+										bind:value={clanTag}
+										placeholder={__('Enter clan tag', $userLanguage)}
+										disabled={isLoading}
+									/>
+								</label>
+							</div>
+							<button
+								class="btn variant-filled-primary"
+								on:click={handleSettingsUpdate}
+								disabled={isLoading || (clanName === data.clan.name && clanTag === data.clan.tag)}
+							>
+								{isLoading ? __('Saving...', $userLanguage) : __('Save Settings', $userLanguage)}
+							</button>
+						</div>
+
+						<hr class="opacity-25" />
+					{/if}
 
 					<div class="mb-8 space-y-4">
 						<h3 class="text-lg font-medium">{__('Invite Users', $userLanguage)}</h3>
@@ -378,42 +380,46 @@
 						{/if}
 					</div>
 
-					<hr class="opacity-25" />
+					{#if data.clan.owner.id === data.user.id}
+						<hr class="opacity-25" />
 
-					<div class="mb-8">
-						<h3 class="text-lg font-medium mb-4">{__('Clan Flag', $userLanguage)}</h3>
-						<div class="flex flex-col md:flex-row gap-6 items-start">
-							<div class="flex-shrink-0">
-								<img
-									src={getPreviewUrl(flagFile?.[0], `/api/clan/${data.clan.id}/flag`)}
-									alt="Flag"
-									class="h-16 aspect-[3/2] rounded-md object-cover border-4 border-surface-300-600-token"
-									on:error={(e) => {
-										e.currentTarget.style.display = 'none';
-									}}
-								/>
-							</div>
-							<div class="flex-1 space-y-3">
-								<input
-									type="file"
-									accept="image/jpeg,image/png,image/gif"
-									bind:files={flagFile}
-									class="input"
-									disabled={isLoading}
-								/>
-								<button
-									class="btn variant-filled-primary"
-									on:click={handleFlagUpload}
-									disabled={!flagFile?.[0] || isLoading}
-								>
-									{isLoading ? __('Uploading...', $userLanguage) : __('Upload Flag', $userLanguage)}
-								</button>
-								<p class="text-sm opacity-75">
-									{__('Maximum size: 5MB. Supported formats: JPG, PNG, GIF', $userLanguage)}
-								</p>
+						<div class="mb-8">
+							<h3 class="text-lg font-medium mb-4">{__('Clan Flag', $userLanguage)}</h3>
+							<div class="flex flex-col md:flex-row gap-6 items-start">
+								<div class="flex-shrink-0">
+									<img
+										src={getPreviewUrl(flagFile?.[0], `/api/clan/${data.clan.id}/flag`)}
+										alt="Flag"
+										class="h-16 aspect-[3/2] rounded-md object-cover border-4 border-surface-300-600-token"
+										on:error={(e) => {
+											e.currentTarget.style.display = 'none';
+										}}
+									/>
+								</div>
+								<div class="flex-1 space-y-3">
+									<input
+										type="file"
+										accept="image/jpeg,image/png,image/gif"
+										bind:files={flagFile}
+										class="input"
+										disabled={isLoading}
+									/>
+									<button
+										class="btn variant-filled-primary"
+										on:click={handleFlagUpload}
+										disabled={!flagFile?.[0] || isLoading}
+									>
+										{isLoading
+											? __('Uploading...', $userLanguage)
+											: __('Upload Flag', $userLanguage)}
+									</button>
+									<p class="text-sm opacity-75">
+										{__('Maximum size: 5MB. Supported formats: JPG, PNG, GIF', $userLanguage)}
+									</p>
+								</div>
 							</div>
 						</div>
-					</div>
+					{/if}
 				</div>
 			</div>
 		</div>

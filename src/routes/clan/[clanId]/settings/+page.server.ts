@@ -25,8 +25,8 @@ export const load = async ({ cookies, params, locals }) => {
 		redirect(302, '/');
 	}
 
-	// Ensure the user is the clan owner
-	if (clan.owner.id !== user.id) {
+	// Ensure the user is the clan owner or an officer
+	if (user.clan_id !== clan.id || user.clan_priv < 2) {
 		redirect(302, `/clan/${clan.id}`);
 	}
 

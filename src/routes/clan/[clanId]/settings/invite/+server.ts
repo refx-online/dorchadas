@@ -26,8 +26,8 @@ export const POST = async ({ request, cookies, params }) => {
 			throw error(404, 'Clan not found');
 		}
 
-		if (clan.owner.id !== user.id) {
-			throw error(403, 'Only the clan owner can invite users');
+		if (user.clan_id !== clanId || user.clan_priv < 2) {
+			throw error(403, 'Only the clan owner or officers can invite users');
 		}
 
 		const { username } = await request.json();
