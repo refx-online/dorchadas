@@ -476,18 +476,17 @@
 	{#key data.url}
 		<div
 			class={($page.data.url != '/signin' && $page.data.url != '/signup') || $page.status != 200
-				? 'mt-14 h-[calc(100vh-3.5rem)]'
+				? 'mt-14 min-h-[calc(100vh-3.5rem)] flex flex-col'
 				: ''}
 			in:scale={{ start: 0.99, duration: 200, delay: 200 }}
 			out:scale={{ start: 0.99, duration: 200 }}
 		>
-			<slot />
+			<div class="flex-grow">
+				<slot />
+			</div>
+			{#if ($page.data.url != '/signin' && $page.data.url != '/signup') || $page.status != 200}
+				<Footer />
+			{/if}
 		</div>
 	{/key}
-
-	<svelte:fragment slot="footer">
-		{#if ($page.data.url != '/signin' && $page.data.url != '/signup') || $page.status != 200}
-			<Footer />
-		{/if}
-	</svelte:fragment>
 </AppShell>
