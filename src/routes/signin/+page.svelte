@@ -87,8 +87,9 @@
 		<a
 			class="block bg-white/5 hover:bg-white/10 transition-colors cursor-pointer rounded-full p-2 w-fit"
 			href="/"
+			aria-label="Back to Home"
 		>
-			<ChevronLeft class="pointer-events-none" />
+			<ChevronLeft class="pointer-events-none" aria-hidden="true" />
 		</a>
 		<div class="p-10 h-full">
 			{#if !passwordMask}
@@ -99,7 +100,7 @@
 					use:focusTrap={true}
 				>
 					<div in:scale={{ start: 0.9, delay: 200, duration: 400 }}>
-						<User size={45} class="!outline-none !border-none" />
+						<User size={45} class="!outline-none !border-none" aria-hidden="true" />
 					</div>
 					<div class="text-center">
 						<p class="text-2xl font-normal">{__('Sign In', $userLanguage)}</p>
@@ -109,6 +110,7 @@
 						id="username"
 						type="text"
 						placeholder={__('Username', $userLanguage)}
+						aria-label={__('Username', $userLanguage)}
 						on:input={() => (errored = false)}
 						on:keypress={(e) => {
 							if (e.key === 'Enter') {
@@ -144,19 +146,20 @@
 					use:focusTrap={true}
 				>
 					<div in:scale={{ start: 0.9, delay: 200, duration: 400 }}>
-						<Key size={45} />
+						<Key size={45} aria-hidden="true" />
 					</div>
 					<p class="text-2xl font-normal">{__('Welcome', $userLanguage)}</p>
 					<p
 						class="flex flex-row justify-center items-center gap-2 mt-2 mb-8 rounded-full !border-[1px] p-1 px-2 border-surface-700"
 					>
-						<User class="border border-white rounded-full" size={12} />
+						<User class="border border-white rounded-full" size={12} aria-hidden="true" />
 						{loginData.username}
 					</p>
 					<input
 						id="password"
 						type="password"
 						placeholder={__('Password', $userLanguage)}
+						aria-label={__('Password', $userLanguage)}
 						class="border border-surface-700 !ring-pink-700 focus:!border-pink-700 bg-surface-900 rounded-lg p-4 text-[17px] w-full mb-2"
 						bind:value={loginData.password}
 						disabled={loading}
