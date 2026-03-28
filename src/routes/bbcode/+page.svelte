@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { parseBBCodeToHtml } from '$lib/bbcode';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
 	import { appName } from '$lib/env';
 

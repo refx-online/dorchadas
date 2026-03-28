@@ -7,7 +7,7 @@
 	import Loader from 'svelte-feathers/Loader.svelte';
 	import { getTimeSince } from '$lib/time';
 	import { parseModsInt } from '$lib/mods';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
 	import Flag from './Flag.svelte';
 	import Mod from './Mod.svelte';

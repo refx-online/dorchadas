@@ -6,7 +6,7 @@
 		//youtubeUrl,
 		discordUrl
 	} from '$lib/env';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
 </script>
 

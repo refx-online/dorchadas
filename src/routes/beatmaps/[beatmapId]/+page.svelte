@@ -21,7 +21,7 @@
 	import { fetchBeatmapScores } from '$lib/api';
 	import MapScores from '$lib/components/MapScores.svelte';
 	import { statusIntToString } from '$lib/beatmap-status';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
 
 	/*TODO: maybe rework this at another time

@@ -1,7 +1,7 @@
 import { type Writable, writable } from 'svelte/store';
 import type { UserData } from './types';
 import { browser } from '$app/environment';
-import { getLanguage } from './language';
+import { getLanguage } from './i18n';
 
 export const userData: Writable<UserData | undefined> = writable(undefined);
 

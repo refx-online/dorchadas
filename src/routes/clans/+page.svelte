@@ -5,7 +5,7 @@
 	import ChevronRight from 'svelte-feathers/ChevronRight.svelte';
 	import { appName } from '$lib/env';
 	import { queryParam } from 'sveltekit-search-params';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
 	import Clans from '$lib/components/Clans.svelte';
 

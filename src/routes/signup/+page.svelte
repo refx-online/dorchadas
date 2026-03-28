@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { env } from '$env/dynamic/public';
 	import { appName } from '$lib/env';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userData, userLanguage } from '$lib/storage';
 	import {
 		ProgressRadial,

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { userData, userLanguage } from '$lib/storage';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { slide, fade, scale } from 'svelte/transition';
 	import Heart from 'svelte-feathers/Heart.svelte';
 	import Send from 'svelte-feathers/Send.svelte';

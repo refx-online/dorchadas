@@ -42,7 +42,7 @@
 	import NavItems from '$lib/components/NavItems.svelte';
 	import type { UserData } from '$lib/types';
 	import Popup from '$lib/components/Popup.svelte';
-	import { __, languages } from '$lib/language';
+	import { __, languages } from '$lib/i18n';
 	import Footer from '$lib/components/Footer.svelte';
 	import { elasticOut } from 'svelte/easing';
 	import { isRestricted } from '$lib/privs';

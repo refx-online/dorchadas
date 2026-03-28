@@ -11,7 +11,7 @@
 	import MoreVertical from 'svelte-feathers/MoreVertical.svelte';
 	import Popup from './Popup.svelte';
 	import { getReplayUrl } from '$lib/env';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
 	import { scale } from 'svelte/transition';
 	import Time, { dayjs } from 'svelte-time';

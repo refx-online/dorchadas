@@ -6,7 +6,7 @@
 	import Mod from '$lib/components/Mod.svelte';
 	import ChevronLeft from 'svelte-feathers/ChevronLeft.svelte';
 	import ChevronRight from 'svelte-feathers/ChevronRight.svelte';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
 
 	export let data;

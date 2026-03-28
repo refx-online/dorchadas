@@ -6,7 +6,7 @@
 	import { onMount } from 'svelte';
 	import ChevronDown from 'svelte-feathers/ChevronDown.svelte';
 	import Play from 'svelte-feathers/Play.svelte';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
 	import { scale } from 'svelte/transition';
 

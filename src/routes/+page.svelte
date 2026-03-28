@@ -1,7 +1,7 @@
 <script lang="ts">
 	import './style.postcss';
 	import { appName } from '$lib/env';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage, userData } from '$lib/storage';
 	import { onMount } from 'svelte';
 	import { avatarUrl } from '$lib/env';

@@ -3,7 +3,7 @@
 
 	import Download from 'svelte-feathers/Download.svelte';
 	import Star from 'svelte-feathers/Star.svelte';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
 	import Mod from '$lib/components/Mod.svelte';
 	import { parseModsInt } from '$lib/mods';

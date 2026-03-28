@@ -4,7 +4,7 @@
 	import { userData, userLanguage } from '$lib/storage';
 	import { Trash2, Edit2, Check, X } from 'svelte-feathers';
 	import { avatarUrl } from '$lib/env';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { invalidateAll } from '$app/navigation';
 
 	interface Comment {

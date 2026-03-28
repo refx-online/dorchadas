@@ -1,7 +1,7 @@
 <script lang="ts">
 	import AiGirlfriend from '$lib/components/AiGirlfriend.svelte';
 	import { userData, userLanguage } from '$lib/storage';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { fade } from 'svelte/transition';
 
 	$: isLoggedIn = !!$userData;

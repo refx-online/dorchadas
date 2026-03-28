@@ -1,4 +1,4 @@
-import type { Language } from '$lib/language';
+import type { Language } from '.';
 
 const language: Language = {
 	name: 'Indonesia',
@@ -99,8 +99,6 @@ const language: Language = {
 		'Back to Home': 'Kembali ke Beranda',
 		'Difficulty Rating': 'Rating Kesulitan',
 		Length: 'Durasi',
-		'Failed to load leaderboard.': 'Gagal memuat papan peringkat.',
-		Refresh: 'Segarkan',
 		'Beatmap not found.': 'Beatmap tidak ditemukan.',
 		'There are a few possible reasons for this:': 'Ada beberapa kemungkinan penyebabnya:',
 		'The map was deleted': 'Map telah dihapus',
@@ -141,7 +139,52 @@ const language: Language = {
 		'{{val}} year ago': '{{val}} tahun yang lalu',
 		'{{val}} years ago': '{{val}} tahun yang lalu',
 		'{{val}} hour': '{{val}} jam',
-		'{{val}} hours': '{{val}} jam'
+		'{{val}} hours': '{{val}} jam',
+		'Create Clan': 'Buat Klan',
+		'Failed to load leaderboard.': 'Gagal memuat papan peringkat.',
+		Refresh: 'Segarkan',
+		'Create a Clan': 'Buat Klan',
+		'Clan Name': 'Nama Klan',
+		'Enter clan name (2-32 characters)': 'Masukkan nama klan (2-32 karakter)',
+		'Clan Tag': 'Tag Klan',
+		'Enter clan tag (2-6 characters)': 'Masukkan tag klan (2-6 karakter)',
+		Cancel: 'Batal',
+		'Creating...': 'Membuat...',
+		Online: 'Online',
+		Offline: 'Offline',
+		Friends: 'Teman',
+		Followers: 'Pengikut',
+		'No friends found': 'Tidak ada teman ditemukan',
+		'No followers found': 'Tidak ada pengikut ditemukan',
+		'Welcome to {{val}}!': 'Selamat datang di {{val}}!',
+		'Follow these steps to connect to our server and start playing!':
+			'Ikuti langkah-langkah ini untuk terhubung ke server kami dan mulai bermain!',
+		'How to Connect': 'Cara Menghubungkan',
+		'Find your osu! executable': 'Temukan file eksekusi osu! Anda',
+		'Usually located in:': 'Biasanya terletak di:',
+		'Create a shortcut': 'Buat jalan pintas (shortcut)',
+		'Right-click on osu!.exe → "Create shortcut"': 'Klik kanan pada osu!.exe → "Buat shortcut"',
+		'Edit shortcut properties': 'Edit properti shortcut',
+		'Add this at the end of the existing target path':
+			'Tambahkan ini di akhir jalur target yang ada',
+		'Launch and login': 'Jalankan dan masuk',
+		'Double-click your shortcut and login with your new account!':
+			'Klik dua kali shortcut Anda dan login dengan akun baru Anda!',
+		'Welcome aboard, {{val}}!': 'Selamat bergabung, {{val}}!',
+		Username: 'Nama Pengguna',
+		'Forgot username?': 'Lupa nama pengguna?',
+		'More Options': 'Opsi Lainnya',
+		'Unpin Score': 'Lepas Pin Skor',
+		'Pin Score': 'Pin Skor',
+		'BBCode': 'BBCode',
+		'How to connect': 'Cara menghubungkan',
+		'show less': 'tampilkan lebih sedikit',
+		'Post Comment': 'Kirim Komentar',
+		'Please sign in to leave a comment': 'Silakan masuk untuk meninggalkan komentar',
+		'Loading comments...': 'Memuat komentar...',
+		'No comments yet': 'Belum ada komentar',
+		'edited': 'diedit',
+		'XP': 'XP'
 	}
 };
 

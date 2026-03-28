@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { fetchPlayerStatus } from '$lib/api.js';
 	import { avatarUrl, appName } from '$lib/env.js';
-	import { __ } from '$lib/language.js';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage.js';
 	import { getCountryName } from '$lib/country.js';
 	import Popup from '$lib/components/Popup.svelte';

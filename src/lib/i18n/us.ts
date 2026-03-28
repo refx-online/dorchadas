@@ -1,4 +1,4 @@
-import type { Language } from '$lib/language';
+import type { Language } from '.';
 
 const language: Language = {
 	name: 'English',
