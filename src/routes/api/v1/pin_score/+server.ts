@@ -10,7 +10,10 @@ export const POST: RequestHandler = async ({ request }) => {
 			throw error(403, 'Unauthorized');
 		}
 
-		await pinScore(score_id, pinned);
+		const result = await pinScore(score_id, pinned);
+		if (!result.ok) {
+			throw error(500, 'Failed to update score');
+		}
 
 		return json({ success: true });
 	} catch (err) {

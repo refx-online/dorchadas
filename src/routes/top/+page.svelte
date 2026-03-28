@@ -72,7 +72,7 @@
 		goto(`/top?mode=${modeNum}&page=1`);
 	}
 
-	function getBeatmapCoverUrl(setId: number) {
+	function fetchBeatmapCoverUrl(setId: number) {
 		return `https://assets.ppy.sh/beatmaps/${setId}/covers/cover.jpg`;
 	}
 </script>
@@ -266,9 +266,9 @@
 						class="bg-zinc-900 rounded-lg overflow-hidden w-full group hover:-translate-y-1 hover:shadow-xl border border-white/5 hover:border-primary-500/50 transition-all duration-300"
 					>
 						<div class="relative h-32 bg-gray-500 overflow-hidden">
-							{#if getBeatmapCoverUrl(score.set_id)}
+							{#if fetchBeatmapCoverUrl(score.set_id)}
 								<img
-									src={getBeatmapCoverUrl(score.set_id)}
+									src={fetchBeatmapCoverUrl(score.set_id)}
 									alt=""
 									class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
 								/>

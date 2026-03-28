@@ -4,12 +4,13 @@ import { fail, error } from '@sveltejs/kit';
 import { getMySQLDatabase } from '../../hooks.server';
 import { usernameRegex } from '$lib/regex';
 import { env } from '$env/dynamic/private';
+import { logger } from '$lib/logger';
 
 async function sendDiscordWebhookLog(logType: string, message: string, avatarUrl?: string) {
 	try {
 		const webhookUrl = env.DISCORD_WEBHOOK_LOG;
 		if (!webhookUrl) {
-			console.error('Discord webhook URL is not set');
+			logger.error('Discord webhook URL is not set');
 			return;
 		}
 
@@ -31,22 +32,22 @@ async function sendDiscordWebhookLog(logType: string, message: string, avatarUrl
 		});
 
 		if (!response.ok) {
-			console.error('Failed to send Discord webhook', await response.text());
+			logger.error('Failed to send Discord webhook', await response.text());
 		}
 	} catch (error) {
-		console.error('Error sending Discord webhook:', error);
+		logger.error('Error sending Discord webhook:', error);
 	}
 }
 
 export const load = async ({ cookies }) => {
 	const sessionToken = cookies.get('sessionToken');
 	if (!sessionToken) {
-		redirect(302, '/signin');
+		throw redirect(302, '/signin');
 	}
 
 	const user = await getUserFromSession(sessionToken);
 	if (!user) {
-		redirect(302, '/signin');
+		throw redirect(302, '/signin');
 	}
 
 	return {
@@ -71,11 +72,11 @@ export const actions = {
 		const newUsername = data.get('newUsername')?.toString().trim();
 
 		if (!sessionToken) {
-			return redirect(302, '/signin');
+			throw redirect(302, '/signin');
 		}
 
 		if (!user) {
-			return redirect(302, '/signin');
+			throw redirect(302, '/signin');
 		}
 
 		if (!mysqlDatabase) {
@@ -156,7 +157,8 @@ export const actions = {
 			);
 
 			return { success: true };
-		} catch {
+		} catch (err) {
+			logger.error('Failed to change username', err);
 			return fail(500, { message: 'An error occurred while updating username' });
 		}
 	},
@@ -171,11 +173,11 @@ export const actions = {
 		const preferredMetric = data.get('preferredMetric')?.toString();
 
 		if (!sessionToken) {
-			return redirect(302, '/signin');
+			throw redirect(302, '/signin');
 		}
 
 		if (!user) {
-			return redirect(302, '/signin');
+			throw redirect(302, '/signin');
 		}
 
 		if (!mysqlDatabase) {
@@ -191,7 +193,8 @@ export const actions = {
 				preferred_metric: preferredMetric
 			});
 			return { success: true };
-		} catch {
+		} catch (err) {
+			logger.error('Failed to change metric', err);
 			return fail(500, { message: 'An error occurred while updating ranking metric' });
 		}
 	}

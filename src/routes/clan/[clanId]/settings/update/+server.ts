@@ -1,7 +1,8 @@
 import { error, json } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
-import { getClan } from '$lib/api';
+import { fetchClan } from '$lib/api';
 import { getMySQLDatabase } from '../../../../../hooks.server';
+import { logger } from '$lib/logger';
 
 export const POST = async ({ request, cookies, params }) => {
 	try {
@@ -20,10 +21,11 @@ export const POST = async ({ request, cookies, params }) => {
 			throw error(400, 'Invalid clan ID');
 		}
 
-		const clan = await getClan(clanId);
-		if (!clan) {
+		const clanResult = await fetchClan(clanId);
+		if (!clanResult.ok) {
 			throw error(404, 'Clan not found');
 		}
+		const clan = clanResult.value;
 
 		if (user.clan_id !== clanId || user.clan_priv < 3) {
 			throw error(403, 'Only the clan owner can change settings');
@@ -69,7 +71,7 @@ export const POST = async ({ request, cookies, params }) => {
 		if (err && typeof err === 'object' && 'status' in err) {
 			throw err;
 		}
-		console.error('Failed to update clan settings:', err);
+		logger.error('Failed to update clan settings', err);
 		throw error(500, 'Failed to update clan settings');
 	}
 };

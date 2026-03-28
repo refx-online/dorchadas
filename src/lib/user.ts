@@ -6,26 +6,29 @@ import { usernameRegex } from './regex';
 import { getInfoFromIP } from './geoloc';
 
 export const createPassword = (plainPassword: string): Promise<string> => {
-	const pw_md5 = crypto.createHash('md5').update(plainPassword).digest('hex');
-	const bw_bcrypt = bcrypt.hash(pw_md5, 10);
+	const passwordMd5 = crypto.createHash('md5').update(plainPassword).digest('hex');
+	const bw_bcrypt = bcrypt.hash(passwordMd5, 10);
 	return bw_bcrypt;
 };
 
-export async function comparePasswords(plainPassword: string, hashed_pw: string): Promise<boolean> {
+export async function comparePasswords(
+	plainPassword: string,
+	hashedPassword: string
+): Promise<boolean> {
 	return await bcrypt.compare(
 		crypto.createHash('md5').update(plainPassword).digest('hex'),
-		hashed_pw
+		hashedPassword
 	);
 }
 
-export const register = async (opts: {
+export const register = async (options: {
 	username: string;
 	password: string;
 	ip: string;
 	/*discordId: string;
 	authKey: string;*/
 }): Promise<{ succeeded: boolean; message: string }> => {
-	const { username, password, ip } = opts;
+	const { username, password, ip } = options;
 
 	if (!usernameRegex.test(username)) {
 		return {
@@ -97,11 +100,11 @@ export const register = async (opts: {
 	};
 };
 
-export const login = async (opts: {
+export const login = async (options: {
 	username: string;
 	password: string;
 }): Promise<DBUser | undefined> => {
-	const { username, password } = opts;
+	const { username, password } = options;
 	const mysqlDatabase = await getMySQLDatabase();
 	if (!mysqlDatabase) {
 		return undefined;

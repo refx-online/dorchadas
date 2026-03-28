@@ -17,7 +17,11 @@
 	let fileInput: HTMLInputElement;
 
 	let messages: { role: 'user' | 'assistant'; content: string; image?: string }[] = [
-		{ role: 'assistant', content: 'Ugh, finally you’re here! 😤 Why did it take you so long? Do you even care about me? 💔' }
+		{
+			role: 'assistant',
+			content:
+				'Ugh, finally you’re here! 😤 Why did it take you so long? Do you even care about me? 💔'
+		}
 	];
 
 	const scrollToBottom = () => {
@@ -36,7 +40,7 @@
 		if (file) {
 			// Limit file size to 1MB for base64 safety
 			if (file.size > 1024 * 1024) {
-				alert("That file is too big! Are you trying to crash our love? 😤 (Max 1MB)");
+				alert('That file is too big! Are you trying to crash our love? 😤 (Max 1MB)');
 				return;
 			}
 			const reader = new FileReader();
@@ -58,11 +62,14 @@
 		const userMessage = inputMessage.trim();
 		const currentImage = selectedImage;
 
-		messages = [...messages, {
-			role: 'user',
-			content: userMessage || (currentImage ? "(Sent an image)" : ""),
-			image: currentImage || undefined
-		}];
+		messages = [
+			...messages,
+			{
+				role: 'user',
+				content: userMessage || (currentImage ? '(Sent an image)' : ''),
+				image: currentImage || undefined
+			}
+		];
 
 		inputMessage = '';
 		clearImage();
@@ -77,7 +84,7 @@
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					messages: messages.map(m => ({ role: m.role, content: m.content })),
+					messages: messages.map((m) => ({ role: m.role, content: m.content })),
 					search: isSearchMode,
 					image: currentImage
 				})
@@ -91,8 +98,14 @@
 			const data = await response.json();
 			messages = [...messages, { role: 'assistant', content: data.reply }];
 		} catch (error) {
-			console.error('Chat error:', error);
-			messages = [...messages, { role: 'assistant', content: 'Stop annoying me with your technical problems! 🙄 (Something went wrong, try again later.)' }];
+			messages = [
+				...messages,
+				{
+					role: 'assistant',
+					content:
+						'Stop annoying me with your technical problems! 🙄 (Something went wrong, try again later.)'
+				}
+			];
 		} finally {
 			isLoading = false;
 			setTimeout(scrollToBottom, 10);
@@ -106,7 +119,9 @@
 	};
 </script>
 
-<div class="w-full max-w-4xl mx-auto h-[75vh] flex flex-col shadow-2xl variant-filled-surface border border-surface-500 rounded-xl overflow-hidden">
+<div
+	class="w-full max-w-4xl mx-auto h-[75vh] flex flex-col shadow-2xl variant-filled-surface border border-surface-500 rounded-xl overflow-hidden"
+>
 	<header class="p-4 bg-surface-700 border-b border-surface-500 flex justify-between items-center">
 		<div class="flex items-center gap-3">
 			<Heart class="text-error-500 animate-pulse" size={24} />
@@ -114,8 +129,10 @@
 		</div>
 		<div class="flex items-center gap-4">
 			<button
-				class="btn btn-sm flex items-center gap-2 {isSearchMode ? 'variant-filled-secondary' : 'variant-soft-surface'}"
-				on:click={() => isSearchMode = !isSearchMode}
+				class="btn btn-sm flex items-center gap-2 {isSearchMode
+					? 'variant-filled-secondary'
+					: 'variant-soft-surface'}"
+				on:click={() => (isSearchMode = !isSearchMode)}
 				title="Toggle Web Search Mode"
 			>
 				<Globe size={16} />
@@ -146,17 +163,28 @@
 		{/each}
 		{#if isLoading}
 			<div class="flex justify-start">
-				<div class="bg-surface-600 text-white p-3 rounded-2xl rounded-bl-none text-sm italic animate-pulse">
-					{isSearchMode ? 'searching the web to find something to argue about...' : 'typing something annoying...'}
+				<div
+					class="bg-surface-600 text-white p-3 rounded-2xl rounded-bl-none text-sm italic animate-pulse"
+				>
+					{isSearchMode
+						? 'searching the web to find something to argue about...'
+						: 'typing something annoying...'}
 				</div>
 			</div>
 		{/if}
 	</div>
 
 	{#if selectedImage}
-		<div class="px-4 py-2 bg-surface-800 border-t border-surface-500 flex items-center gap-4" transition:slide>
+		<div
+			class="px-4 py-2 bg-surface-800 border-t border-surface-500 flex items-center gap-4"
+			transition:slide
+		>
 			<div class="relative group">
-				<img src={selectedImage} alt="Preview" class="w-16 h-16 object-cover rounded-lg border border-surface-400" />
+				<img
+					src={selectedImage}
+					alt="Preview"
+					class="w-16 h-16 object-cover rounded-lg border border-surface-400"
+				/>
 				<button
 					class="absolute -top-2 -right-2 btn btn-icon btn-sm variant-filled-error scale-75"
 					on:click={clearImage}
@@ -164,7 +192,9 @@
 					<X size={14} />
 				</button>
 			</div>
-			<div class="text-xs text-surface-300">Ready to show her this? She'll probably find a reason to be mad.</div>
+			<div class="text-xs text-surface-300">
+				Ready to show her this? She'll probably find a reason to be mad.
+			</div>
 		</div>
 	{/if}
 
@@ -186,7 +216,7 @@
 
 		<input
 			class="input p-3 text-base rounded-xl"
-			placeholder={isSearchMode ? "Ask her to search something..." : "Talk to her..."}
+			placeholder={isSearchMode ? 'Ask her to search something...' : 'Talk to her...'}
 			bind:value={inputMessage}
 			on:keydown={handleKeydown}
 			disabled={isLoading}
@@ -207,11 +237,12 @@
 	}
 
 	@keyframes pulse {
-		0%, 100% {
+		0%,
+		100% {
 			opacity: 1;
 		}
 		50% {
-			opacity: .5;
+			opacity: 0.5;
 		}
 	}
 </style>

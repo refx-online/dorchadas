@@ -62,15 +62,11 @@ export const actions = {
 		}
 
 		let clanId = 0;
-		try {
-			clanId = await createClan(name, tag, user.id);
-			if (!clanId) {
-				return fail(500, { message: 'Failed to create clan' });
-			}
-		} catch (err) {
-			console.error('Clan creation error:', err);
-			return fail(500, { message: 'An error occurred during clan creation' });
+		const result = await createClan(name, tag, user.id);
+		if (!result.ok) {
+			return fail(500, { message: 'Failed to create clan' });
 		}
+		clanId = result.value;
 		redirect(302, `/clan/${clanId}`);
 	}
 };

@@ -1,8 +1,9 @@
 import { error, json } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
-import { getClan } from '$lib/api';
+import { fetchClan } from '$lib/api';
 import { updateClanMemberPriv } from '$lib/db';
 import { getMySQLDatabase } from '../../../../../../hooks.server.js';
+import { logger } from '$lib/logger';
 
 export const POST = async ({ request, cookies, params }) => {
 	try {
@@ -21,8 +22,8 @@ export const POST = async ({ request, cookies, params }) => {
 			throw error(400, 'Invalid clan ID');
 		}
 
-		const clan = await getClan(clanId);
-		if (!clan) {
+		const clanResult = await fetchClan(clanId);
+		if (!clanResult.ok) {
 			throw error(404, 'Clan not found');
 		}
 
@@ -49,14 +50,17 @@ export const POST = async ({ request, cookies, params }) => {
 			return json({ message: 'User is not an officer' }, { status: 400 });
 		}
 
-		await updateClanMemberPriv(targetUserId, 1);
+		const updateResult = await updateClanMemberPriv(targetUserId, 1);
+		if (!updateResult.ok) {
+			throw error(500, 'Failed to demote member');
+		}
 
 		return json({ success: true });
 	} catch (err) {
 		if (err && typeof err === 'object' && 'status' in err) {
 			throw err;
 		}
-		console.error('Failed to demote member:', err);
+		logger.error('Failed to demote member', err);
 		throw error(500, 'Failed to demote member');
 	}
 };

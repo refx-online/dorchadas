@@ -5,7 +5,7 @@
 	import ChevronRight from 'svelte-feathers/ChevronRight.svelte';
 	import { apiUrl, appName } from '$lib/env';
 	import { queryParam } from 'sveltekit-search-params';
-	import Leaderboard from '$lib/components/leaderboard.svelte';
+	import Leaderboard from '$lib/components/Leaderboard.svelte';
 	import { __ } from '$lib/language';
 	import { userLanguage } from '$lib/storage';
 

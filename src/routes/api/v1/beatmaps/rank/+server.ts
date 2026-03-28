@@ -3,8 +3,8 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { getMySQLDatabase, getRedisClient } from '../../../../../hooks.server';
 import { getUserFromSession } from '$lib/user';
 import { isStaff } from '$lib/privs';
-import { RankedStatus, statusStringToId } from '$lib/beatmapStatus';
-import { getPlayerStatus } from '$lib/api';
+import { RankedStatus, statusStringToId } from '$lib/beatmap-status';
+import { fetchPlayerStatus } from '$lib/api';
 import { env } from '$env/dynamic/private';
 import { env as pubEnv } from '$env/dynamic/public';
 
@@ -140,14 +140,14 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 		if (beatmapId) {
 			beatmap = await mysqlDB('maps').where('id', beatmapId).first();
 		} else {
-			const playerStatus = await getPlayerStatus(sessionUser.id);
-			if (!playerStatus?.player_status?.status?.beatmap) {
+			const playerStatusResult = await fetchPlayerStatus(sessionUser.id);
+			if (!playerStatusResult.ok || !playerStatusResult.value.player_status?.status?.beatmap) {
 				throw error(
 					400,
 					'No beatmap found. Please specify beatmapId or ensure you have a beatmap loaded.'
 				);
 			}
-			const lastNpBeatmap = playerStatus.player_status.status.beatmap;
+			const lastNpBeatmap = playerStatusResult.value.player_status.status.beatmap;
 			beatmap = await mysqlDB('maps').where('id', lastNpBeatmap.id).first();
 		}
 

@@ -57,12 +57,12 @@ export const load: PageServerLoad = async ({ cookies }) => {
 
 	return {
 		userId: session.id,
-		friends: friendResults[0].map((friend) => ({
+		friends: friendResults[0].map((friend: any) => ({
 			id: friend.id,
 			username: friend.username,
 			country: friend.country
 		})),
-		followers: followerResults[0].map((follower) => ({
+		followers: followerResults[0].map((follower: any) => ({
 			id: follower.id,
 			username: follower.username,
 			country: follower.country

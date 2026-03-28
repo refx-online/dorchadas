@@ -4,7 +4,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { appName } from '$lib/env';
 
-	export let data;
+	export let data: any;
 
 	let isLoading = false;
 	let message = '';
@@ -16,6 +16,13 @@
 		setTimeout(() => {
 			message = '';
 		}, 5000);
+	}
+
+	function handleImageError(e: Event) {
+		const target = e.currentTarget;
+		if (target instanceof HTMLImageElement) {
+			target.style.display = 'none';
+		}
 	}
 
 	async function respond(inviteId: number, status: 'accepted' | 'rejected') {
@@ -86,9 +93,7 @@
 								src="/api/clan/{invite.clan_id}/flag"
 								alt={invite.clan_tag}
 								class="h-10 aspect-[3/2] rounded-md object-cover"
-								on:error={(e) => {
-									e.currentTarget.style.display = 'none';
-								}}
+								on:error={handleImageError}
 							/>
 							<div>
 								<p class="text-lg font-bold">{invite.clan_name} [{invite.clan_tag}]</p>

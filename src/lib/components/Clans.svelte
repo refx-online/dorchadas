@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { avatarUrl } from '$lib/env';
 	import { userLanguage } from '$lib/storage';
-	import { numberHumanReadable } from '$lib/stringUtil';
+	import { numberHumanReadable } from '$lib/string-util';
 	import type { DBClan } from '$lib/types';
 	import { scale } from 'svelte/transition';
 

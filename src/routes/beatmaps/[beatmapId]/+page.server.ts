@@ -1,4 +1,4 @@
-import { getBeatmap } from '$lib/api';
+import { fetchBeatmap } from '$lib/api';
 import { getMySQLDatabase } from '../../../hooks.server';
 
 export async function load({ params }) {
@@ -17,10 +17,10 @@ export async function load({ params }) {
 		.where('set_id', beatmapRow.set_id)
 		.orderBy('diff', 'asc');
 
-	const beatmap = await getBeatmap(parseInt(beatmapId));
+	const beatmapResult = await fetchBeatmap(parseInt(beatmapId));
 
 	return {
-		map: beatmap?.map,
+		map: beatmapResult.ok ? beatmapResult.value.map : undefined,
 		diffs
 	};
 }

@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
-import { getUserInvites } from '$lib/db';
+import { fetchUserInvites } from '$lib/db';
 
 export const load = async ({ cookies, locals }) => {
 	const sessionToken = cookies.get('sessionToken');
@@ -13,7 +13,8 @@ export const load = async ({ cookies, locals }) => {
 		redirect(302, '/signin');
 	}
 
-	const invites = await getUserInvites(user.id);
+	const invitesResult = await fetchUserInvites(user.id);
+	const invites = invitesResult.ok ? invitesResult.value : [];
 
 	return {
 		user: {

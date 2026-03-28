@@ -28,7 +28,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 					const stats = await sharp(buffer).stats();
 
 					// Simple color heuristic
-					const avgColor = stats.channels.map(c => Math.round(c.mean));
+					const avgColor = stats.channels.map((c) => Math.round(c.mean));
 					const colorDesc = `average RGB(${avgColor[0]}, ${avgColor[1]}, ${avgColor[2]})`;
 
 					imageContext = `[SYSTEM NOTE: The user sent an image. It is ${metadata.width}x${metadata.height} pixels, format ${metadata.format}. Its dominant color is roughly ${colorDesc}. Use this to be suspicious or annoyed, e.g., "Why are you showing me this ${metadata.format} file? Do you think I'm a computer??" or "This image is so ${avgColor[0] > 150 ? 'bright' : 'dark'}, just like your future without me!"]`;

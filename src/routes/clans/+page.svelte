@@ -7,7 +7,7 @@
 	import { queryParam } from 'sveltekit-search-params';
 	import { __ } from '$lib/language';
 	import { userLanguage } from '$lib/storage';
-	import Clans from '$lib/components/clans.svelte';
+	import Clans from '$lib/components/Clans.svelte';
 
 	export let data;
 

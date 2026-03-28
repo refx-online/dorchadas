@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { numberHumanReadable } from '$lib/stringUtil';
+	import { numberHumanReadable } from '$lib/string-util';
 	import type { LBUser } from '$lib/types';
 	import { fade } from 'svelte/transition';
 	import { removeTrailingZeroes } from '$lib/regex';
@@ -18,6 +18,17 @@
 		const month = 30 * 24 * 60 * 60;
 		return Math.floor(Date.now() / 1000) - latestActivity > month;
 	}
+
+	const handleImageError = (e: Event) => {
+		const target = e.currentTarget;
+		if (target instanceof HTMLImageElement) {
+			target.style.display = 'none';
+			const next = target.nextElementSibling;
+			if (next && next instanceof HTMLElement) {
+				next.style.display = 'inline-block';
+			}
+		}
+	};
 </script>
 
 <div class="table-container table-extracompact !rounded-none px-5 pb-3">
@@ -75,10 +86,7 @@
 												src="/api/clan/{user.clan_id}/flag"
 												alt={user.clan_tag}
 												class="h-full aspect-[3/2] rounded-md object-cover"
-												on:error={(e) => {
-													e.currentTarget.style.display = 'none';
-													e.currentTarget.nextElementSibling.style.display = 'inline-block';
-												}}
+												on:error={handleImageError}
 											/>
 											<span
 												class="chip !text-xs p-1.5 py-0.5 min-w-7 variant-soft-primary hover:variant-filled-primary"

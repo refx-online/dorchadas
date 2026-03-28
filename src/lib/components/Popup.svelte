@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Placement } from '@floating-ui/dom';
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
-	import { makeid } from '../stringUtil';
+	import { makeid } from '../string-util';
 	import { twMerge } from 'tailwind-merge';
 
 	let popupUuid = makeid();

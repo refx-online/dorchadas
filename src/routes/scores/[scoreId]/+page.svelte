@@ -294,8 +294,14 @@
 										alt={data.clanData.tag}
 										class="h-full aspect-[3/2] rounded-md object-cover"
 										on:error={(e) => {
-											e.currentTarget.style.display = 'none';
-											e.currentTarget.nextElementSibling.style.display = 'inline-block';
+											const target = e.currentTarget;
+											if (target instanceof HTMLImageElement) {
+												target.style.display = 'none';
+												const next = target.nextElementSibling;
+												if (next && next instanceof HTMLElement) {
+													next.style.display = 'inline-block';
+												}
+											}
 										}}
 									/>
 									<span

@@ -39,11 +39,11 @@
 	import Menu from 'svelte-feathers/Menu.svelte';
 	import Search from 'svelte-feathers/Search.svelte';
 	import Heart from 'svelte-feathers/Heart.svelte';
-	import NavItems from '$lib/components/navItems.svelte';
+	import NavItems from '$lib/components/NavItems.svelte';
 	import type { UserData } from '$lib/types';
 	import Popup from '$lib/components/Popup.svelte';
 	import { __, languages } from '$lib/language';
-	import Footer from '$lib/components/footer.svelte';
+	import Footer from '$lib/components/Footer.svelte';
 	import { elasticOut } from 'svelte/easing';
 	import { isRestricted } from '$lib/privs';
 	import { discordUrl } from '$lib/env';

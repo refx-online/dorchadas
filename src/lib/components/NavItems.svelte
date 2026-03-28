@@ -40,7 +40,7 @@
 									drawerStore.close();
 								}}>{__('Settings', $userLanguage)}</button
 							>
-							{#if $userData?.clanId}
+							{#if $userData.clanId}
 								<button
 									class="w-32 btn variant-filled-surface rounded-lg"
 									on:click={() => {

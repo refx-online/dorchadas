@@ -1,9 +1,9 @@
-import { getPlayerCounts } from '$lib/api';
+import { fetchPlayerCounts } from '$lib/api';
 import { getMySQLDatabase } from '../hooks.server';
 import type { DBUser } from '$lib/types';
 
 export const load = async () => {
-	const userCounts = await getPlayerCounts();
+	const userCountsResult = await fetchPlayerCounts();
 	const mysqlDatabase = await getMySQLDatabase();
 	if (!mysqlDatabase) {
 		throw new Error('Database connection failed');
@@ -43,7 +43,7 @@ export const load = async () => {
     `);
 
 	return {
-		userCounts,
+		userCounts: userCountsResult.ok ? userCountsResult.value : undefined,
 		recentAccounts,
 		rankedMapsCount,
 		ppRecords: ppRecords[0]

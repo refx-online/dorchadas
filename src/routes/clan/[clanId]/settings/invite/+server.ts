@@ -1,8 +1,9 @@
 import { error, json } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
-import { getClan } from '$lib/api';
+import { fetchClan } from '$lib/api';
 import { createClanInvite } from '$lib/db';
 import { getMySQLDatabase } from '../../../../../hooks.server';
+import { logger } from '$lib/logger';
 
 export const POST = async ({ request, cookies, params }) => {
 	try {
@@ -21,8 +22,8 @@ export const POST = async ({ request, cookies, params }) => {
 			throw error(400, 'Invalid clan ID');
 		}
 
-		const clan = await getClan(clanId);
-		if (!clan) {
+		const clanResult = await fetchClan(clanId);
+		if (!clanResult.ok) {
 			throw error(404, 'Clan not found');
 		}
 
@@ -59,14 +60,17 @@ export const POST = async ({ request, cookies, params }) => {
 			return json({ message: 'User already has a pending invite' }, { status: 400 });
 		}
 
-		await createClanInvite(clanId, targetUser.id);
+		const inviteResult = await createClanInvite(clanId, targetUser.id);
+		if (!inviteResult.ok) {
+			throw error(500, 'Failed to create invite');
+		}
 
 		return json({ success: true });
 	} catch (err) {
 		if (err && typeof err === 'object' && 'status' in err) {
 			throw err;
 		}
-		console.error('Failed to invite user:', err);
+		logger.error('Failed to invite user', err);
 		throw error(500, 'Failed to invite user');
 	}
 };

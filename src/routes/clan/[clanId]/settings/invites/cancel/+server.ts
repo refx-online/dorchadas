@@ -1,7 +1,8 @@
 import { error, json } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
-import { cancelInvite } from '$lib/db';
-import { getClan } from '$lib/api';
+import { deleteInvite } from '$lib/db';
+import { fetchClan } from '$lib/api';
+import { logger } from '$lib/logger';
 
 export const POST = async ({ request, cookies, params }) => {
 	try {
@@ -20,8 +21,8 @@ export const POST = async ({ request, cookies, params }) => {
 			throw error(400, 'Invalid clan ID');
 		}
 
-		const clan = await getClan(clanId);
-		if (!clan) {
+		const clanResult = await fetchClan(clanId);
+		if (!clanResult.ok) {
 			throw error(404, 'Clan not found');
 		}
 
@@ -35,14 +36,17 @@ export const POST = async ({ request, cookies, params }) => {
 			return json({ message: 'Invite ID is required' }, { status: 400 });
 		}
 
-		await cancelInvite(inviteId, clanId);
+		const cancelResult = await deleteInvite(inviteId, clanId);
+		if (!cancelResult.ok) {
+			throw error(500, 'Failed to cancel invite');
+		}
 
 		return json({ success: true });
 	} catch (err) {
 		if (err && typeof err === 'object' && 'status' in err) {
 			throw err;
 		}
-		console.error('Failed to cancel invite:', err);
+		logger.error('Failed to cancel invite', err);
 		throw error(500, 'Failed to cancel invite');
 	}
 };

@@ -3,9 +3,9 @@
 	import { onMount } from 'svelte';
 	import { scale } from 'svelte/transition';
 	import { Music, AlertTriangle, CheckCircle } from 'svelte-feathers';
-	import { RankedStatus, statusIntToString } from '$lib/beatmapStatus';
+	import { RankedStatus, statusIntToString } from '$lib/beatmap-status';
 	import type { PageData } from './$types';
-	import { getBeatmap } from '$lib/api';
+	import { fetchBeatmap } from '$lib/api';
 	import { invalidateAll } from '$app/navigation';
 
 	export let data: PageData;
@@ -71,13 +71,13 @@
 		actionMessage = '';
 
 		try {
-			const result = await getBeatmap(Number(beatmapId));
+			const result = await fetchBeatmap(Number(beatmapId));
 
-			if (!result || result.status !== 'success' || !result.map) {
+			if (!result.ok || !result.value.map) {
 				throw new Error('Beatmap not found');
 			}
 
-			const map = result.map;
+			const map = result.value.map;
 
 			beatmapInfo = {
 				id: map.id,

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { numberHumanReadable } from '$lib/stringUtil';
+	import { numberHumanReadable } from '$lib/string-util';
 	import type { MapScore } from '$lib/types';
 	import { scale } from 'svelte/transition';
 	import { removeTrailingZeroes } from '$lib/regex';
@@ -19,7 +19,7 @@
 	export let currentMode: string;
 	export let currentType: string;
 
-	const getPlayerCountryFromScore = (score: MapScore) => {
+	const fetchPlayerCountryFromScore = (score: MapScore) => {
 		if (score.country) return score.country;
 		if (score.player_country) return score.player_country;
 		return 'xx';
@@ -93,7 +93,7 @@
 								>{removeTrailingZeroes(score.acc)}%</td
 							>
 							<td class="w-[1%] !px-0 whitespace-nowrap content-center text-end"
-								><Flag country={getPlayerCountryFromScore(score)} size={12} tooltip={true}
+								><Flag country={fetchPlayerCountryFromScore(score)} size={12} tooltip={true}
 								></Flag></td
 							>
 							<td class="!text-xs content-center"

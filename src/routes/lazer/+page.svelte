@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import './style.postcss';
 	import { onMount } from 'svelte';
 	import { fade, scale } from 'svelte/transition';
@@ -6,13 +6,19 @@
 
 	import { Download, Zap, Check, AlertCircle, Tool, Server, Grid } from 'svelte-feathers';
 
+	interface Screenshot {
+		id: number;
+		src: string;
+		alt: string;
+	}
+
 	let mounted = false;
 	let lightboxOpen = false;
-	let currentScreenshot = null;
+	let currentScreenshot: Screenshot | null = null;
 	let touchStartX = 0;
 	let touchEndX = 0;
 
-	const screenshots = [
+	const screenshots: Screenshot[] = [
 		{
 			id: 1,
 			src: '/lazer/screenshot-1.jpg',
@@ -48,7 +54,7 @@
 		'Friends List - also someday maybe'
 	];
 
-	function openLightbox(screenshot) {
+	function openLightbox(screenshot: Screenshot) {
 		currentScreenshot = screenshot;
 		lightboxOpen = true;
 		document.body.style.overflow = 'hidden';
@@ -59,7 +65,7 @@
 		document.body.style.overflow = '';
 	}
 
-	function handleKeydown(event) {
+	function handleKeydown(event: KeyboardEvent) {
 		if (lightboxOpen) {
 			if (event.key === 'Escape') {
 				closeLightbox();
@@ -71,10 +77,12 @@
 		}
 	}
 
-	function navigateScreenshot(direction) {
+	function navigateScreenshot(direction: number) {
 		if (!currentScreenshot) return;
 
-		const currentIndex = screenshots.findIndex((s) => s.id === currentScreenshot.id);
+		const currentIndex = screenshots.findIndex(
+			(s) => s.id === (currentScreenshot as Screenshot).id
+		);
 		let newIndex = currentIndex + direction;
 
 		if (newIndex < 0) newIndex = screenshots.length - 1;
@@ -83,11 +91,11 @@
 		currentScreenshot = screenshots[newIndex];
 	}
 
-	function handleTouchStart(event) {
+	function handleTouchStart(event: TouchEvent) {
 		touchStartX = event.touches[0].clientX;
 	}
 
-	function handleTouchMove(event) {
+	function handleTouchMove(event: TouchEvent) {
 		touchEndX = event.touches[0].clientX;
 	}
 
@@ -182,7 +190,7 @@
 						on:click|stopPropagation={() => {}}
 						transition:scale={{ duration: 300, start: 0.95 }}
 					>
-						<img src={currentScreenshot.src} alt={currentScreenshot.alt} />
+						<img src={currentScreenshot?.src} alt={currentScreenshot?.alt} />
 						<button class="lightbox-close" on:click={closeLightbox}>
 							<X size="24" color="#fff" />
 						</button>

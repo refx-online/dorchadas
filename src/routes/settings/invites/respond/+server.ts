@@ -1,6 +1,7 @@
 import { error, json } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
-import { respondToInvite } from '$lib/db';
+import { createInviteResponse } from '$lib/db';
+import { logger } from '$lib/logger';
 
 export const POST = async ({ request, cookies }) => {
 	try {
@@ -20,14 +21,17 @@ export const POST = async ({ request, cookies }) => {
 			return json({ message: 'Invalid request' }, { status: 400 });
 		}
 
-		await respondToInvite(inviteId, user.id, status);
+		const result = await createInviteResponse(inviteId, user.id, status);
+		if (!result.ok) {
+			throw error(500, 'Failed to respond to invite');
+		}
 
 		return json({ success: true });
 	} catch (err) {
 		if (err && typeof err === 'object' && 'status' in err) {
 			throw err;
 		}
-		console.error('Failed to respond to invite:', err);
+		logger.error('Failed to respond to invite', err);
 		throw error(500, 'Failed to respond to invite');
 	}
 };

@@ -21,6 +21,10 @@ export const POST = async ({ request, cookies }) => {
 		await validateImageFile(file);
 
 		const avatarDirectory = env.AVATAR_DIRECTORY;
+		if (!avatarDirectory) {
+			throw error(500, 'Avatar directory not configured');
+		}
+
 		await deleteExistingImages(avatarDirectory, user.id);
 		await saveImageFile(file, avatarDirectory, user.id);
 

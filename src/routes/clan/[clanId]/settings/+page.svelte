@@ -3,8 +3,15 @@
 	import { userLanguage } from '$lib/storage';
 	import { invalidateAll } from '$app/navigation';
 	import { appName } from '$lib/env';
+	import type { Clan } from '$lib/types';
 
-	export let data;
+	export let data: {
+		user: { id: number; username: string };
+		clan: Clan;
+		invites: any[];
+		requests: any[];
+		csrfToken: string;
+	};
 
 	let flagFile: FileList;
 	let message = '';
@@ -78,7 +85,7 @@
 			if (response.ok) {
 				showMessage(successMsg, 'success');
 				await invalidateAll();
-				if (flagFile) flagFile = null as unknown as FileList;
+				if (flagFile) (flagFile as any) = null;
 			} else {
 				const result = await response.json();
 				showMessage(result.message || errorMsg, 'error');
@@ -392,7 +399,10 @@
 										alt="Flag"
 										class="h-16 aspect-[3/2] rounded-md object-cover border-4 border-surface-300-600-token"
 										on:error={(e) => {
-											e.currentTarget.style.display = 'none';
+											const target = e.currentTarget;
+											if (target instanceof HTMLElement) {
+												target.style.display = 'none';
+											}
 										}}
 									/>
 								</div>

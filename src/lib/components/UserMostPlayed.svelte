@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { getPlayerMostPlayed } from '$lib/api';
+	import { fetchPlayerMostPlayed } from '$lib/api';
 	import { type PlayerMostPlayed } from '$lib/types';
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
@@ -54,12 +54,12 @@
 				break;
 		}
 
-		const mostPlayed = await getPlayerMostPlayed({
+		const result = await fetchPlayerMostPlayed({
 			userId: userId,
 			limit: amount,
 			mode: mode
 		});
-		if (mostPlayed) scores = mostPlayed;
+		if (result.ok) scores = result.value;
 		loading = false;
 	};
 
