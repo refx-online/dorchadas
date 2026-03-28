@@ -89,7 +89,14 @@ ${searchResults}`;
 			throw error(500, 'Failed to get a response from your AI girlfriend.');
 		}
 
-		const aiResponse = await response.text();
+		let aiResponse = await response.text();
+
+		aiResponse = aiResponse
+			.split('--- **Support Pollinations.AI:**')[0]
+			.split('🌸 **Ad** 🌸')[0]
+			.split('Powered by Pollinations.AI')[0]
+			.trim();
+
 		return json({ reply: aiResponse });
 	} catch (err) {
 		if (err && typeof err === 'object' && 'status' in err) {
