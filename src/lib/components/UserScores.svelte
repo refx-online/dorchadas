@@ -267,7 +267,7 @@
 												{/if}
 												{#if score.status > 0 && score.grade != 'F'}
 													<a
-														href="{getReplayUrl}?score_id={score.id}"
+														href="{getReplayUrl}?id={score.id}"
 														class="flex items-center w-full px-4 py-2 text-sm hover:bg-surface-500 text-start whitespace-nowrap"
 														title={__('Download Replay', $userLanguage)}
 														on:click|stopPropagation
