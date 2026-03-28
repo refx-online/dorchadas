@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Chart, registerables } from 'chart.js';
+	import { Chart, registerables, type ChartConfiguration } from 'chart.js';
 	import type { ppProfileHistory } from '$lib/types';
 	import { onMount } from 'svelte';
 
@@ -84,7 +84,7 @@
 				dataPoints.push({ ...dataPoints[0], x: 1 });
 			}
 
-			chart = new Chart(chartElement, {
+			const config: ChartConfiguration<'line', { x: number; y: any; date: string }[]> = {
 				type: 'line',
 				data: {
 					datasets: [
@@ -143,7 +143,7 @@
 									return '';
 								},
 								label: (context) => {
-									return formatValue(context.parsed.y);
+									return formatValue(context.parsed.y as number);
 								}
 							}
 						},
@@ -173,7 +173,9 @@
 						}
 					}
 				]
-			});
+			};
+
+			chart = new Chart(chartElement, config as any);
 		} catch {
 			error = 'Failed to load history data';
 		}

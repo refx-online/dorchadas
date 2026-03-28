@@ -1,0 +1,5 @@
+
+> bpy-web@0.0.1 dev
+> bunx --bun vite
+
+sh: 1: bunx: not found

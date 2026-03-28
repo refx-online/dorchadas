@@ -1,8 +1,9 @@
 import { error, json } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
-import { getClan } from '$lib/api';
-import { transferClanOwnership } from '$lib/db';
+import { fetchClan } from '$lib/api';
+import { createOwnershipTransfer } from '$lib/db';
 import { getMySQLDatabase } from '../../../../../../hooks.server.js';
+import { logger } from '$lib/logger';
 
 export const POST = async ({ request, cookies, params }) => {
 	try {
@@ -21,8 +22,8 @@ export const POST = async ({ request, cookies, params }) => {
 			throw error(400, 'Invalid clan ID');
 		}
 
-		const clan = await getClan(clanId);
-		if (!clan) {
+		const clanResult = await fetchClan(clanId);
+		if (!clanResult.ok) {
 			throw error(404, 'Clan not found');
 		}
 
@@ -48,14 +49,17 @@ export const POST = async ({ request, cookies, params }) => {
 			return json({ message: 'User not found in this clan' }, { status: 404 });
 		}
 
-		await transferClanOwnership(clanId, targetUserId);
+		const transferResult = await createOwnershipTransfer(clanId, targetUserId);
+		if (!transferResult.ok) {
+			throw error(500, 'Failed to transfer ownership');
+		}
 
 		return json({ success: true });
 	} catch (err) {
 		if (err && typeof err === 'object' && 'status' in err) {
 			throw err;
 		}
-		console.error('Failed to transfer ownership:', err);
+		logger.error('Failed to transfer ownership', err);
 		throw error(500, 'Failed to transfer ownership');
 	}
 };

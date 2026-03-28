@@ -1,11 +1,14 @@
-export function makeid(length?: number): string {
-	if (!length) length = 10;
-	const characters: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	const charactersLength: number = characters.length;
+import { randomInt } from 'crypto';
 
-	return Array.from({ length }, () =>
-		characters.charAt(Math.floor(Math.random() * charactersLength))
-	).join('');
+export function makeid(length: number = 10): string {
+	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	const charactersLength = characters.length;
+
+	let result = '';
+	for (let i = 0; i < length; i++) {
+		result += characters.charAt(randomInt(0, charactersLength));
+	}
+	return result;
 }
 
 export const numberHumanReadable = (number: number) => {

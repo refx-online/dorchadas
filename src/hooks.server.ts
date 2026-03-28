@@ -2,8 +2,8 @@ import type { Handle } from '@sveltejs/kit';
 import { error, json } from '@sveltejs/kit';
 import { generateCsrfToken, validateCsrfToken, storeCsrfToken } from '$lib/csrf';
 import { env } from '$env/dynamic/private';
-import { makeid } from '$lib/stringUtil';
-import chalk from 'chalk';
+import { makeid } from '$lib/string-util';
+import { logger } from '$lib/logger';
 import knex_pkg from 'knex';
 import redis from 'redis';
 
@@ -22,14 +22,14 @@ let redisClient:
 	  >
 	| undefined;
 
-let mysqlConnected = false;
-let redisConnected = false;
+let isMysqlConnected = false;
+let isRedisConnected = false;
 
 export const getMySQLDatabase = async (): Promise<knex_pkg.Knex | null> => {
-	if (mysqlDatabase && mysqlConnected) return mysqlDatabase;
+	if (mysqlDatabase && isMysqlConnected) return mysqlDatabase;
 
 	try {
-		console.log(chalk.gray('Connecting to MySQL database...'));
+		logger.debug('Connecting to MySQL database...');
 		const tempMysqlDatabase = knex({
 			client: 'mysql2',
 			connection: {
@@ -40,12 +40,13 @@ export const getMySQLDatabase = async (): Promise<knex_pkg.Knex | null> => {
 			}
 		});
 		await tempMysqlDatabase.raw('SELECT 1 + 1 as connection_test;');
-		console.log(chalk.green('Connected to MySQL database!'));
-		mysqlConnected = true;
+		logger.success('Connected to MySQL database!');
+		isMysqlConnected = true;
 
 		return (mysqlDatabase = tempMysqlDatabase);
-	} catch {
-		mysqlConnected = false;
+	} catch (e) {
+		logger.error('Failed to connect to MySQL', e);
+		isMysqlConnected = false;
 		return null;
 	}
 };
@@ -55,7 +56,7 @@ export const getRedisClient = async (): Promise<redis.RedisClientType<
 	redis.RedisFunctions,
 	redis.RedisScripts
 > | null> => {
-	if (redisClient && redisConnected) return redisClient;
+	if (redisClient && isRedisConnected) return redisClient;
 
 	const redisUser = env.REDIS_USER ?? undefined;
 	const redisPassword = env.REDIS_PASSWORD ?? undefined;
@@ -63,10 +64,9 @@ export const getRedisClient = async (): Promise<redis.RedisClientType<
 	const redisPort = env.REDIS_PORT ?? 6379;
 	const redisDb = env.REDIS_DB ?? 0;
 
-	//do regex check if redisDb is a valid number
 	if (/^\d+$/.test(redisDb.toString()) === false) {
-		console.log(chalk.red('Invalid Redis DB number!'));
-		console.log(chalk.yellow('Application will continue without Redis functionality'));
+		logger.error('Invalid Redis DB number!');
+		logger.warn('Application will continue without Redis functionality');
 		return null;
 	}
 
@@ -79,30 +79,31 @@ export const getRedisClient = async (): Promise<redis.RedisClientType<
 	redisUrl += `${redisHost}:${redisPort}`;
 
 	try {
-		console.log(chalk.gray('Connecting to Redis...'));
+		logger.debug('Connecting to Redis...');
 		const tempRedisClient = redis.createClient({
 			url: redisUrl,
 			database: parseInt(redisDb.toString())
 		});
 
 		tempRedisClient.on('error', (error) => {
-			console.log(chalk.red('Redis connection error:'), error);
-			redisConnected = false;
+			logger.error('Redis connection error', error);
+			isRedisConnected = false;
 		});
 
 		tempRedisClient.on('disconnect', () => {
-			console.log(chalk.yellow('Redis disconnected'));
-			redisConnected = false;
+			logger.warn('Redis disconnected');
+			isRedisConnected = false;
 		});
 
 		await tempRedisClient.connect();
 		await tempRedisClient.ping();
 
-		console.log(chalk.green('Connected to Redis!'));
-		redisConnected = true;
+		logger.success('Connected to Redis!');
+		isRedisConnected = true;
 		return (redisClient = tempRedisClient);
-	} catch {
-		redisConnected = false;
+	} catch (e) {
+		logger.error('Failed to connect to Redis', e);
+		isRedisConnected = false;
 		return null;
 	}
 };
@@ -196,5 +197,5 @@ export const handle: Handle = async ({ event, resolve }) => {
 };
 
 export function handleError({ error }): void {
-	console.log(chalk.red((error as Error).stack ?? error));
+	logger.error('Unhandled application error', error);
 }

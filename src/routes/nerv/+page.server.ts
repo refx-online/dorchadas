@@ -1,7 +1,5 @@
-import { getPlayerCounts } from '$lib/api';
+import { fetchPlayerCounts } from '$lib/api';
 import { getMySQLDatabase } from '../../hooks.server';
-import type { DBUser } from '$lib/types';
-
 import { redirect } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
 import { isStaff, Privileges } from '$lib/privs';
@@ -9,20 +7,22 @@ import { isStaff, Privileges } from '$lib/privs';
 export const load = async ({ cookies }) => {
 	const sessionToken = cookies.get('sessionToken');
 	if (!sessionToken) {
-		redirect(302, '/signin');
+		throw redirect(302, '/signin');
 	}
 
 	const OurUser = await getUserFromSession(sessionToken);
 	if (!OurUser) {
-		redirect(302, '/signin');
+		throw redirect(302, '/signin');
 	}
 
 	// privileges check
 	if (!isStaff(OurUser.priv)) {
-		redirect(400, '/home');
+		throw redirect(302, '/');
 	}
 
-	const userCounts = await getPlayerCounts();
+	const userCountsResult = await fetchPlayerCounts();
+	const userCounts = userCountsResult.ok ? userCountsResult.value : undefined;
+
 	const mysqlDatabase = await getMySQLDatabase();
 	if (!mysqlDatabase) {
 		throw new Error('Database connection failed');

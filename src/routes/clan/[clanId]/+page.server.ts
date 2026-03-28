@@ -1,14 +1,16 @@
-import { getClan } from '$lib/api';
-import { isNumber } from '$lib/stringUtil.js';
+import { fetchClan } from '$lib/api';
+import { isNumber } from '$lib/string-util.js';
 import { getUserFromSession } from '$lib/user';
 import { getMySQLDatabase } from '../../../hooks.server.js';
-import { getClanMembersWithPriv } from '$lib/db.js';
+import { fetchClanMembersWithPriv } from '$lib/db.js';
 
 export async function load({ params, cookies, locals }) {
 	const clanIdStr = params.clanId;
 	if (!isNumber(clanIdStr)) return {};
 	const clanId = parseInt(clanIdStr);
-	const clan = await getClan(clanId);
+	const clanResult = await fetchClan(clanId);
+	if (!clanResult.ok) return {};
+	const clan = clanResult.value;
 
 	const sessionToken = cookies.get('sessionToken');
 	let isOwner = false;
@@ -49,12 +51,13 @@ export async function load({ params, cookies, locals }) {
 		}
 	}
 
-	let membersWithPriv = [];
+	let membersWithPriv: any[] = [];
 	if (clan) {
-		membersWithPriv = await getClanMembersWithPriv(clan.id);
+		const membersWithPrivResult = await fetchClanMembersWithPriv(clan.id);
+		membersWithPriv = membersWithPrivResult.ok ? membersWithPrivResult.value : [];
 		// Update clan.members with priv info if available
 		clan.members = clan.members.map((m) => {
-			const dbMember = membersWithPriv.find((dbm) => dbm.id === m.id);
+			const dbMember = (membersWithPriv as any[]).find((dbm) => dbm.id === m.id);
 			return {
 				...m,
 				clan_priv: dbMember ? dbMember.clan_priv : m.id === clan.owner.id ? 3 : 1

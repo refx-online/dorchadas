@@ -3,9 +3,18 @@
 	import { __ } from '$lib/language';
 	import { userLanguage } from '$lib/storage';
 	import Frown from 'svelte-feathers/Frown.svelte';
+	import type { Clan } from '$lib/types';
 
 	import { invalidateAll } from '$app/navigation';
-	export let data;
+	export let data: {
+		clan: Clan;
+		isOwner: boolean;
+		isMember: boolean;
+		isOfficer: boolean;
+		hasPendingRequest: boolean;
+		currentUser: any;
+		csrfToken: string;
+	};
 
 	let isLoading = false;
 
@@ -113,6 +122,17 @@
 			`${__('Are you sure you want to transfer ownership to', $userLanguage)} ${userName}? ${__('You will become an officer.', $userLanguage)}`
 		);
 	}
+
+	const handleImageError = (e: Event) => {
+		const target = e.currentTarget;
+		if (target instanceof HTMLImageElement) {
+			target.style.display = 'none';
+			const next = target.nextElementSibling;
+			if (next && next instanceof HTMLElement) {
+				next.style.display = 'inline-block';
+			}
+		}
+	};
 </script>
 
 <svelte:head>
@@ -129,7 +149,7 @@
 <div class="container mx-auto w-full p-5">
 	{#if data.clan !== undefined}
 		{@const owner = data.clan.owner}
-		{@const members = data.clan.members.filter((member) => member.id != owner.id).length}
+		{@const memberCount = data.clan.members.filter((member) => member.id != owner.id).length}
 		<div class="mx-auto card overflow-hidden">
 			<div class="w-full flex flex-col">
 				<div class="relative flex flex-row justify-between bg-surface-600 p-3">
@@ -140,10 +160,7 @@
 									src="/api/clan/{data.clan.id}/flag"
 									alt={data.clan.tag}
 									class="h-full aspect-[3/2] rounded-md object-cover"
-									on:error={(e) => {
-										e.currentTarget.style.display = 'none';
-										e.currentTarget.nextElementSibling.style.display = 'inline-block';
-									}}
+									on:error={handleImageError}
 								/>
 								<p class="chip cursor-auto variant-filled-primary" style="display: none;">
 									{data.clan.tag}
@@ -208,11 +225,11 @@
 					<div class="w-full text-center">
 						<p class="text-4xl mb-3">{__('Clan Members', $userLanguage)}</p>
 						<div
-							class="mx-auto {members <= 0
+							class="mx-auto {memberCount <= 0
 								? 'flex flex-col justify-center items-center'
 								: 'grid grid-cols-2'} gap-2"
 						>
-							{#if members <= 0}
+							{#if memberCount <= 0}
 								<div
 									class=" mx-auto flex flex-row items-center justify-center gap-3 bg-surface-700 w-fit px-24 py-6 rounded-lg"
 								>

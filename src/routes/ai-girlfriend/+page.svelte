@@ -1,5 +1,5 @@
 <script lang="ts">
-	import AiGirlfriend from '$lib/components/aiGirlfriend.svelte';
+	import AiGirlfriend from '$lib/components/AiGirlfriend.svelte';
 	import { userData, userLanguage } from '$lib/storage';
 	import { __ } from '$lib/language';
 	import { fade } from 'svelte/transition';
@@ -28,7 +28,10 @@
 			<div class="text-4xl">🔒</div>
 			<h2 class="h2 font-bold">{__('Access Denied', $userLanguage)}</h2>
 			<p>
-				{__('You must be logged in to talk to your AI girlfriend. She doesn’t talk to strangers.', $userLanguage)}
+				{__(
+					'You must be logged in to talk to your AI girlfriend. She doesn’t talk to strangers.',
+					$userLanguage
+				)}
 			</p>
 			<div class="flex flex-col sm:flex-row gap-2 justify-center pt-4">
 				<a href="/signin" class="btn variant-filled-primary">{__('Sign In', $userLanguage)}</a>

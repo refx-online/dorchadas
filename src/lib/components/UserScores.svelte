@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { getPlayerScores } from '$lib/api';
+	import { fetchPlayerScores } from '$lib/api';
 	import { parseModsInt } from '$lib/mods';
 	import { removeTrailingZeroes } from '$lib/regex';
 	import type { PlayerScores, PlayerScore } from '$lib/types';
@@ -68,14 +68,14 @@
 				break;
 		}
 
-		const recentScoresRequest = await getPlayerScores({
+		const result = await fetchPlayerScores({
 			userId: userId,
 			limit: amount,
 			offset: 0,
 			mode: mode,
 			scope: scoresType
 		});
-		if (recentScoresRequest) scores = recentScoresRequest;
+		if (result.ok) scores = result.value;
 		loading = false;
 	};
 

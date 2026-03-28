@@ -120,11 +120,11 @@
 			<div class="stat-grid">
 				<div class="stat-item hoverable" style="transform: translateX({Math.random() * 8}px)">
 					<span class="stat-label">Online</span>
-					<span class="stat-value">{data.userCounts?.counts.online}</span>
+					<span class="stat-value">{data.userCounts?.counts.online ?? 0}</span>
 				</div>
 				<div class="stat-item hoverable" style="transform: translateX({Math.random() * -5}px)">
 					<span class="stat-label">Registered</span>
-					<span class="stat-value">{data.userCounts?.counts.total}</span>
+					<span class="stat-value">{data.userCounts?.counts.total ?? 0}</span>
 				</div>
 				<div class="stat-item hoverable" style="transform: translateX({Math.random() * 6}px)">
 					<span class="stat-label">Restricted</span>

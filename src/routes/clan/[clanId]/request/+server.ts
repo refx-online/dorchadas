@@ -1,8 +1,9 @@
 import { error, json } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
-import { getClan } from '$lib/api';
-import { requestToJoinClan } from '$lib/db';
+import { fetchClan } from '$lib/api';
+import { createJoinRequest } from '$lib/db';
 import { getMySQLDatabase } from '../../../../hooks.server';
+import { logger } from '$lib/logger';
 
 export const POST = async ({ cookies, params }) => {
 	try {
@@ -21,8 +22,8 @@ export const POST = async ({ cookies, params }) => {
 			throw error(400, 'Invalid clan ID');
 		}
 
-		const clan = await getClan(clanId);
-		if (!clan) {
+		const clanResult = await fetchClan(clanId);
+		if (!clanResult.ok) {
 			throw error(404, 'Clan not found');
 		}
 
@@ -48,14 +49,17 @@ export const POST = async ({ cookies, params }) => {
 			);
 		}
 
-		await requestToJoinClan(clanId, user.id);
+		const requestResult = await createJoinRequest(clanId, user.id);
+		if (!requestResult.ok) {
+			throw error(500, 'Failed to request to join clan');
+		}
 
 		return json({ success: true });
 	} catch (err) {
 		if (err && typeof err === 'object' && 'status' in err) {
 			throw err;
 		}
-		console.error('Failed to request to join clan:', err);
+		logger.error('Failed to request to join clan', err);
 		throw error(500, 'Failed to request to join clan');
 	}
 };

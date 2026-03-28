@@ -1,6 +1,6 @@
-import DE from './languages/DE';
-import US from './languages/US';
-import ID from './languages/ID';
+import DE from './languages/de';
+import US from './languages/us';
+import ID from './languages/id';
 
 export type Language = {
 	name: string;

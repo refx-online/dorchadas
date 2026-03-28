@@ -48,7 +48,7 @@ export function parseBBCodeToHtml(bbcode: string): string {
 
 		[
 			/\[spoiler\]([\s\S]*?)\[\/spoiler\]/g,
-			'<div class="spoiler" onclick="this.classList.toggle(\'revealed\')">$1</div>'
+			'<details class="spoiler"><summary>Spoiler</summary>$1</details>'
 		],
 
 		[

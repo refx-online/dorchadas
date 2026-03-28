@@ -10,28 +10,28 @@
 	import { queryParam } from 'sveltekit-search-params';
 	import Edit2 from 'svelte-feathers/Edit2.svelte';
 	import type { Clan, PlayerStatus } from '$lib/types';
-	import { getClan, getPlayerStatus } from '$lib/api';
+	import { fetchClan, fetchPlayerStatus } from '$lib/api';
 	import { userData, userLanguage } from '$lib/storage';
 	import { getCountryName } from '$lib/country';
-	import { numberHumanReadable } from '$lib/stringUtil';
+	import { numberHumanReadable } from '$lib/string-util';
 	import { secondsToDHM, secondsToHours } from '$lib/time';
-	import UserScores from '$lib/components/userScores.svelte';
+	import UserScores from '$lib/components/UserScores.svelte';
 	import { removeTrailingZeroes } from '$lib/regex';
 	import { __ } from '$lib/language';
-	import UserRankBadges from '$lib/components/userRankBadges.svelte';
-	import UserMostPlayed from '$lib/components/userMostPlayed.svelte';
+	import UserRankBadges from '$lib/components/UserRankBadges.svelte';
+	import UserMostPlayed from '$lib/components/UserMostPlayed.svelte';
 	import { Privileges, isDonator, privsToGroups, isStaff } from '$lib/privs';
 	import Time, { dayjs } from 'svelte-time';
 	import Check from 'svelte-feathers/Check.svelte';
 	import { enhance } from '$app/forms';
-	import PlayCountGraph from '$lib/components/playCountGraph.svelte';
+	import PlayCountGraph from '$lib/components/PlayCountGraph.svelte';
 	import { Heart, User, Users, UserPlus, Info, Layers } from 'svelte-feathers';
-	import DonatorEffect from '$lib/components/donatorEffect.svelte';
-	import UserGraph from '$lib/components/userGraph.svelte';
-	import UserComments from '$lib/components/userComments.svelte';
-	import RecentAct from '$lib/components/recentAct.svelte';
+	import DonatorEffect from '$lib/components/DonatorEffect.svelte';
+	import UserGraph from '$lib/components/UserGraph.svelte';
+	import UserComments from '$lib/components/UserComments.svelte';
+	import RecentAct from '$lib/components/RecentAct.svelte';
 
-	export let data;
+	export let data: any;
 	let clan: Clan | undefined;
 
 	const queryMode = queryParam('mode', undefined, {
@@ -242,14 +242,18 @@
 		}
 	};
 
-	const relationshipIcons = {
+	const relationshipIcons: Record<string, any> = {
 		mutual: Heart,
 		follower: UserPlus,
 		known: Users,
 		none: User
 	};
 
-	const relationshipColors = {
+	const getRelationshipIcon = (status: string) => {
+		return relationshipIcons[status] || User;
+	};
+
+	const relationshipColors: Record<string, string> = {
 		mutual: 'bg-pink-400 hover:bg-pink-200',
 		follower: 'bg-blue-600 hover:bg-blue-200',
 		known: 'bg-green-800 hover:bg-green-200',
@@ -267,6 +271,17 @@
 		activeSection = sectionName;
 	};
 
+	const handleImageError = (e: Event) => {
+		const target = e.currentTarget;
+		if (target instanceof HTMLImageElement) {
+			target.style.display = 'none';
+			const next = target.nextElementSibling;
+			if (next && next instanceof HTMLElement) {
+				next.style.display = 'inline-block';
+			}
+		}
+	};
+
 	onMount(async () => {
 		if (data.user?.info.id) {
 			const selectedMode = $queryMode;
@@ -276,9 +291,13 @@
 
 			await updateModeInt();
 
-			if (data.user.info.clan_id) clan = await getClan(data.user.info.clan_id);
+			if (data.user.info.clan_id) {
+				const clanResult = await fetchClan(data.user.info.clan_id);
+				if (clanResult.ok) clan = clanResult.value;
+			}
 
-			playerStatus = await getPlayerStatus(data.user.info.id);
+			const playerStatusResult = await fetchPlayerStatus(data.user.info.id);
+			if (playerStatusResult.ok) playerStatus = playerStatusResult.value;
 		}
 	});
 </script>
@@ -547,10 +566,7 @@
 										src="/api/clan/{clan.id}/flag"
 										alt={clan.tag}
 										class="h-full aspect-[3/2] rounded-md object-cover"
-										on:error={(e) => {
-											e.currentTarget.style.display = 'none';
-											e.currentTarget.nextElementSibling.style.display = 'inline-block';
-										}}
+										on:error={handleImageError}
 									/>
 									<span
 										class="chip variant-soft-primary hover:variant-filled-primary"
@@ -639,7 +655,7 @@
 								</div>
 							</div>
 							{#if data.user?.info.id && typeof currentModeInt === 'number' && currentModeInt >= 0 && currentModeInt <= 20}
-								<UserGraph ppHistory={data.ppHistoryData?.[currentModeInt]} />
+								<UserGraph ppHistory={data.ppHistoryData?.[currentModeInt] ?? undefined} />
 							{:else}
 								<div class="flex items-center justify-center h-16 text-surface-400">No result</div>
 							{/if}
@@ -755,7 +771,7 @@
 									class="relative inline-flex items-center justify-center h-[40px] px-6 text-white text-sm font-semibold rounded-full
                                 	shadow-md transition {data.user?.info.id === $userData?.id
 										? 'bg-gray-600 hover:bg-gray-200 cursor-not-allowed'
-										: relationshipColors[data.relationships.relationshipStatus]}"
+										: relationshipColors[data.relationships.relationshipStatus] || 'bg-gray-600'}"
 								>
 									<input type="hidden" name="friendID" value={data.user?.info.id} />
 									<input
@@ -765,12 +781,14 @@
 									/>
 
 									<button type="submit" class="inline-flex items-center">
-										<svelte:component
-											this={data.user?.info.id === $userData?.id
-												? User
-												: relationshipIcons[data.relationships.relationshipStatus]}
-											class="mr-2 text-xl"
-										/>
+										{#if data.user?.info.id === $userData?.id}
+											<User class="mr-2 text-xl" />
+										{:else}
+											<svelte:component
+												this={getRelationshipIcon(data.relationships.relationshipStatus)}
+												class="mr-2 text-xl"
+											/>
+										{/if}
 
 										{data.relationships.followers}
 									</button>

@@ -1,18 +1,22 @@
-import { getClan, getPlayer, getPPProfileHistory } from '$lib/api';
+import { fetchClan, fetchPlayer, fetchPPProfileHistory } from '$lib/api';
 import { sanitizeHtml } from '$lib/html';
-import { isNumber } from '$lib/stringUtil';
+import { isNumber } from '$lib/string-util';
 import { parse } from 'marked';
 import { parseBBCodeToHtml } from '$lib/bbcode';
-import { getMySQLDatabase } from '../../../hooks.server';
 import { getUserFromSession } from '$lib/user';
 import {
-	getUserRelationships,
-	getPlayCountResults,
-	addFriend,
-	removeFriend,
-	getOldUsername,
-	getUsersLog,
-	batchFetchTitles
+	fetchUserRelationships,
+	fetchPlayCountResults,
+	createFriendship,
+	deleteFriendship,
+	fetchOldUsernames,
+	fetchUsersLog,
+	fetchLogTitlesBatch,
+	updateUserpage,
+	createComment,
+	fetchComment,
+	updateComment,
+	deleteComment
 } from '$lib/db';
 import { fail, redirect } from '@sveltejs/kit';
 
@@ -20,11 +24,12 @@ export async function load({ params, cookies }) {
 	const requestedUser = params.userId; // now can be name too!
 	const sessionToken = cookies.get('sessionToken');
 
-	const user = await getPlayer(requestedUser, 'all');
-	if (!user || !user.player) return {};
+	const playerResult = await fetchPlayer(requestedUser, 'all');
+	if (!playerResult.ok || !playerResult.value.player) return {};
 
+	const user = playerResult.value;
 	const ourUser = await getUserFromSession(sessionToken);
-	const userpageData = user?.player?.info.userpage_content ?? '';
+	const userpageData = user.player?.info.userpage_content ?? '';
 	const parsedBBCode = parseBBCodeToHtml(userpageData);
 
 	const sanitizedUserPage = sanitizeHtml(parsedBBCode);
@@ -34,28 +39,49 @@ export async function load({ params, cookies }) {
 		gfm: true
 	});
 
-	const clan = user?.player?.info.clan_id ? await getClan(user.player.info.clan_id) : undefined;
+	const clanResult =
+		user.player && user.player.info.clan_id ? await fetchClan(user.player.info.clan_id) : undefined;
+	const clan = clanResult?.ok ? clanResult.value : undefined;
 
-	const playCountGraph = await getPlayCountResults(user?.player?.info.id.toString()); // deadass why the fuck do i put the param to str instead of num
-	const relationships = await getUserRelationships(user?.player?.info.id.toString(), ourUser);
-	const oldUsernames = await getOldUsername(user?.player?.info.id, user?.player?.info.name);
-	const usersLog = await getUsersLog(user?.player?.info.id);
-	const logTitles = await batchFetchTitles(usersLog); // map / score titles
+	const playCountResult = await fetchPlayCountResults(user.player?.info.id.toString() || '');
+	const playCountGraph = playCountResult.ok ? playCountResult.value : {};
+
+	const relationshipResult = await fetchUserRelationships(
+		user.player?.info.id.toString() || '',
+		ourUser
+	);
+	const relationships = relationshipResult.ok
+		? relationshipResult.value
+		: { followers: 0, relationshipStatus: 'none' };
+
+	const oldUsernamesResult = await fetchOldUsernames(
+		user.player?.info.id || 0,
+		user.player?.info.name || ''
+	);
+	const oldUsernames = oldUsernamesResult.ok ? oldUsernamesResult.value : '';
+
+	const usersLogResult = await fetchUsersLog(user.player?.info.id || 0);
+	const usersLog = usersLogResult.ok ? usersLogResult.value : [];
+
+	const logTitlesResult = await fetchLogTitlesBatch(usersLog);
+	const logTitles = logTitlesResult.ok ? logTitlesResult.value : {};
 
 	const ppHistoryData = await Promise.all(
-		Array.from({ length: 21 }, (_, i) =>
-			getPPProfileHistory('pp', user?.player?.info.id, i).catch(() => null)
-		)
+		Array.from({ length: 21 }, async (_, i) => {
+			if (!user.player) return null;
+			const res = await fetchPPProfileHistory('pp', user.player.info.id, i);
+			return res.ok ? res.value : null;
+		})
 	);
 
 	const ourPriv = ourUser?.priv;
 
 	return {
-		user: user?.player,
-		clan: clan,
+		user: user.player,
+		clan,
 		userpage: parsedUserPage,
 		playCountGraph,
-		relationships: relationships,
+		relationships,
 		oldUsernames,
 		ourPriv,
 		usersLog,
@@ -66,8 +92,6 @@ export async function load({ params, cookies }) {
 
 export const actions = {
 	updateUserpage: async ({ request, params, cookies }) => {
-		// i just realized why didnt i just use session
-		// too bad
 		const session = await getUserFromSession(cookies.get('sessionToken'));
 		if (!session) throw redirect(302, '/signin');
 
@@ -78,20 +102,12 @@ export const actions = {
 			throw redirect(302, '/signin');
 		}
 
-		try {
-			const mysqlDatabase = await getMySQLDatabase();
-			if (!mysqlDatabase) {
-				throw fail(500, { error: 'Database connection failed' });
-			}
-
-			await mysqlDatabase('users')
-				.where('id', parseInt(params.userId))
-				.update({ userpage_content: userpageContent });
-
-			return { success: true };
-		} catch {
-			throw fail(500, { error: 'Something went wrong.' });
+		const result = await updateUserpage(session.id, userpageContent);
+		if (!result.ok) {
+			return fail(500, { error: 'Failed to update userpage' });
 		}
+
+		return { success: true };
 	},
 	relationship: async ({ request, cookies }) => {
 		const userSession = await getUserFromSession(cookies.get('sessionToken'));
@@ -108,23 +124,22 @@ export const actions = {
 		const relationshipStatus = data.get('relationshipStatus');
 
 		if (userID === parseInt(friendID)) {
-			throw fail(302, { error: "you can't friend yourself :3c" });
+			return fail(400, { error: "you can't friend yourself :3c" });
 		}
 
-		try {
-			if (relationshipStatus === 'mutual' || relationshipStatus === 'known') {
-				// unfollow
-				await removeFriend(userID, parseInt(friendID));
-			} else {
-				// follow
-				await addFriend(userID, parseInt(friendID));
-			}
-		} catch {
-			throw fail(500, { error: 'Something went wrong.' });
+		let result;
+		if (relationshipStatus === 'mutual' || relationshipStatus === 'known') {
+			result = await deleteFriendship(userID, parseInt(friendID));
+		} else {
+			result = await createFriendship(userID, parseInt(friendID));
 		}
+
+		if (!result.ok) {
+			return fail(500, { error: 'Something went wrong.' });
+		}
+		return { success: true };
 	},
 
-	// profile comments
 	addComment: async ({ request, cookies }) => {
 		const session = await getUserFromSession(cookies.get('sessionToken'));
 		if (!session) throw redirect(302, '/signin');
@@ -137,22 +152,12 @@ export const actions = {
 			return fail(400, { error: 'Missing required fields' });
 		}
 
-		try {
-			const mysqlDatabase = await getMySQLDatabase();
-			if (!mysqlDatabase) {
-				return fail(500, { error: 'Database connection failed' });
-			}
-
-			await mysqlDatabase('profile_comments').insert({
-				user_id: parseInt(userId),
-				from_id: session.id,
-				comment: comment
-			});
-
-			return { success: true };
-		} catch {
+		const result = await createComment(parseInt(userId), session.id, comment);
+		if (!result.ok) {
 			return fail(500, { error: 'Failed to add comment' });
 		}
+
+		return { success: true };
 	},
 
 	editComment: async ({ request, cookies }) => {
@@ -167,30 +172,17 @@ export const actions = {
 			return fail(400, { error: 'Missing required fields' });
 		}
 
-		try {
-			const mysqlDatabase = await getMySQLDatabase();
-			if (!mysqlDatabase) {
-				return fail(500, { error: 'Database connection failed' });
-			}
+		const commentResult = await fetchComment(parseInt(commentId));
+		if (!commentResult.ok || !commentResult.value || commentResult.value.from_id !== session.id) {
+			return fail(403, { error: 'Unauthorized' });
+		}
 
-			// verify comment ownership
-			const existingComment = await mysqlDatabase('profile_comments')
-				.where('id', parseInt(commentId))
-				.first();
-
-			if (!existingComment || existingComment.from_id !== session.id) {
-				return fail(403, { error: 'Unauthorized' });
-			}
-
-			await mysqlDatabase('profile_comments').where('id', parseInt(commentId)).update({
-				comment: comment,
-				updated_at: mysqlDatabase.fn.now()
-			});
-
-			return { success: true };
-		} catch {
+		const result = await updateComment(parseInt(commentId), comment);
+		if (!result.ok) {
 			return fail(500, { error: 'Failed to edit comment' });
 		}
+
+		return { success: true };
 	},
 
 	deleteComment: async ({ request, cookies }) => {
@@ -204,26 +196,16 @@ export const actions = {
 			return fail(400, { error: 'Missing comment ID' });
 		}
 
-		try {
-			const mysqlDatabase = await getMySQLDatabase();
-			if (!mysqlDatabase) {
-				return fail(500, { error: 'Database connection failed' });
-			}
+		const commentResult = await fetchComment(parseInt(commentId));
+		if (!commentResult.ok || !commentResult.value || commentResult.value.from_id !== session.id) {
+			return fail(403, { error: 'Unauthorized' });
+		}
 
-			// verify comment ownership
-			const comment = await mysqlDatabase('profile_comments')
-				.where('id', parseInt(commentId))
-				.first();
-
-			if (!comment || comment.from_id !== session.id) {
-				return fail(403, { error: 'Unauthorized' });
-			}
-
-			await mysqlDatabase('profile_comments').where('id', parseInt(commentId)).delete();
-
-			return { success: true };
-		} catch {
+		const result = await deleteComment(parseInt(commentId));
+		if (!result.ok) {
 			return fail(500, { error: 'Failed to delete comment' });
 		}
+
+		return { success: true };
 	}
 };

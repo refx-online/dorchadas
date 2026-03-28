@@ -7,10 +7,18 @@
 	export let particleColor: string = '#ffdf00';
 	export let gradientColors: [string, string] = ['#ff6b6b', '#4ecdc4'];
 
-	let sparkles = [];
-	let particles = [];
+	interface EffectItem {
+		x: number;
+		y: number;
+		size: number;
+		opacity: number;
+		id: number;
+	}
 
-	function generateSparkle() {
+	let sparkles: EffectItem[] = [];
+	let particles: EffectItem[] = [];
+
+	function generateSparkle(): EffectItem {
 		return {
 			x: Math.random() * 100,
 			y: Math.random() * 100,
@@ -20,7 +28,7 @@
 		};
 	}
 
-	function generateParticle() {
+	function generateParticle(): EffectItem {
 		return {
 			x: Math.random() * 100,
 			y: Math.random() * 100,
@@ -165,7 +173,7 @@
 
 	.particle {
 		position: absolute;
-		background-color: particleColor;
+		background-color: var(--particle-color, #ffdf00);
 		border-radius: 50%;
 		animation: particle-fade 1s ease-out forwards;
 	}

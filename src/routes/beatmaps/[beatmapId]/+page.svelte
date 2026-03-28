@@ -18,9 +18,9 @@
 	import Trash from 'svelte-feathers/Trash.svelte';
 	import { queryParam } from 'sveltekit-search-params';
 	import { type MapScore } from '$lib/types';
-	import { getBeatmapScores } from '$lib/api';
-	import MapScores from '$lib/components/mapScores.svelte';
-	import { statusIntToString } from '$lib/beatmapStatus';
+	import { fetchBeatmapScores } from '$lib/api';
+	import MapScores from '$lib/components/MapScores.svelte';
+	import { statusIntToString } from '$lib/beatmap-status';
 	import { __ } from '$lib/language';
 	import { userLanguage } from '$lib/storage';
 
@@ -87,13 +87,17 @@
 		}
 
 		try {
-			const leaderboard = await getBeatmapScores({
+			const result = await fetchBeatmapScores({
 				beatmapMd5: data.map!.md5,
 				mode,
 				scope: 'best'
 			});
-			currentLeaderboard = leaderboard?.scores ?? [];
-			failed = false;
+			if (result.ok) {
+				currentLeaderboard = result.value.scores;
+				failed = false;
+			} else {
+				failed = true;
+			}
 			firstLoad = false;
 		} catch {
 			failed = true;

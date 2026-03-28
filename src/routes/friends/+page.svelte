@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PlayerStatus } from '$lib/types';
 	import { onMount } from 'svelte';
-	import { getPlayerStatus } from '$lib/api.js';
+	import { fetchPlayerStatus } from '$lib/api.js';
 	import { avatarUrl, appName } from '$lib/env.js';
 	import { __ } from '$lib/language.js';
 	import { userLanguage } from '$lib/storage.js';
@@ -10,7 +10,10 @@
 	import { User, UserPlus, Users } from 'svelte-feathers';
 	import Time, { dayjs } from 'svelte-time';
 
-	export let data;
+	export let data: {
+		friends: any[];
+		followers: any[];
+	};
 
 	let playerStatusMap: Record<number, PlayerStatus['player_status']> = {};
 	let activeTab: 'friends' | 'followers' = 'friends';
@@ -28,20 +31,20 @@
 
 	onMount(async () => {
 		const statusPromises = [
-			...data.friends.map((friend) => getPlayerStatus(friend.id)),
-			...data.followers.map((follower) => getPlayerStatus(follower.id))
+			...data.friends.map((friend: any) => fetchPlayerStatus(friend.id)),
+			...data.followers.map((follower: any) => fetchPlayerStatus(follower.id))
 		];
 
 		const statuses = await Promise.all(statusPromises);
 
-		statuses.forEach((status, index) => {
-			if (status) {
+		statuses.forEach((result, index) => {
+			if (result.ok) {
 				const user =
 					index < data.friends.length
 						? data.friends[index]
 						: data.followers[index - data.friends.length];
 
-				playerStatusMap[user.id] = status.player_status;
+				playerStatusMap[user.id] = result.value.player_status;
 			}
 		});
 	});

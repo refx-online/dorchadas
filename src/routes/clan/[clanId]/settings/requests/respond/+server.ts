@@ -1,7 +1,8 @@
 import { error, json } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
-import { getClan } from '$lib/api';
-import { respondToJoinRequest } from '$lib/db';
+import { fetchClan } from '$lib/api';
+import { createJoinRequestResponse } from '$lib/db';
+import { logger } from '$lib/logger';
 
 export const POST = async ({ request, cookies, params }) => {
 	try {
@@ -20,8 +21,8 @@ export const POST = async ({ request, cookies, params }) => {
 			throw error(400, 'Invalid clan ID');
 		}
 
-		const clan = await getClan(clanId);
-		if (!clan) {
+		const clanResult = await fetchClan(clanId);
+		if (!clanResult.ok) {
 			throw error(404, 'Clan not found');
 		}
 
@@ -35,14 +36,17 @@ export const POST = async ({ request, cookies, params }) => {
 			return json({ message: 'Invalid request data' }, { status: 400 });
 		}
 
-		await respondToJoinRequest(requestId, clanId, status);
+		const respondResult = await createJoinRequestResponse(requestId, clanId, status);
+		if (!respondResult.ok) {
+			throw error(500, 'Failed to respond to join request');
+		}
 
 		return json({ success: true });
 	} catch (err) {
 		if (err && typeof err === 'object' && 'status' in err) {
 			throw err;
 		}
-		console.error('Failed to respond to join request:', err);
+		logger.error('Failed to respond to join request', err);
 		throw error(500, 'Failed to respond to join request');
 	}
 };

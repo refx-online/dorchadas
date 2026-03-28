@@ -1,6 +1,6 @@
 import { error, json } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
-import { getClan } from '$lib/api';
+import { fetchClan } from '$lib/api';
 import {
 	validateImageFile,
 	deleteExistingImages,
@@ -27,7 +27,7 @@ export const POST = async ({ request, cookies, params }) => {
 			throw error(400, 'Invalid clan ID');
 		}
 
-		const clan = await getClan(clanId);
+		const clan = await fetchClan(clanId);
 		if (!clan) {
 			throw error(404, 'Clan not found');
 		}
