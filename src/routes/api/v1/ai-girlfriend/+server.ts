@@ -44,12 +44,13 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 			const lastMessage = messages[messages.length - 1].content;
 			if (lastMessage && lastMessage.length > 3) {
 				try {
-					// Use DuckDuckGo Instant Answer API for a quick "search"
-					const ddgRes = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(lastMessage)}&format=json&no_html=1`);
-					if (ddgRes.ok) {
-						const ddgData = await ddgRes.json();
-						if (ddgData.AbstractText) {
-							searchResults = `[SYSTEM NOTE: Web search result for "${lastMessage}": ${ddgData.AbstractText}. Use this to prove them wrong or be more annoying.]`;
+					const wikiRes = await fetch(
+						`https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(lastMessage)}&limit=1&format=json`
+					);
+					if (wikiRes.ok) {
+						const wikiData = await wikiRes.json();
+						if (wikiData[2] && wikiData[2][0]) {
+							searchResults = `[SYSTEM NOTE: Web search result for "${lastMessage}": ${wikiData[2][0]}. Use this to prove them wrong or be more annoying.]`;
 						}
 					}
 				} catch (err) {
