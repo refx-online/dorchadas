@@ -1,12 +1,10 @@
-import { randomInt } from 'crypto';
-
 export function makeid(length: number = 10): string {
 	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 	const charactersLength = characters.length;
 
 	let result = '';
 	for (let i = 0; i < length; i++) {
-		result += characters.charAt(randomInt(0, charactersLength));
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
 	}
 	return result;
 }
