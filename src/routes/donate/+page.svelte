@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
 	import { onMount } from 'svelte';
 	import { appName, avatarUrl } from '$lib/env';

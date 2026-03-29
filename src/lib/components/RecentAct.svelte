@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte';
 	import dayjs from 'dayjs';
 	import relativeTime from 'dayjs/plugin/relativeTime';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
 	import { Trophy, Upload, Edit, TrendingDown, ChevronDown } from 'lucide-svelte';
 	import { ProgressRadial } from '@skeletonlabs/skeleton';

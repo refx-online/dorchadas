@@ -1,7 +1,7 @@
 <script lang="ts">
 	import './style.postcss';
 	import { fade, slide } from 'svelte/transition';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
 	import { appName } from '$lib/env';
 

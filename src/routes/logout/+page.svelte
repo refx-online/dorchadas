@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userData, userLanguage } from '$lib/storage';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';

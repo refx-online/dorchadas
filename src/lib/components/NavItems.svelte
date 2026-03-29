@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { __, languages } from '$lib/language';
+	import { __, languages } from '$lib/i18n';
 	import { userData, userLanguage } from '$lib/storage';
 	import { Avatar, type DrawerStore } from '@skeletonlabs/skeleton';
 	import Popup from './Popup.svelte';

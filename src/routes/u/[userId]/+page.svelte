@@ -17,7 +17,7 @@
 	import { secondsToDHM, secondsToHours } from '$lib/time';
 	import UserScores from '$lib/components/UserScores.svelte';
 	import { removeTrailingZeroes } from '$lib/regex';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import UserRankBadges from '$lib/components/UserRankBadges.svelte';
 	import UserMostPlayed from '$lib/components/UserMostPlayed.svelte';
 	import { Privileges, isDonator, privsToGroups, isStaff } from '$lib/privs';

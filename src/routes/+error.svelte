@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
 
 	const errorCode = $page.status;

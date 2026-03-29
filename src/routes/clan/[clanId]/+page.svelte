@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { appName, appUrl, avatarUrl } from '$lib/env';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
 	import Frown from 'svelte-feathers/Frown.svelte';
 	import type { Clan } from '$lib/types';

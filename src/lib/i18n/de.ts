@@ -1,4 +1,4 @@
-import type { Language } from '$lib/language';
+import type { Language } from '.';
 
 const language: Language = {
 	name: 'Deutsch',
@@ -96,7 +96,50 @@ const language: Language = {
 		'first place scores': 'Erster Platz',
 		'progress to next level': 'Fortschritt bis zum nächsten Level',
 		'View Leaderboards': 'Ranglisten anzeigen',
-		'View Profile': 'Profil anzeigen'
+		'View Profile': 'Profil anzeigen',
+		'Create Clan': 'Clan erstellen',
+		'Create a Clan': 'Clan erstellen',
+		'Clan Name': 'Clanname',
+		'Enter clan name (2-32 characters)': 'Clanname eingeben (2-32 Zeichen)',
+		'Clan Tag': 'Clantag',
+		'Enter clan tag (2-6 characters)': 'Clantag eingeben (2-6 Zeichen)',
+		Cancel: 'Abbrechen',
+		'Creating...': 'Erstellen...',
+		Online: 'Online',
+		Offline: 'Offline',
+		Friends: 'Freunde',
+		Followers: 'Follower',
+		'No friends found': 'Keine Freunde gefunden',
+		'No followers found': 'Keine Follower gefunden',
+		'Welcome to {{val}}!': 'Willkommen bei {{val}}!',
+		'Follow these steps to connect to our server and start playing!':
+			'Folge diesen Schritten, um dich mit unserem Server zu verbinden und loszuspielen!',
+		'How to Connect': 'Verbindung herstellen',
+		'Find your osu! executable': 'Suche deine osu!.exe',
+		'Usually located in:': 'Normalerweise unter:',
+		'Create a shortcut': 'Erstelle eine Verknüpfung',
+		'Right-click on osu!.exe → "Create shortcut"':
+			'Rechtsklick auf osu!.exe → "Verknüpfung erstellen"',
+		'Edit shortcut properties': 'Verknüpfungseigenschaften bearbeiten',
+		'Add this at the end of the existing target path':
+			'Füge dies am Ende des bestehenden Zielpfads hinzu',
+		'Launch and login': 'Starten und anmelden',
+		'Double-click your shortcut and login with your new account!':
+			'Doppelklicke auf deine Verknüpfung und melde dich mit deinem neuen Account an!',
+		'Welcome aboard, {{val}}!': 'Willkommen an Bord, {{val}}!',
+		Username: 'Benutzername',
+		'Forgot username?': 'Benutzername vergessen?',
+		'More Options': 'Weitere Optionen',
+		'Unpin Score': 'Score loslösen',
+		'Pin Score': 'Score anheften',
+		'BBCode': 'BBCode',
+		'How to connect': 'Verbindung herstellen',
+		'show less': 'weniger anzeigen',
+		'Post Comment': 'Kommentar posten',
+		'Please sign in to leave a comment': 'Bitte melde dich an, um einen Kommentar zu hinterlassen',
+		'Loading comments...': 'Kommentare werden geladen...',
+		'No comments yet': 'Noch keine Kommentare',
+		'edited': 'bearbeitet'
 	}
 };
 

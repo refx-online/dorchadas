@@ -1,4 +1,4 @@
-import { __ } from './language';
+import { __ } from './i18n';
 
 export const getFormattedTimeFromSeconds = (sec: number) => {
 	const date = new Date(0);

@@ -6,7 +6,7 @@
 	import { apiUrl, appName } from '$lib/env';
 	import { queryParam } from 'sveltekit-search-params';
 	import Leaderboard from '$lib/components/Leaderboard.svelte';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
 
 	const modes = ['osu', 'taiko', 'catch', 'mania'];

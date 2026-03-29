@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
 	import { appName } from '$lib/env';
 	import { enhance } from '$app/forms';

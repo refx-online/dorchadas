@@ -3,7 +3,7 @@
 	import type { LBUser } from '$lib/types';
 	import { fade } from 'svelte/transition';
 	import { removeTrailingZeroes } from '$lib/regex';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
 	import Flag from './Flag.svelte';
 

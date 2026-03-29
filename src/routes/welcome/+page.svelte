@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { appName } from '$lib/env';
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
 	import { focusTrap } from '@skeletonlabs/skeleton';
 	import ChevronLeft from 'svelte-feathers/ChevronLeft.svelte';

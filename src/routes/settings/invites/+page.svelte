@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { __ } from '$lib/language';
+	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
 	import { invalidateAll } from '$app/navigation';
 	import { appName } from '$lib/env';
