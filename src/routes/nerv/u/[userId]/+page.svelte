@@ -7,7 +7,7 @@
 	import { fade, slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { invalidateAll } from '$app/navigation';
-	import type { DBUser, UserBadge } from '$lib/types';
+	import { UserBadges, type DBUser, type UserBadge } from '$lib/types';
 
 	export let data: { user: DBUser; badges: UserBadge[] };
 
@@ -272,10 +272,10 @@
 				</button>
 
 				<button
-					class="mod-button {data.badges.some((b) => b.badge_id === 1) ? 'warning' : ''}"
-					on:click={() => handleBadgeToggle(1)}
+					class="mod-button {data.badges.some((b) => b.badge_id === UserBadges.OG) ? 'warning' : ''}"
+					on:click={() => handleBadgeToggle(UserBadges.OG)}
 				>
-					{data.badges.some((b) => b.badge_id === 1) ? 'Remove' : 'Give'} OG Badge
+					{data.badges.some((b) => b.badge_id === UserBadges.OG) ? 'Remove' : 'Give'} OG Badge
 				</button>
 			</div>
 		</div>

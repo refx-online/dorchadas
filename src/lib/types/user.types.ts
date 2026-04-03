@@ -91,6 +91,10 @@ export type User = {
 	};
 };
 
+export enum UserBadges {
+	OG = 1
+}
+
 export interface UserBadge {
 	id: number;
 	userid: number;

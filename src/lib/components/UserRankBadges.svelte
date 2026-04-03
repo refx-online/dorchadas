@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Privileges, privsToGroups } from '$lib/privs';
-	import type { UserBadge } from '$lib/types';
+	import { UserBadges, type UserBadge } from '$lib/types';
 	import Award from 'svelte-feathers/Award.svelte';
 	import BookOpen from 'svelte-feathers/BookOpen.svelte';
 	import CheckCircle from 'svelte-feathers/CheckCircle.svelte';
@@ -39,7 +39,7 @@
 
 	<!-- Misc -->
 	<!-- og player -->
-	{#if userBadges.some((badge) => badge.badge_id === 1)}
+	{#if userBadges.some((badge) => badge.badge_id === UserBadges.OG)}
 		<div class="tooltip text-green-300" aria-label="Here since the beginning">
 			<Moon class="w-4 md:w-6 pointer-events-none" />
 		</div>

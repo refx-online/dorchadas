@@ -1,6 +1,6 @@
 import { getMySQLDatabase, getRedisClient } from '../../../../hooks.server';
 import { fetchUserBadges, toggleUserBadge } from '$lib/db';
-import type { DBUser } from '$lib/types';
+import { UserBadges, type DBUser } from '$lib/types';
 import type { Actions } from '../../$types';
 import { getUserFromSession } from '$lib/user';
 import { fail, redirect } from '@sveltejs/kit';
