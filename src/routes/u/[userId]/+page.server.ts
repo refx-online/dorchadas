@@ -12,6 +12,7 @@ import {
 	fetchOldUsernames,
 	fetchUsersLog,
 	fetchLogTitlesBatch,
+	fetchUserBadges,
 	updateUserpage,
 	createComment,
 	fetchComment,
@@ -63,6 +64,9 @@ export async function load({ params, cookies }) {
 	const usersLogResult = await fetchUsersLog(user.player?.info.id || 0);
 	const usersLog = usersLogResult.ok ? usersLogResult.value : [];
 
+	const userBadgesResult = await fetchUserBadges(user.player?.info.id || 0);
+	const userBadges = userBadgesResult.ok ? userBadgesResult.value : [];
+
 	const logTitlesResult = await fetchLogTitlesBatch(usersLog);
 	const logTitles = logTitlesResult.ok ? logTitlesResult.value : {};
 
@@ -85,6 +89,7 @@ export async function load({ params, cookies }) {
 		oldUsernames,
 		ourPriv,
 		usersLog,
+		userBadges,
 		logTitles,
 		ppHistoryData
 	};

@@ -91,6 +91,12 @@ export type User = {
 	};
 };
 
+export interface UserBadge {
+	id: number;
+	userid: number;
+	badge_id: number;
+}
+
 export interface UserRelationship {
 	followers: number;
 	relationshipStatus: 'none' | 'follower' | 'known' | 'mutual';

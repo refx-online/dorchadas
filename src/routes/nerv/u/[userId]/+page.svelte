@@ -7,9 +7,9 @@
 	import { fade, slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { invalidateAll } from '$app/navigation';
-	import type { DBUser } from '$lib/types';
+	import type { DBUser, UserBadge } from '$lib/types';
 
-	export let data: { user: DBUser };
+	export let data: { user: DBUser; badges: UserBadge[] };
 
 	let editMode: { [key: string]: boolean } = {};
 	let editValues: { [key: string]: any } = {};
@@ -180,6 +180,29 @@
 		await invalidateAll();
 	};
 
+	const handleBadgeToggle = async (badgeId: number) => {
+		if (!data.user) return;
+		const form = new FormData();
+		form.append('userId', data.user.id.toString());
+		form.append('badgeId', badgeId.toString());
+
+		const res = await fetch('?/toggleBadge', {
+			method: 'POST',
+			body: form
+		});
+
+		const result = await res.json();
+		const resultData = JSON.parse(result.data);
+
+		if (result.type === 'success' && resultData[0] !== 'error') {
+			addNotification('Badge updated successfully');
+			await invalidateAll();
+		} else {
+			const errorMsg = resultData.error || 'Failed to update badge';
+			addNotification(errorMsg, 'error');
+		}
+	};
+
 	const getPrivilegesList = () => {
 		return [
 			{ key: 'UNRESTRICTED', value: Privileges.UNRESTRICTED, label: 'Unrestricted' },
@@ -246,6 +269,13 @@
 
 				<button class="mod-button danger {showWipeConfirm ? 'confirm' : ''}" on:click={handleWipe}>
 					{showWipeConfirm ? 'Confirm Wipe' : 'Wipe User'}
+				</button>
+
+				<button
+					class="mod-button {data.badges.some((b) => b.badge_id === 1) ? 'warning' : ''}"
+					on:click={() => handleBadgeToggle(1)}
+				>
+					{data.badges.some((b) => b.badge_id === 1) ? 'Remove' : 'Give'} OG Badge
 				</button>
 			</div>
 		</div>

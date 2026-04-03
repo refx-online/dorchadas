@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Privileges, privsToGroups } from '$lib/privs';
+	import type { UserBadge } from '$lib/types';
 	import Award from 'svelte-feathers/Award.svelte';
 	import BookOpen from 'svelte-feathers/BookOpen.svelte';
 	import CheckCircle from 'svelte-feathers/CheckCircle.svelte';
@@ -15,6 +16,7 @@
 	export let userID: number;
 	export let userRank: number;
 	export let userMode: string;
+	export let userBadges: UserBadge[] = [];
 
 	const groups = privsToGroups(userPriv);
 </script>
@@ -37,7 +39,7 @@
 
 	<!-- Misc -->
 	<!-- og player -->
-	{#if userID >= 3 && userID <= 15}
+	{#if userBadges.some((badge) => badge.badge_id === 1)}
 		<div class="tooltip text-green-300" aria-label="Here since the beginning">
 			<Moon class="w-4 md:w-6 pointer-events-none" />
 		</div>

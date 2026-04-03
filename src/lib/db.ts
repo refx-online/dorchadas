@@ -1,5 +1,5 @@
 import { getMySQLDatabase } from '../hooks.server';
-import type { DBClan, TopScore, UserRelationship, UsersLog } from './types';
+import type { DBClan, TopScore, UserBadge, UserRelationship, UsersLog } from './types';
 import { ok, err, type Result, DatabaseError } from './result';
 import { logger } from './logger';
 
@@ -719,6 +719,43 @@ export const fetchUserJoinRequests = async (
 	} catch (e) {
 		logger.error('Failed to fetch user join requests', e);
 		return err(new DatabaseError('Failed to fetch user join requests'));
+	}
+};
+
+export const fetchUserBadges = async (userId: number): Promise<Result<UserBadge[], DatabaseError>> => {
+	try {
+		const mysqlDB = await getMySQLDatabase();
+		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
+
+		const badges = await mysqlDB<UserBadge>('player_badges').where('userid', userId);
+		return ok(badges);
+	} catch (e) {
+		logger.error('Failed to fetch user badges', e);
+		return err(new DatabaseError('Failed to fetch user badges'));
+	}
+};
+
+export const toggleUserBadge = async (
+	userId: number,
+	badgeId: number
+): Promise<Result<void, DatabaseError>> => {
+	try {
+		const mysqlDB = await getMySQLDatabase();
+		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
+
+		const existing = await mysqlDB<UserBadge>('player_badges')
+			.where({ userid: userId, badge_id: badgeId })
+			.first();
+
+		if (existing) {
+			await mysqlDB('player_badges').where({ userid: userId, badge_id: badgeId }).del();
+		} else {
+			await mysqlDB('player_badges').insert({ userid: userId, badge_id: badgeId });
+		}
+		return ok(undefined);
+	} catch (e) {
+		logger.error('Failed to toggle user badge', e);
+		return err(new DatabaseError('Failed to toggle user badge'));
 	}
 };
 

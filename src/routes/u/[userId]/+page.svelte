@@ -631,6 +631,7 @@
 								userID={data.user.info.id}
 								userRank={$globalRank}
 								userMode="{currentMode}!{currentType}"
+								userBadges={data.userBadges}
 							/>
 							<!-- Ok -->
 						</div>

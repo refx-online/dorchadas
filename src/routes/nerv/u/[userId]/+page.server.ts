@@ -1,8 +1,9 @@
 import { getMySQLDatabase, getRedisClient } from '../../../../hooks.server';
+import { fetchUserBadges, toggleUserBadge } from '$lib/db';
 import type { DBUser } from '$lib/types';
 import type { Actions } from '../../$types';
 import { getUserFromSession } from '$lib/user';
-import { redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { isAdmin } from '$lib/privs';
 import { env } from '$env/dynamic/private';
 import { Privileges } from '$lib/privs';
@@ -390,6 +391,44 @@ export const actions: Actions = {
 		);
 
 		return { success: true };
+	},
+
+	toggleBadge: async ({ request, cookies }) => {
+		const data = await request.formData();
+		const userId = Number(data.get('userId'));
+		const badgeId = Number(data.get('badgeId'));
+
+		const sessionUser = await getUserFromSession(cookies.get('sessionToken'));
+		if (!isAdmin(sessionUser?.priv)) {
+			return fail(403, { success: false, error: 'Insufficient privileges' });
+		}
+
+		if (!userId || !badgeId) {
+			return fail(400, { success: false, error: 'Missing required fields' });
+		}
+
+		const mysqlDatabase = await getMySQLDatabase();
+		if (!mysqlDatabase) {
+			return fail(500, { success: false, error: 'Database connection failed' });
+		}
+
+		const user = await mysqlDatabase<DBUser>('users')
+			.select('name', 'id')
+			.where('id', userId)
+			.first();
+
+		const result = await toggleUserBadge(userId, badgeId);
+		if (!result.ok) {
+			return fail(500, { success: false, error: 'Failed to toggle badge' });
+		}
+
+		await sendDiscordWebhookLog(
+			'Nerv',
+			`${sessionUser?.name} (${sessionUser?.id}) toggled badge ${badgeId} for ${user?.name} (${user?.id})!`,
+			`${appUrl}/nerv.png`
+		);
+
+		return { success: true };
 	}
 };
 
@@ -419,5 +458,8 @@ export async function load({ params, cookies }) {
 	const user = await mysqlDatabase<DBUser>('users').where('id', userId).first();
 	if (!user) return { success: false, error: 'User not found.' };
 
-	return { user };
+	const badgesResult = await fetchUserBadges(Number(userId));
+	const badges = badgesResult.ok ? badgesResult.value : [];
+
+	return { user, badges };
 }
