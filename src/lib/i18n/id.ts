@@ -25,9 +25,9 @@ const language: Language = {
 		'All rights reserved.': 'Seluruh hak dilindungi.',
 		'Not affiliated with ppy or osu!.': 'Tidak berafiliasi dengan ppy atau osu!.',
 		// dear god
-		// TODO: cheatinfo and donate, too lazy for now
+		// TODO: donate, too lazy for now
 		// home too?? nah maybe not
-		'Cheat Info': 'Info Cheat',
+
 		"There's rules?": 'Ada aturan?',
 		'Use common sense': 'Gunakan akal sehat',
 		'This includes being respectful to each other when interacting, as well as not doing (or abusing) things that are unintended.':
@@ -176,15 +176,15 @@ const language: Language = {
 		'More Options': 'Opsi Lainnya',
 		'Unpin Score': 'Lepas Pin Skor',
 		'Pin Score': 'Pin Skor',
-		'BBCode': 'BBCode',
+		BBCode: 'BBCode',
 		'How to connect': 'Cara menghubungkan',
 		'show less': 'tampilkan lebih sedikit',
 		'Post Comment': 'Kirim Komentar',
 		'Please sign in to leave a comment': 'Silakan masuk untuk meninggalkan komentar',
 		'Loading comments...': 'Memuat komentar...',
 		'No comments yet': 'Belum ada komentar',
-		'edited': 'diedit',
-		'XP': 'XP'
+		edited: 'diedit',
+		XP: 'XP'
 	}
 };
 

@@ -10,7 +10,7 @@
 
 	export let drawerStore: DrawerStore;
 
-	const downloadsPages = ['/patcher', '/lazer', '/client'];
+	const downloadsPages = ['/patcher', '/client'];
 	$: isDownloadsActive = downloadsPages.includes($page.data.url);
 	$: isUserStaff = isStaff($userData?.priv);
 </script>
@@ -132,15 +132,7 @@
 						>
 							{__('Patcher', $userLanguage)}
 						</a>
-						<a
-							href="/lazer"
-							class="btn {$page.data.url == '/lazer'
-								? 'variant-ghost-surface '
-								: 'hover:variant-outline-surface '}rounded-lg justify-start"
-							on:click={() => drawerStore.close()}
-						>
-							{__('Lazer', $userLanguage)}
-						</a>
+
 						<a
 							href="/client"
 							class="btn {$page.data.url == '/client'
@@ -166,16 +158,6 @@
 			on:click={() => drawerStore.close()}
 		>
 			{__('Patcher', $userLanguage)}
-		</a>
-
-		<a
-			href="/lazer"
-			class="btn {$page.data.url == '/lazer'
-				? 'variant-ghost-surface '
-				: 'hover:variant-outline-surface '}rounded-lg"
-			on:click={() => drawerStore.close()}
-		>
-			{__('Lazer', $userLanguage)}
 		</a>
 
 		<a

@@ -43,14 +43,7 @@
 			case 'relax':
 				mode += 4;
 				break;
-			case 'autopilot':
 				mode += 8;
-				break;
-			case 'cheat':
-				mode = 12;
-				break;
-			case 'cheatcheat':
-				mode = 16;
 				break;
 		}
 

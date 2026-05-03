@@ -12,7 +12,7 @@
 	export let data;
 
 	const modes = ['osu', 'taiko', 'catch', 'mania'];
-	const types = ['vanilla', 'relax', 'autopilot', 'cheat', 'cheatcheat', 'touch'];
+	const types = ['vanilla', 'relax'];
 
 	let currentLeaderboard: DBClan[] = [];
 	const clansPerPage = 50;
@@ -50,8 +50,6 @@
 		const urlParams = new URLSearchParams();
 
 		if (currentType == 'relax' && currentMode == 'mania') currentMode = 'osu';
-		if (currentType == 'autopilot' && currentMode != 'osu') currentMode = 'osu';
-		if (currentType == 'touch' && currentMode != 'osu') currentMode = 'osu';
 
 		queryMode.set(currentMode);
 		queryType.set(currentType);
@@ -73,17 +71,7 @@
 			case 'relax':
 				mode += 4;
 				break;
-			case 'autopilot':
 				mode += 8;
-				break;
-			case 'cheat':
-				mode = 12;
-				break;
-			case 'cheatcheat':
-				mode = 16;
-				break;
-			case 'touch':
-				mode = 20;
 				break;
 		}
 
@@ -172,42 +160,6 @@
 						disabled={currentMode == 'mania' || loading || failed}
 					>
 						Relax
-					</button>
-					<button
-						class="w-auto px-4 !scale-100 btn {currentType == 'autopilot'
-							? 'bg-surface-500'
-							: 'bg-surface-600'} rounded-lg md:rounded-none"
-						on:click={() => setType('autopilot')}
-						disabled={currentMode != 'osu' || loading || failed}
-					>
-						Autopilot
-					</button>
-					<button
-						class="w-auto px-4 !scale-100 btn {currentType == 'cheat'
-							? 'bg-surface-500'
-							: 'bg-surface-600'} rounded-lg md:rounded-none"
-						on:click={() => setType('cheat')}
-						disabled={loading || failed}
-					>
-						Cheat
-					</button>
-					<button
-						class="w-auto px-4 !scale-100 btn {currentType == 'cheatcheat'
-							? 'bg-surface-500'
-							: 'bg-surface-600'} rounded-lg md:rounded-none"
-						on:click={() => setType('cheatcheat')}
-						disabled={loading || failed}
-					>
-						CheatCheat
-					</button>
-					<button
-						class="w-auto px-4 !scale-100 btn {currentType == 'touch'
-							? 'bg-surface-500'
-							: 'bg-surface-600'} rounded-lg md:rounded-l-none"
-						on:click={() => setType('touch')}
-						disabled={currentMode != 'osu' || loading || failed}
-					>
-						Touch
 					</button>
 				</div>
 				<div class="w-full flex rounded-lg">

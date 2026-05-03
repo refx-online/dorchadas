@@ -35,10 +35,8 @@ export const modNames: { [mod_short: string]: string } = {
 	HD: 'Hidden',
 	FL: 'Flashlight',
 	SO: 'Spun Out',
-	TD: 'Touch Device',
 	V2: 'ScoreV2',
-	RX: 'Relax',
-	AP: 'Autopilot'
+	RX: 'Relax'
 };
 
 export const parseModsInt = (
@@ -82,7 +80,6 @@ export const parseModsInt = (
 
 	// since its stable
 	// we can assume that if modsInt is not null,
-	// then they're not playing on lazer (duh)
 	if (modsInt) {
 		activatedMods.push({
 			name: 'Classic',

@@ -59,7 +59,6 @@ export const fetchTopScores = async (options: {
             FROM scores s
             LEFT JOIN users u ON u.id = s.userid
             LEFT JOIN maps m ON m.md5 = s.map_md5
-            LEFT JOIN lazer_scores ls ON ls.score_id = s.id
             WHERE s.mode = ?
             AND u.priv & 1
             AND m.status IN (2, 3)

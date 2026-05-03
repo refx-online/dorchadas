@@ -21,7 +21,6 @@
 		Monitor,
 		Settings,
 		FastForward,
-		GitBranch,
 		Star
 	} from 'svelte-feathers';
 
@@ -55,25 +54,22 @@
 
 	const features = [
 		{
-			text: "Enable Relax/Autopilot Miss (wow! who would've thought)",
+			text: "Enable Relax Miss (wow! who would've thought)",
 			icon: CheckCircle
 		},
 		{
-			text: 'Enable Relax/Autopilot Combo Miss Sound (the sound!)',
+			text: 'Enable Relax Combo Miss Sound (the sound!)',
 			icon: Monitor
 		},
 		{
-			text: 'Show Relax/Autopilot Ranking Panel',
+			text: 'Show Relax Ranking Panel',
 			icon: Layout
 		},
 		{
 			text: 'Faster Transition',
 			icon: FastForward
 		},
-		{
-			text: 'This fuckshit is not for the cheat leaderboard!',
-			icon: GitBranch
-		},
+
 		{
 			text: 'Totally not a crypto miner!',
 			icon: Settings

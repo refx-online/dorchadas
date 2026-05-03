@@ -141,14 +141,14 @@ const language: Language = {
 		'More Options': 'Больше опций',
 		'Unpin Score': 'Открепить результат',
 		'Pin Score': 'Закрепить результат',
-		'BBCode': 'BBCode',
+		BBCode: 'BBCode',
 		'How to connect': 'Как подключиться',
 		'show less': 'показать меньше',
 		'Post Comment': 'Оставить комментарий',
 		'Please sign in to leave a comment': 'Пожалуйста, войдите, чтобы оставить комментарий',
 		'Loading comments...': 'Загрузка комментариев...',
 		'No comments yet': 'Комментариев пока нет',
-		'edited': 'изменено'
+		edited: 'изменено'
 	}
 };
 

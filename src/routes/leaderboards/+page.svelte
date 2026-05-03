@@ -10,7 +10,7 @@
 	import { userLanguage } from '$lib/storage';
 
 	const modes = ['osu', 'taiko', 'catch', 'mania'];
-	const types = ['vanilla', 'relax', 'autopilot', 'cheat', 'cheatcheat', 'touch'];
+	const types = ['vanilla', 'relax'];
 	const sorts = ['pp', 'tscore'];
 
 	let currentLeaderboard: LBUser[] = [];
@@ -55,8 +55,6 @@
 		const urlParams = new URLSearchParams();
 
 		if (currentType == 'relax' && currentMode == 'mania') currentMode = 'osu';
-		if (currentType == 'autopilot' && currentMode != 'osu') currentMode = 'osu';
-		if (currentType == 'touch' && currentMode != 'osu') currentMode = 'osu';
 
 		queryMode.set(currentMode);
 		queryType.set(currentType);
@@ -79,17 +77,7 @@
 			case 'relax':
 				mode += 4;
 				break;
-			case 'autopilot':
 				mode += 8;
-				break;
-			case 'cheat':
-				mode = 12;
-				break;
-			case 'cheatcheat':
-				mode = 16;
-				break;
-			case 'touch':
-				mode = 20;
 				break;
 		}
 
@@ -202,61 +190,6 @@
 						>
 							Relax
 						</button>
-						<button
-							class="flex-1 !scale-100 btn {currentType == 'autopilot'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-lg rounded-l-none"
-							on:click={() => setType('autopilot')}
-							disabled={currentMode == 'taiko' ||
-								currentMode == 'catch' ||
-								currentMode == 'mania' ||
-								loading ||
-								failed}
-						>
-							Autopilot
-						</button>
-					</div>
-
-					<div class="flex w-full md:hidden">
-						<button
-							class="flex-1 !scale-100 btn {currentType == 'touch'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-lg rounded-r-none"
-							on:click={() => setType('touch')}
-							disabled={currentMode == 'taiko' ||
-								currentMode == 'catch' ||
-								currentMode == 'mania' ||
-								loading ||
-								failed}
-						>
-							TouchScreen
-						</button>
-						<button
-							class="flex-1 !scale-100 btn {currentType == 'cheat'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-lg rounded-r-none"
-							on:click={() => setType('cheat')}
-							disabled={currentMode == 'taiko' ||
-								currentMode == 'catch' ||
-								currentMode == 'mania' ||
-								loading ||
-								failed}
-						>
-							Cheat
-						</button>
-						<button
-							class="flex-1 !scale-100 btn {currentType == 'cheatcheat'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-lg rounded-l-none"
-							on:click={() => setType('cheatcheat')}
-							disabled={currentMode == 'taiko' ||
-								currentMode == 'catch' ||
-								currentMode == 'mania' ||
-								loading ||
-								failed}
-						>
-							CheatCheat
-						</button>
 					</div>
 
 					<div class="hidden md:flex w-full">
@@ -277,58 +210,6 @@
 							disabled={currentMode == 'mania' || loading || failed}
 						>
 							Relax
-						</button>
-						<button
-							class="w-[20%] !scale-100 btn {currentType == 'autopilot'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-none"
-							on:click={() => setType('autopilot')}
-							disabled={currentMode == 'taiko' ||
-								currentMode == 'catch' ||
-								currentMode == 'mania' ||
-								loading ||
-								failed}
-						>
-							Autopilot
-						</button>
-						<button
-							class="w-[20%] !scale-100 btn {currentType == 'touch'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-none"
-							on:click={() => setType('touch')}
-							disabled={currentMode == 'taiko' ||
-								currentMode == 'catch' ||
-								currentMode == 'mania' ||
-								loading ||
-								failed}
-						>
-							TouchScreen
-						</button>
-						<button
-							class="w-[20%] !scale-100 btn {currentType == 'cheat'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-none"
-							on:click={() => setType('cheat')}
-							disabled={currentMode == 'taiko' ||
-								currentMode == 'catch' ||
-								currentMode == 'mania' ||
-								loading ||
-								failed}
-						>
-							Cheat
-						</button>
-						<button
-							class="w-[20%] !scale-100 btn {currentType == 'cheatcheat'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-lg rounded-l-none"
-							on:click={() => setType('cheatcheat')}
-							disabled={currentMode == 'taiko' ||
-								currentMode == 'catch' ||
-								currentMode == 'mania' ||
-								loading ||
-								failed}
-						>
-							CheatCheat
 						</button>
 					</div>
 				</div>

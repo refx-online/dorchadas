@@ -8,7 +8,7 @@
 	import type { DBUser, PlayerCounts } from '$lib/types';
 	import { ChevronsUp, ChevronLeft, ChevronRight } from 'svelte-feathers';
 	import { env } from '$env/dynamic/public';
-	import { fade, fly, scale } from 'svelte/transition';
+	import { fly, scale } from 'svelte/transition';
 
 	export let data: {
 		userCounts?: PlayerCounts;
@@ -67,20 +67,6 @@
 			currentAccountIndex =
 				currentAccountIndex === 0 ? data.recentAccounts.length - 1 : currentAccountIndex - 1;
 		}
-	};
-
-	const modeNames: { [key: number]: string } = {
-		0: 'vn!std',
-		1: 'vn!taiko',
-		2: 'vn!catch',
-		3: 'vn!mania',
-		4: 'rx!std',
-		5: 'rx!taiko',
-		6: 'rx!catch',
-		8: 'ap!std',
-		12: 'cheat!std',
-		16: 'cheatcheat!std',
-		20: 'td!std'
 	};
 
 	onMount(() => {
@@ -147,8 +133,8 @@
 					class="text-lg md:text-xl text-white/80 leading-relaxed"
 					in:fly={{ y: 20, duration: 800, delay: 300 }}
 				>
-					a rich-feature osu! private server. we serve stable - our custom client - aeris - even
-					lazer. as of today; 12-01-2026. refx-stack has become stable!
+					a rich-feature osu! private server. we serve stable - our custom client - aeris - as of
+					today; 12-01-2026. refx-stack has become stable!
 				</p>
 			</div>
 

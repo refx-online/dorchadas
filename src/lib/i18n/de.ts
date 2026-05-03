@@ -132,14 +132,14 @@ const language: Language = {
 		'More Options': 'Weitere Optionen',
 		'Unpin Score': 'Score loslösen',
 		'Pin Score': 'Score anheften',
-		'BBCode': 'BBCode',
+		BBCode: 'BBCode',
 		'How to connect': 'Verbindung herstellen',
 		'show less': 'weniger anzeigen',
 		'Post Comment': 'Kommentar posten',
 		'Please sign in to leave a comment': 'Bitte melde dich an, um einen Kommentar zu hinterlassen',
 		'Loading comments...': 'Kommentare werden geladen...',
 		'No comments yet': 'Noch keine Kommentare',
-		'edited': 'bearbeitet'
+		edited: 'bearbeitet'
 	}
 };
 
