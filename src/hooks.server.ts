@@ -34,6 +34,7 @@ export const getMySQLDatabase = async (): Promise<knex_pkg.Knex | null> => {
 			client: 'mysql2',
 			connection: {
 				host: env.MYSQL_HOST,
+				port: env.MYSQL_PORT ? parseInt(env.MYSQL_PORT) : 3306,
 				user: env.MYSQL_USER,
 				password: env.MYSQL_PASSWORD,
 				database: env.MYSQL_DATABASE
