@@ -59,6 +59,34 @@
 		return fallback;
 	}
 
+	async function submitRequest(
+		endpoint: string,
+		init: RequestInit,
+		successMsg: string,
+		errorMsg: string,
+		onSuccess?: () => void
+	) {
+		isLoading = true;
+
+		try {
+			const response = await fetch(endpoint, init);
+
+			if (!response.ok) {
+				const result = await response.json();
+				showMessage(result.message || errorMsg, 'error');
+				return;
+			}
+
+			showMessage(successMsg, 'success');
+			onSuccess?.();
+			await invalidateAll();
+		} catch {
+			showMessage(errorMsg, 'error');
+		} finally {
+			isLoading = false;
+		}
+	}
+
 	async function handleImageUpload(
 		file: File,
 		endpoint: string,
@@ -72,36 +100,28 @@
 			return;
 		}
 
-		isLoading = true;
 		const formData = new FormData();
 		formData.append(fieldName, file);
 
-		try {
-			const response = await fetch(endpoint, {
+		await submitRequest(
+			endpoint,
+			{
 				method: 'POST',
 				body: formData
-			});
-
-			if (response.ok) {
-				showMessage(successMsg, 'success');
-				await invalidateAll();
+			},
+			successMsg,
+			errorMsg,
+			() => {
 				if (flagFile) (flagFile as any) = null;
-			} else {
-				const result = await response.json();
-				showMessage(result.message || errorMsg, 'error');
 			}
-		} catch {
-			showMessage(errorMsg, 'error');
-		} finally {
-			isLoading = false;
-		}
+		);
 	}
 
 	async function handleFlagUpload() {
 		if (!flagFile?.[0]) return;
 		await handleImageUpload(
 			flagFile[0],
-			`/clan/${data.clan.id}/settings/flag`,
+			`/api/v1/clans/${data.clan.id}/settings/flag`,
 			'flag',
 			__('Flag updated successfully! Refreshing...', $userLanguage),
 			__('An error occurred while uploading the flag', $userLanguage)
@@ -109,9 +129,9 @@
 	}
 
 	async function handleSettingsUpdate() {
-		isLoading = true;
-		try {
-			const response = await fetch(`/clan/${data.clan.id}/settings/update`, {
+		await submitRequest(
+			`/api/v1/clans/${data.clan.id}/settings/update`,
+			{
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -120,27 +140,17 @@
 					name: clanName,
 					tag: clanTag
 				})
-			});
-
-			if (response.ok) {
-				showMessage(__('Settings updated successfully!', $userLanguage), 'success');
-				await invalidateAll();
-			} else {
-				const result = await response.json();
-				showMessage(result.message || __('Failed to update settings', $userLanguage), 'error');
-			}
-		} catch {
-			showMessage(__('An error occurred while updating settings', $userLanguage), 'error');
-		} finally {
-			isLoading = false;
-		}
+			},
+			__('Settings updated successfully!', $userLanguage),
+			__('Failed to update settings', $userLanguage)
+		);
 	}
 
 	async function handleInvite() {
 		if (!inviteUsername) return;
-		isLoading = true;
-		try {
-			const response = await fetch(`/clan/${data.clan.id}/settings/invite`, {
+		await submitRequest(
+			`/api/v1/clans/${data.clan.id}/settings/invite`,
+			{
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -148,27 +158,19 @@
 				body: JSON.stringify({
 					username: inviteUsername
 				})
-			});
-
-			if (response.ok) {
-				showMessage(__('Invite sent successfully!', $userLanguage), 'success');
+			},
+			__('Invite sent successfully!', $userLanguage),
+			__('Failed to send invite', $userLanguage),
+			() => {
 				inviteUsername = '';
-				await invalidateAll();
-			} else {
-				const result = await response.json();
-				showMessage(result.message || __('Failed to send invite', $userLanguage), 'error');
 			}
-		} catch {
-			showMessage(__('An error occurred while sending invite', $userLanguage), 'error');
-		} finally {
-			isLoading = false;
-		}
+		);
 	}
 
 	async function handleCancelInvite(inviteId: number) {
-		isLoading = true;
-		try {
-			const response = await fetch(`/clan/${data.clan.id}/settings/invites/cancel`, {
+		await submitRequest(
+			`/api/v1/clans/${data.clan.id}/settings/invites/cancel`,
+			{
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -176,26 +178,16 @@
 				body: JSON.stringify({
 					inviteId
 				})
-			});
-
-			if (response.ok) {
-				showMessage(__('Invite cancelled successfully!', $userLanguage), 'success');
-				await invalidateAll();
-			} else {
-				const result = await response.json();
-				showMessage(result.message || __('Failed to cancel invite', $userLanguage), 'error');
-			}
-		} catch {
-			showMessage(__('An error occurred while cancelling invite', $userLanguage), 'error');
-		} finally {
-			isLoading = false;
-		}
+			},
+			__('Invite cancelled successfully!', $userLanguage),
+			__('Failed to cancel invite', $userLanguage)
+		);
 	}
 
 	async function handleRespondRequest(requestId: number, status: 'accepted' | 'rejected') {
-		isLoading = true;
-		try {
-			const response = await fetch(`/clan/${data.clan.id}/settings/requests/respond`, {
+		await submitRequest(
+			`/api/v1/clans/${data.clan.id}/settings/requests/respond`,
+			{
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -204,25 +196,12 @@
 					requestId,
 					status
 				})
-			});
-
-			if (response.ok) {
-				showMessage(
-					status === 'accepted'
-						? __('Request accepted!', $userLanguage)
-						: __('Request rejected!', $userLanguage),
-					'success'
-				);
-				await invalidateAll();
-			} else {
-				const result = await response.json();
-				showMessage(result.message || __('Failed to respond to request', $userLanguage), 'error');
-			}
-		} catch {
-			showMessage(__('An error occurred while responding to request', $userLanguage), 'error');
-		} finally {
-			isLoading = false;
-		}
+			},
+			status === 'accepted'
+				? __('Request accepted!', $userLanguage)
+				: __('Request rejected!', $userLanguage),
+			__('Failed to respond to request', $userLanguage)
+		);
 	}
 </script>
 
@@ -395,7 +374,7 @@
 							<div class="flex flex-col md:flex-row gap-6 items-start">
 								<div class="flex-shrink-0">
 									<img
-										src={getPreviewUrl(flagFile?.[0], `/api/clan/${data.clan.id}/flag`)}
+										src={getPreviewUrl(flagFile?.[0], `/api/v1/clans/${data.clan.id}/flag`)}
 										alt="Flag"
 										class="h-16 aspect-[3/2] rounded-md object-cover border-4 border-surface-300-600-token"
 										on:error={(e) => {

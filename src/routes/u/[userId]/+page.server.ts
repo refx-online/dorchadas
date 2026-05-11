@@ -1,6 +1,6 @@
 import { fetchClan, fetchPlayer, fetchPPProfileHistory } from '$lib/api';
 import { sanitizeHtml } from '$lib/html';
-import { isNumber } from '$lib/string-util';
+import { isNumber } from '$lib/string';
 import { parse } from 'marked';
 import { parseBBCodeToHtml } from '$lib/bbcode';
 import { getUserFromSession } from '$lib/user';
@@ -20,7 +20,45 @@ import {
 } from '$lib/db';
 import { fail, redirect } from '@sveltejs/kit';
 
-export async function load({ params, cookies }) {
+const modeTypes = ['vanilla', 'relax', 'autopilot', 'cheat', 'cheatcheat', 'touch'];
+const modeNames = ['osu', 'taiko', 'catch', 'mania'];
+
+const getModeIndex = (modeName: string | null, typeName: string | null): number => {
+	let mode = 0;
+	const selectedMode = modeName && modeNames.includes(modeName) ? modeName : 'osu';
+	const selectedType = typeName && modeTypes.includes(typeName) ? typeName : 'vanilla';
+
+	switch (selectedMode) {
+		case 'taiko':
+			mode += 1;
+			break;
+		case 'catch':
+			mode += 2;
+			break;
+		case 'mania':
+			mode += 3;
+			break;
+	}
+
+	switch (selectedType) {
+		case 'relax':
+			mode += 4;
+			break;
+		case 'autopilot':
+			mode += 8;
+			break;
+		case 'cheat':
+			return 12;
+		case 'cheatcheat':
+			return 16;
+		case 'touch':
+			return 20;
+	}
+
+	return mode;
+};
+
+export async function load({ params, cookies, url }) {
 	const requestedUser = params.userId; // now can be name too!
 	const sessionToken = cookies.get('sessionToken');
 
@@ -28,8 +66,9 @@ export async function load({ params, cookies }) {
 	if (!playerResult.ok || !playerResult.value.player) return {};
 
 	const user = playerResult.value;
+	const player = user.player!;
 	const ourUser = await getUserFromSession(sessionToken);
-	const userpageData = user.player?.info.userpage_content ?? '';
+	const userpageData = player.info.userpage_content ?? '';
 	const parsedBBCode = parseBBCodeToHtml(userpageData);
 
 	const sanitizedUserPage = sanitizeHtml(parsedBBCode);
@@ -40,44 +79,35 @@ export async function load({ params, cookies }) {
 	});
 
 	const clanResult =
-		user.player && user.player.info.clan_id ? await fetchClan(user.player.info.clan_id) : undefined;
+		player && player.info.clan_id ? await fetchClan(player.info.clan_id) : undefined;
 	const clan = clanResult?.ok ? clanResult.value : undefined;
 
-	const playCountResult = await fetchPlayCountResults(user.player?.info.id.toString() || '');
+	const playCountResult = await fetchPlayCountResults(player.info.id.toString() || '');
 	const playCountGraph = playCountResult.ok ? playCountResult.value : {};
 
-	const relationshipResult = await fetchUserRelationships(
-		user.player?.info.id.toString() || '',
-		ourUser
-	);
+	const relationshipResult = await fetchUserRelationships(player.info.id.toString() || '', ourUser);
 	const relationships = relationshipResult.ok
 		? relationshipResult.value
 		: { followers: 0, relationshipStatus: 'none' };
 
-	const oldUsernamesResult = await fetchOldUsernames(
-		user.player?.info.id || 0,
-		user.player?.info.name || ''
-	);
+	const oldUsernamesResult = await fetchOldUsernames(player.info.id || 0, player.info.name || '');
 	const oldUsernames = oldUsernamesResult.ok ? oldUsernamesResult.value : '';
 
-	const usersLogResult = await fetchUsersLog(user.player?.info.id || 0);
+	const usersLogResult = await fetchUsersLog(player.info.id || 0);
 	const usersLog = usersLogResult.ok ? usersLogResult.value : [];
 
 	const logTitlesResult = await fetchLogTitlesBatch(usersLog);
 	const logTitles = logTitlesResult.ok ? logTitlesResult.value : {};
 
-	const ppHistoryData = await Promise.all(
-		Array.from({ length: 21 }, async (_, i) => {
-			if (!user.player) return null;
-			const res = await fetchPPProfileHistory('pp', user.player.info.id, i);
-			return res.ok ? res.value : null;
-		})
-	);
+	const initialMode = getModeIndex(url.searchParams.get('mode'), url.searchParams.get('type'));
+	const ppHistoryResult = await fetchPPProfileHistory('pp', player.info.id, initialMode);
+	const ppHistoryData = Array(21).fill(null);
+	ppHistoryData[initialMode] = ppHistoryResult.ok ? ppHistoryResult.value : null;
 
 	const ourPriv = ourUser?.priv;
 
 	return {
-		user: user.player,
+		user: player,
 		clan,
 		userpage: parsedUserPage,
 		playCountGraph,

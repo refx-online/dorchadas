@@ -16,12 +16,12 @@ export function generateCsrfToken(): string {
 }
 
 /**
- * Stores a one-time CSRF token in Redis with session binding.
- * The token is bound to the session to prevent token fixation attacks.
+ * Stores a CSRF token in Redis with binding to an httpOnly CSRF ID cookie.
+ * The token is bound to that cookie to prevent token fixation attacks.
  *
  * @param redisClient - Redis client instance
  * @param token - The CSRF token to store
- * @param sessionToken - The session token to bind this CSRF token to
+ * @param sessionToken - The CSRF ID or session-like value to bind this token to
  * @param ttl - Time to live in seconds (default: 2 minutes)
  * @returns true if stored successfully, false otherwise
  */
@@ -46,7 +46,7 @@ export async function storeCsrfToken(
 
 /**
  * Validates a CSRF token from Redis without consuming it.
- * This function checks if the token exists and validates session binding.
+ * This function checks if the token exists and validates CSRF ID binding.
  *
  * @param redisClient - Redis client instance
  * @param token - The token to validate

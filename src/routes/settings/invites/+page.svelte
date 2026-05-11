@@ -27,8 +27,9 @@
 
 	async function respond(inviteId: number, status: 'accepted' | 'rejected') {
 		isLoading = true;
+
 		try {
-			const response = await fetch('/settings/invites/respond', {
+			const response = await fetch('/api/v1/clan-invites/respond', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -39,18 +40,19 @@
 				})
 			});
 
-			if (response.ok) {
-				showMessage(
-					status === 'accepted'
-						? __('Successfully joined the clan!', $userLanguage)
-						: __('Invite rejected.', $userLanguage),
-					'success'
-				);
-				await invalidateAll();
-			} else {
+			if (!response.ok) {
 				const result = await response.json();
 				showMessage(result.message || __('An error occurred', $userLanguage), 'error');
+				return;
 			}
+
+			showMessage(
+				status === 'accepted'
+					? __('Successfully joined the clan!', $userLanguage)
+					: __('Invite rejected.', $userLanguage),
+				'success'
+			);
+			await invalidateAll();
 		} catch {
 			showMessage(__('An error occurred', $userLanguage), 'error');
 		} finally {
@@ -90,7 +92,7 @@
 					>
 						<div class="flex items-center gap-4">
 							<img
-								src="/api/clan/{invite.clan_id}/flag"
+								src="/api/v1/clans/{invite.clan_id}/flag"
 								alt={invite.clan_tag}
 								class="h-10 aspect-[3/2] rounded-md object-cover"
 								on:error={handleImageError}

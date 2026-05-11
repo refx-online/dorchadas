@@ -1,7 +1,7 @@
 import { redirect, fail } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
 import { createClan } from '$lib/db';
-import { getMySQLDatabase } from '../../../hooks.server';
+import { getMySQLDatabase } from '$lib/server/connections';
 
 export const load = async ({ cookies }) => {
 	const sessionToken = cookies.get('sessionToken');

@@ -176,15 +176,15 @@ const language: Language = {
 		'More Options': 'Opsi Lainnya',
 		'Unpin Score': 'Lepas Pin Skor',
 		'Pin Score': 'Pin Skor',
-		'BBCode': 'BBCode',
+		BBCode: 'BBCode',
 		'How to connect': 'Cara menghubungkan',
 		'show less': 'tampilkan lebih sedikit',
 		'Post Comment': 'Kirim Komentar',
 		'Please sign in to leave a comment': 'Silakan masuk untuk meninggalkan komentar',
 		'Loading comments...': 'Memuat komentar...',
 		'No comments yet': 'Belum ada komentar',
-		'edited': 'diedit',
-		'XP': 'XP'
+		edited: 'diedit',
+		XP: 'XP'
 	}
 };
 

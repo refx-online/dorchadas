@@ -1,5 +1,5 @@
 import { fetchBeatmap } from '$lib/api';
-import { getMySQLDatabase } from '../../../hooks.server';
+import { getMySQLDatabase } from '$lib/server/connections';
 
 export async function load({ params }) {
 	const beatmapId = params.beatmapId;

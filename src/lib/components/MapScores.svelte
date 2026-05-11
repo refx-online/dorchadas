@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { numberHumanReadable } from '$lib/string-util';
+	import { numberHumanReadable } from '$lib/string';
 	import type { MapScore } from '$lib/types';
 	import { scale } from 'svelte/transition';
 	import { removeTrailingZeroes } from '$lib/regex';

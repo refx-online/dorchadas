@@ -1,16 +1,31 @@
-import { getMySQLDatabase } from '../hooks.server';
+import { getMySQLDatabase } from '$lib/server/connections';
 import type { DBClan, TopScore, UserRelationship, UsersLog } from './types';
 import { ok, err, type Result, DatabaseError } from './result';
 import { logger } from './logger';
+
+type MySQLDatabase = NonNullable<Awaited<ReturnType<typeof getMySQLDatabase>>>;
+
+const withDatabaseResult = async <T>(
+	errorMessage: string,
+	operation: (mysqlDB: MySQLDatabase) => Promise<Result<T, DatabaseError>>
+): Promise<Result<T, DatabaseError>> => {
+	try {
+		const mysqlDB = await getMySQLDatabase();
+		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
+
+		return await operation(mysqlDB);
+	} catch (error) {
+		logger.error(errorMessage, error);
+		return err(new DatabaseError(errorMessage));
+	}
+};
 
 export const fetchClans = async (options: {
 	mode: number;
 	limit: number;
 	offset: number;
-}): Promise<Result<DBClan[], DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
+}): Promise<Result<DBClan[], DatabaseError>> =>
+	withDatabaseResult('Failed to fetch clans', async (mysqlDB) => {
 		if (options.limit < 1 || options.offset < 0) return ok([]);
 		if (options.limit > 100) options.limit = 100;
 
@@ -32,21 +47,14 @@ export const fetchClans = async (options: {
 		}) as DBClan[];
 
 		return ok(formattedClans);
-	} catch (e) {
-		logger.error('Failed to fetch clans', e);
-		return err(new DatabaseError('Failed to fetch clans'));
-	}
-};
+	});
 
 export const fetchTopScores = async (options: {
 	mode: number;
 	limit?: number;
 	offset?: number;
-}): Promise<Result<TopScore[], DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+}): Promise<Result<TopScore[], DatabaseError>> =>
+	withDatabaseResult('Error fetching top scores', async (mysqlDB) => {
 		const limit = options.limit ?? 45;
 		const offset = options.offset ?? 0;
 		const scores = await mysqlDB.raw(
@@ -71,17 +79,10 @@ export const fetchTopScores = async (options: {
 		);
 
 		return ok(scores[0] as TopScore[]);
-	} catch (e) {
-		logger.error('Error fetching top scores', e);
-		return err(new DatabaseError('Error fetching top scores'));
-	}
-};
+	});
 
-export const fetchTopScoresCount = async (mode: number): Promise<Result<number, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+export const fetchTopScoresCount = async (mode: number): Promise<Result<number, DatabaseError>> =>
+	withDatabaseResult('Error fetching top scores count', async (mysqlDB) => {
 		const countResult = await mysqlDB.raw(
 			`
             SELECT COUNT(*) as count
@@ -97,19 +98,12 @@ export const fetchTopScoresCount = async (mode: number): Promise<Result<number, 
 		);
 
 		return ok(countResult[0][0].count);
-	} catch (e) {
-		logger.error('Error fetching top scores count', e);
-		return err(new DatabaseError('Error fetching top scores count'));
-	}
-};
+	});
 
 export const fetchPlayCountResults = async (
 	requestedUserId: string
-): Promise<Result<Record<string, number>, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+): Promise<Result<Record<string, number>, DatabaseError>> =>
+	withDatabaseResult('Failed to retrieve play count graph', async (mysqlDB) => {
 		const playCountResults = await mysqlDB.raw(
 			`WITH RECURSIVE month_list AS (
                 SELECT
@@ -141,24 +135,17 @@ export const fetchPlayCountResults = async (
 		});
 
 		return ok(playCountGraph);
-	} catch (e) {
-		logger.error('Failed to retrieve play count graph', e);
-		return err(new DatabaseError('Failed to retrieve play count graph'));
-	}
-};
+	});
 
 export const fetchUserRelationships = async (
 	requestedUserId: string,
 	ourUser: any
-): Promise<Result<UserRelationship, DatabaseError>> => {
-	try {
+): Promise<Result<UserRelationship, DatabaseError>> =>
+	withDatabaseResult('Failed to fetch user relationships', async (mysqlDB) => {
 		let relationships: UserRelationship = {
 			followers: 0,
 			relationshipStatus: 'none'
 		};
-
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
 
 		const followerResult = await mysqlDB('relationships')
 			.count('* as followers')
@@ -199,56 +186,35 @@ export const fetchUserRelationships = async (
 		}
 
 		return ok(relationships);
-	} catch (e) {
-		logger.error('Failed to fetch user relationships', e);
-		return err(new DatabaseError('Failed to fetch user relationships'));
-	}
-};
+	});
 
-export const fetchUsersLog = async (userId: number): Promise<Result<UsersLog[], DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+export const fetchUsersLog = async (userId: number): Promise<Result<UsersLog[], DatabaseError>> =>
+	withDatabaseResult('Failed to fetch users log', async (mysqlDB) => {
 		const logs = await mysqlDB<UsersLog>('users_log')
 			.where('user_id', userId)
 			.orderBy('timestamp', 'desc')
 			.limit(10);
 
 		return ok(logs || []);
-	} catch (e) {
-		logger.error('Failed to fetch users log', e);
-		return err(new DatabaseError('Failed to fetch users log'));
-	}
-};
+	});
 
 export const pinScore = async (
 	scoreID: number,
 	isPinned: boolean
-): Promise<Result<void, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+): Promise<Result<void, DatabaseError>> =>
+	withDatabaseResult('Failed to pin score', async (mysqlDB) => {
 		await mysqlDB('scores')
 			.update('pinned', isPinned ? 0 : 1)
 			.where('id', scoreID);
 		return ok(undefined);
-	} catch (e) {
-		logger.error('Failed to pin score', e);
-		return err(new DatabaseError('Failed to pin score'));
-	}
-};
+	});
 
 export const createFriendship = async (
 	userID: number,
 	friendID: number
-): Promise<Result<void, DatabaseError>> => {
-	try {
+): Promise<Result<void, DatabaseError>> =>
+	withDatabaseResult('Failed to add friend', async (mysqlDB) => {
 		if (userID === friendID) return ok(undefined);
-
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
 
 		const isMutual = await mysqlDB('relationships')
 			.select('type')
@@ -264,38 +230,24 @@ export const createFriendship = async (
 			type: 'friend'
 		});
 		return ok(undefined);
-	} catch (e) {
-		logger.error('Failed to add friend', e);
-		return err(new DatabaseError('Failed to add friend'));
-	}
-};
+	});
 
 export const deleteFriendship = async (
 	userID: number,
 	friendID: number
-): Promise<Result<void, DatabaseError>> => {
-	try {
+): Promise<Result<void, DatabaseError>> =>
+	withDatabaseResult('Failed to remove friend', async (mysqlDB) => {
 		if (userID === friendID) return ok(undefined);
-
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
 
 		await mysqlDB('relationships').where('user1', userID).andWhere('user2', friendID).del();
 		return ok(undefined);
-	} catch (e) {
-		logger.error('Failed to remove friend', e);
-		return err(new DatabaseError('Failed to remove friend'));
-	}
-};
+	});
 
 export const fetchOldUsernames = async (
 	userID: number,
 	currentUsername?: string
-): Promise<Result<string, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+): Promise<Result<string, DatabaseError>> =>
+	withDatabaseResult('Failed to fetch old usernames', async (mysqlDB) => {
 		const old_usernames = await mysqlDB('username_log')
 			.select('old_username')
 			.where('user_id', userID);
@@ -306,20 +258,13 @@ export const fetchOldUsernames = async (
 		const usernames = uniqueUsernames.filter((username) => username !== currentUsername).join(', ');
 
 		return ok(usernames);
-	} catch (e) {
-		logger.error('Failed to fetch old usernames', e);
-		return err(new DatabaseError('Failed to fetch old usernames'));
-	}
-};
+	});
 
 export const fetchLogTitlesBatch = async (
 	logs: UsersLog[]
-): Promise<Result<Record<number, string>, DatabaseError>> => {
-	const results: Record<number, string> = {};
-
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
+): Promise<Result<Record<number, string>, DatabaseError>> =>
+	withDatabaseResult('Failed to batch fetch titles', async (mysqlDB) => {
+		const results: Record<number, string> = {};
 
 		const scoreLogIds = logs
 			.filter((log) => log.type === 'rank' || log.type === 'lost')
@@ -368,37 +313,23 @@ export const fetchLogTitlesBatch = async (
 			});
 		}
 		return ok(results);
-	} catch (e) {
-		logger.error('Failed to batch fetch titles', e);
-		return err(new DatabaseError('Failed to batch fetch titles'));
-	}
-};
+	});
 
 export const createClanInvite = async (
 	clanId: number,
 	userId: number
-): Promise<Result<void, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+): Promise<Result<void, DatabaseError>> =>
+	withDatabaseResult('Failed to create clan invite', async (mysqlDB) => {
 		await mysqlDB('clan_invites').insert({
 			clan_id: clanId,
 			user_id: userId,
 			status: 'pending'
 		});
 		return ok(undefined);
-	} catch (e) {
-		logger.error('Failed to create clan invite', e);
-		return err(new DatabaseError('Failed to create clan invite'));
-	}
-};
+	});
 
-export const fetchUserInvites = async (userId: number): Promise<Result<any[], DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+export const fetchUserInvites = async (userId: number): Promise<Result<any[], DatabaseError>> =>
+	withDatabaseResult('Failed to fetch user invites', async (mysqlDB) => {
 		const invites = await mysqlDB('clan_invites')
 			.select(
 				'clan_invites.id',
@@ -410,17 +341,10 @@ export const fetchUserInvites = async (userId: number): Promise<Result<any[], Da
 			.where('clan_invites.user_id', userId)
 			.andWhere('clan_invites.status', 'pending');
 		return ok(invites);
-	} catch (e) {
-		logger.error('Failed to fetch user invites', e);
-		return err(new DatabaseError('Failed to fetch user invites'));
-	}
-};
+	});
 
-export const fetchClanInvites = async (clanId: number): Promise<Result<any[], DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+export const fetchClanInvites = async (clanId: number): Promise<Result<any[], DatabaseError>> =>
+	withDatabaseResult('Failed to fetch clan invites', async (mysqlDB) => {
 		const invites = await mysqlDB('clan_invites')
 			.select(
 				'clan_invites.id',
@@ -432,21 +356,14 @@ export const fetchClanInvites = async (clanId: number): Promise<Result<any[], Da
 			.where('clan_invites.clan_id', clanId)
 			.andWhere('clan_invites.status', 'pending');
 		return ok(invites);
-	} catch (e) {
-		logger.error('Failed to fetch clan invites', e);
-		return err(new DatabaseError('Failed to fetch clan invites'));
-	}
-};
+	});
 
 export const createInviteResponse = async (
 	inviteId: number,
 	userId: number,
 	status: 'accepted' | 'rejected'
-): Promise<Result<void, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+): Promise<Result<void, DatabaseError>> =>
+	withDatabaseResult('Failed to respond to invite', async (mysqlDB) => {
 		const invite = await mysqlDB('clan_invites')
 			.where('id', inviteId)
 			.andWhere('user_id', userId)
@@ -466,69 +383,39 @@ export const createInviteResponse = async (
 			}
 		});
 		return ok(undefined);
-	} catch (e) {
-		logger.error('Failed to respond to invite', e);
-		return err(new DatabaseError('Failed to respond to invite'));
-	}
-};
+	});
 
-export const deleteClanMembership = async (
-	userId: number
-): Promise<Result<void, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+export const deleteClanMembership = async (userId: number): Promise<Result<void, DatabaseError>> =>
+	withDatabaseResult('Failed to leave clan', async (mysqlDB) => {
 		await mysqlDB('users').where('id', userId).update({ clan_id: 0, clan_priv: 0 });
 		return ok(undefined);
-	} catch (e) {
-		logger.error('Failed to leave clan', e);
-		return err(new DatabaseError('Failed to leave clan'));
-	}
-};
+	});
 
-export const deleteClan = async (clanId: number): Promise<Result<void, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+export const deleteClan = async (clanId: number): Promise<Result<void, DatabaseError>> =>
+	withDatabaseResult('Failed to delete clan', async (mysqlDB) => {
 		await mysqlDB.transaction(async (trx) => {
 			await trx('users').where('clan_id', clanId).update({ clan_id: 0 });
 			await trx('clan_invites').where('clan_id', clanId).del();
 			await trx('clans').where('id', clanId).del();
 		});
 		return ok(undefined);
-	} catch (e) {
-		logger.error('Failed to delete clan', e);
-		return err(new DatabaseError('Failed to delete clan'));
-	}
-};
+	});
 
 export const deleteInvite = async (
 	inviteId: number,
 	clanId: number
-): Promise<Result<void, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+): Promise<Result<void, DatabaseError>> =>
+	withDatabaseResult('Failed to cancel invite', async (mysqlDB) => {
 		await mysqlDB('clan_invites').where('id', inviteId).andWhere('clan_id', clanId).del();
 		return ok(undefined);
-	} catch (e) {
-		logger.error('Failed to cancel invite', e);
-		return err(new DatabaseError('Failed to cancel invite'));
-	}
-};
+	});
 
 export const createClan = async (
 	name: string,
 	tag: string,
 	ownerId: number
-): Promise<Result<number, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+): Promise<Result<number, DatabaseError>> =>
+	withDatabaseResult('Failed to create clan', async (mysqlDB) => {
 		const clanId = await mysqlDB.transaction(async (trx) => {
 			const [id] = await trx('clans').insert({
 				name,
@@ -541,39 +428,25 @@ export const createClan = async (
 			return id;
 		});
 		return ok(clanId);
-	} catch (e) {
-		logger.error('Failed to create clan', e);
-		return err(new DatabaseError('Failed to create clan'));
-	}
-};
+	});
 
 export const createJoinRequest = async (
 	clanId: number,
 	userId: number
-): Promise<Result<void, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+): Promise<Result<void, DatabaseError>> =>
+	withDatabaseResult('Failed to request to join clan', async (mysqlDB) => {
 		await mysqlDB('clan_invites').insert({
 			clan_id: clanId,
 			user_id: userId,
 			status: 'request_pending'
 		});
 		return ok(undefined);
-	} catch (e) {
-		logger.error('Failed to request to join clan', e);
-		return err(new DatabaseError('Failed to request to join clan'));
-	}
-};
+	});
 
 export const fetchClanJoinRequests = async (
 	clanId: number
-): Promise<Result<any[], DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+): Promise<Result<any[], DatabaseError>> =>
+	withDatabaseResult('Failed to fetch clan join requests', async (mysqlDB) => {
 		const requests = await mysqlDB('clan_invites')
 			.select(
 				'clan_invites.id',
@@ -585,21 +458,14 @@ export const fetchClanJoinRequests = async (
 			.where('clan_invites.clan_id', clanId)
 			.andWhere('clan_invites.status', 'request_pending');
 		return ok(requests);
-	} catch (e) {
-		logger.error('Failed to fetch clan join requests', e);
-		return err(new DatabaseError('Failed to fetch clan join requests'));
-	}
-};
+	});
 
 export const createJoinRequestResponse = async (
 	requestId: number,
 	clanId: number,
 	status: 'accepted' | 'rejected'
-): Promise<Result<void, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+): Promise<Result<void, DatabaseError>> =>
+	withDatabaseResult('Failed to respond to join request', async (mysqlDB) => {
 		const request = await mysqlDB('clan_invites')
 			.where('id', requestId)
 			.andWhere('clan_id', clanId)
@@ -621,36 +487,22 @@ export const createJoinRequestResponse = async (
 			}
 		});
 		return ok(undefined);
-	} catch (e) {
-		logger.error('Failed to respond to join request', e);
-		return err(new DatabaseError('Failed to respond to join request'));
-	}
-};
+	});
 
 export const updateClanMemberPriv = async (
 	userId: number,
 	priv: number
-): Promise<Result<void, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+): Promise<Result<void, DatabaseError>> =>
+	withDatabaseResult('Failed to update clan member privilege', async (mysqlDB) => {
 		await mysqlDB('users').where('id', userId).update({ clan_priv: priv });
 		return ok(undefined);
-	} catch (e) {
-		logger.error('Failed to update clan member privilege', e);
-		return err(new DatabaseError('Failed to update clan member privilege'));
-	}
-};
+	});
 
 export const createOwnershipTransfer = async (
 	clanId: number,
 	newOwnerId: number
-): Promise<Result<void, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+): Promise<Result<void, DatabaseError>> =>
+	withDatabaseResult('Failed to transfer clan ownership', async (mysqlDB) => {
 		await mysqlDB.transaction(async (trx) => {
 			const clan = await trx('clans').where('id', clanId).first();
 			if (!clan) return;
@@ -662,49 +514,28 @@ export const createOwnershipTransfer = async (
 			await trx('users').where('id', oldOwnerId).update({ clan_priv: 2 });
 		});
 		return ok(undefined);
-	} catch (e) {
-		logger.error('Failed to transfer clan ownership', e);
-		return err(new DatabaseError('Failed to transfer clan ownership'));
-	}
-};
+	});
 
 export const fetchClanMembersWithPriv = async (
 	clanId: number
-): Promise<Result<any[], DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+): Promise<Result<any[], DatabaseError>> =>
+	withDatabaseResult('Failed to fetch clan members', async (mysqlDB) => {
 		const members = await mysqlDB('users')
 			.select('id', 'name', 'country', 'clan_priv')
 			.where('clan_id', clanId);
 		return ok(members);
-	} catch (e) {
-		logger.error('Failed to fetch clan members', e);
-		return err(new DatabaseError('Failed to fetch clan members'));
-	}
-};
+	});
 
-export const deleteClanMember = async (userId: number): Promise<Result<void, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+export const deleteClanMember = async (userId: number): Promise<Result<void, DatabaseError>> =>
+	withDatabaseResult('Failed to kick clan member', async (mysqlDB) => {
 		await mysqlDB('users').where('id', userId).update({ clan_id: 0, clan_priv: 0 });
 		return ok(undefined);
-	} catch (e) {
-		logger.error('Failed to kick clan member', e);
-		return err(new DatabaseError('Failed to kick clan member'));
-	}
-};
+	});
 
 export const fetchUserJoinRequests = async (
 	userId: number
-): Promise<Result<any[], DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+): Promise<Result<any[], DatabaseError>> =>
+	withDatabaseResult('Failed to fetch user join requests', async (mysqlDB) => {
 		const requests = await mysqlDB('clan_invites')
 			.select(
 				'clan_invites.id',
@@ -716,90 +547,51 @@ export const fetchUserJoinRequests = async (
 			.where('clan_invites.user_id', userId)
 			.andWhere('clan_invites.status', 'request_pending');
 		return ok(requests);
-	} catch (e) {
-		logger.error('Failed to fetch user join requests', e);
-		return err(new DatabaseError('Failed to fetch user join requests'));
-	}
-};
+	});
 
 export const updateUserpage = async (
 	userId: number,
 	content: string
-): Promise<Result<void, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+): Promise<Result<void, DatabaseError>> =>
+	withDatabaseResult('Failed to update userpage', async (mysqlDB) => {
 		await mysqlDB('users').where('id', userId).update({ userpage_content: content });
 		return ok(undefined);
-	} catch (e) {
-		logger.error('Failed to update userpage', e);
-		return err(new DatabaseError('Failed to update userpage'));
-	}
-};
+	});
 
 export const createComment = async (
 	userId: number,
 	fromId: number,
 	comment: string
-): Promise<Result<void, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+): Promise<Result<void, DatabaseError>> =>
+	withDatabaseResult('Failed to create comment', async (mysqlDB) => {
 		await mysqlDB('profile_comments').insert({
 			user_id: userId,
 			from_id: fromId,
 			comment: comment
 		});
 		return ok(undefined);
-	} catch (e) {
-		logger.error('Failed to create comment', e);
-		return err(new DatabaseError('Failed to create comment'));
-	}
-};
+	});
 
-export const fetchComment = async (commentId: number): Promise<Result<any, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+export const fetchComment = async (commentId: number): Promise<Result<any, DatabaseError>> =>
+	withDatabaseResult('Failed to fetch comment', async (mysqlDB) => {
 		const comment = await mysqlDB('profile_comments').where('id', commentId).first();
 		return ok(comment);
-	} catch (e) {
-		logger.error('Failed to fetch comment', e);
-		return err(new DatabaseError('Failed to fetch comment'));
-	}
-};
+	});
 
 export const updateComment = async (
 	commentId: number,
 	comment: string
-): Promise<Result<void, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+): Promise<Result<void, DatabaseError>> =>
+	withDatabaseResult('Failed to update comment', async (mysqlDB) => {
 		await mysqlDB('profile_comments').where('id', commentId).update({
 			comment: comment,
 			updated_at: mysqlDB.fn.now()
 		});
 		return ok(undefined);
-	} catch (e) {
-		logger.error('Failed to update comment', e);
-		return err(new DatabaseError('Failed to update comment'));
-	}
-};
+	});
 
-export const deleteComment = async (commentId: number): Promise<Result<void, DatabaseError>> => {
-	try {
-		const mysqlDB = await getMySQLDatabase();
-		if (!mysqlDB) return err(new DatabaseError('Database connection failed'));
-
+export const deleteComment = async (commentId: number): Promise<Result<void, DatabaseError>> =>
+	withDatabaseResult('Failed to delete comment', async (mysqlDB) => {
 		await mysqlDB('profile_comments').where('id', commentId).delete();
 		return ok(undefined);
-	} catch (e) {
-		logger.error('Failed to delete comment', e);
-		return err(new DatabaseError('Failed to delete comment'));
-	}
-};
+	});

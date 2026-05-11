@@ -1,17 +1,19 @@
 import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
+import { withApiErrorHandling } from '$lib/server/http';
 import sharp from 'sharp';
 
-export const POST: RequestHandler = async ({ request, cookies }) => {
-	const sessionToken = cookies.get('sessionToken');
-	const user = await getUserFromSession(sessionToken);
+export const POST: RequestHandler = withApiErrorHandling(
+	'Something went wrong while talking to your AI girlfriend.',
+	async ({ request, cookies }) => {
+		const sessionToken = cookies.get('sessionToken');
+		const user = await getUserFromSession(sessionToken);
 
-	if (!user) {
-		throw error(401, 'Unauthorized: You must be logged in to talk to your AI girlfriend.');
-	}
+		if (!user) {
+			throw error(401, 'Unauthorized: You must be logged in to talk to your AI girlfriend.');
+		}
 
-	try {
 		const { messages, search, image } = await request.json();
 
 		if (!messages || !Array.isArray(messages)) {
@@ -98,11 +100,5 @@ ${searchResults}`;
 			.trim();
 
 		return json({ reply: aiResponse });
-	} catch (err) {
-		if (err && typeof err === 'object' && 'status' in err) {
-			throw err;
-		}
-		console.error('AI Girlfriend API error:', err);
-		throw error(500, 'Something went wrong while talking to your AI girlfriend.');
 	}
-};
+);

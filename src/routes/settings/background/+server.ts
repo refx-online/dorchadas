@@ -8,9 +8,11 @@ import {
 	ensureDirectoryExists,
 	DATA_DIRECTORY
 } from '$lib/image';
+import { withApiErrorHandling } from '$lib/server/http';
 
-export const POST = async ({ request, cookies }) => {
-	try {
+export const POST = withApiErrorHandling(
+	'Failed to upload background',
+	async ({ request, cookies }) => {
 		const sessionToken = cookies.get('sessionToken');
 		if (!sessionToken) {
 			throw error(401, 'Not authenticated');
@@ -32,10 +34,5 @@ export const POST = async ({ request, cookies }) => {
 		await saveImageFile(file, bgDirectory, user.id);
 
 		return json({ success: true, user: { id: user.id } });
-	} catch (err) {
-		if (err && typeof err === 'object' && 'status' in err) {
-			throw err;
-		}
-		throw error(500, 'Failed to upload background');
 	}
-};
+);

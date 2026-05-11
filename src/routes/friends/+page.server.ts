@@ -1,5 +1,5 @@
 import type { PageServerLoad } from '../$types';
-import { getMySQLDatabase } from '../../hooks.server';
+import { getMySQLDatabase } from '$lib/server/connections';
 import { error, redirect } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
 

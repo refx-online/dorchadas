@@ -5,7 +5,24 @@ import svelte from 'eslint-plugin-svelte';
 import svelteParser from 'svelte-eslint-parser';
 
 export default [
+	{
+		ignores: [
+			'node_modules/**',
+			'build/**',
+			'.svelte-kit/**',
+			'package/**',
+			'coverage/**',
+			'static/**'
+		]
+	},
+
 	js.configs.recommended,
+
+	{
+		rules: {
+			'no-empty': ['warn', { allowEmptyCatch: true }]
+		}
+	},
 
 	{
 		files: ['**/*.ts', '**/*.tsx'],
@@ -59,7 +76,16 @@ export default [
 			'@typescript-eslint': tseslint
 		},
 		rules: {
-			...tseslint.configs.recommended.rules
+			...tseslint.configs.recommended.rules,
+			'@typescript-eslint/no-explicit-any': 'warn',
+			'@typescript-eslint/no-unused-vars': [
+				'warn',
+				{
+					argsIgnorePattern: '^_',
+					varsIgnorePattern: '^_',
+					caughtErrorsIgnorePattern: '^_'
+				}
+			]
 		}
 	},
 
@@ -107,14 +133,26 @@ export default [
 				performance: 'readonly',
 				location: 'readonly',
 				confirm: 'readonly',
-				alert: 'readonly'
+				alert: 'readonly',
+				FileReader: 'readonly',
+				Headers: 'readonly',
+				KeyboardEvent: 'readonly',
+				TouchEvent: 'readonly',
+				HTMLDivElement: 'readonly',
+				HTMLFormElement: 'readonly',
+				HTMLImageElement: 'readonly',
+				HTMLInputElement: 'readonly'
 			}
 		},
 		plugins: {
-			svelte
+			svelte,
+			'@typescript-eslint': tseslint
 		},
 		rules: {
-			...svelte.configs.recommended.rules
+			...svelte.configs.recommended.rules,
+			'no-undef': 'off',
+			'no-unused-vars': 'warn',
+			'@typescript-eslint/no-explicit-any': 'warn'
 		}
 	}
 ];

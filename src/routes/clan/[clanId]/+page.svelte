@@ -18,6 +18,31 @@
 
 	let isLoading = false;
 
+	async function submitClanAction(
+		endpoint: string,
+		init: RequestInit,
+		errorMsg: string,
+		onSuccess: () => void | Promise<void>
+	) {
+		isLoading = true;
+
+		try {
+			const response = await fetch(endpoint, init);
+
+			if (!response.ok) {
+				const result = await response.json();
+				alert(result.message || errorMsg);
+				return;
+			}
+
+			await onSuccess();
+		} catch {
+			alert(errorMsg);
+		} finally {
+			isLoading = false;
+		}
+	}
+
 	async function handleClanLeave() {
 		if (
 			!confirm(
@@ -29,66 +54,43 @@
 			return;
 		}
 
-		isLoading = true;
-		try {
-			const response = await fetch(`/clan/${data.clan.id}/leave`, {
-				method: 'POST'
-			});
-
-			if (response.ok) {
+		await submitClanAction(
+			`/api/v1/clans/${data.clan.id}/leave`,
+			{ method: 'POST' },
+			__('An error occurred while leaving the clan', $userLanguage),
+			() => {
 				window.location.href = '/';
-			} else {
-				const result = await response.json();
-				alert(result.message || __('An error occurred while leaving the clan', $userLanguage));
 			}
-		} catch {
-			alert(__('An error occurred while leaving the clan', $userLanguage));
-		} finally {
-			isLoading = false;
-		}
+		);
 	}
 
 	async function handleClanRequest() {
-		isLoading = true;
-		try {
-			const response = await fetch(`/clan/${data.clan.id}/request`, {
-				method: 'POST'
-			});
-
-			if (response.ok) {
+		await submitClanAction(
+			`/api/v1/clans/${data.clan.id}/request`,
+			{ method: 'POST' },
+			__('An error occurred while requesting to join', $userLanguage),
+			() => {
 				alert(__('Request sent successfully!', $userLanguage));
 				invalidateAll();
-			} else {
-				const result = await response.json();
-				alert(result.message || __('An error occurred while requesting to join', $userLanguage));
 			}
-		} catch {
-			alert(__('An error occurred while requesting to join', $userLanguage));
-		} finally {
-			isLoading = false;
-		}
+		);
 	}
 
 	async function performAction(endpoint: string, targetUserId: number, confirmMsg: string) {
 		if (!confirm(confirmMsg)) return;
-		isLoading = true;
-		try {
-			const response = await fetch(`/clan/${data.clan.id}/settings/members/${endpoint}`, {
+
+		await submitClanAction(
+			`/api/v1/clans/${data.clan.id}/settings/members/${endpoint}`,
+			{
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ targetUserId })
-			});
-			if (response.ok) {
+			},
+			__('An error occurred', $userLanguage),
+			() => {
 				invalidateAll();
-			} else {
-				const result = await response.json();
-				alert(result.message || __('An error occurred', $userLanguage));
 			}
-		} catch {
-			alert(__('An error occurred', $userLanguage));
-		} finally {
-			isLoading = false;
-		}
+		);
 	}
 
 	function handleKick(userId: number, userName: string) {
@@ -157,7 +159,7 @@
 						<div class="flex flex-row items-center gap-2 text-xl md:text-2xl">
 							<div class="h-8">
 								<img
-									src="/api/clan/{data.clan.id}/flag"
+									src="/api/v1/clans/{data.clan.id}/flag"
 									alt={data.clan.tag}
 									class="h-full aspect-[3/2] rounded-md object-cover"
 									on:error={handleImageError}

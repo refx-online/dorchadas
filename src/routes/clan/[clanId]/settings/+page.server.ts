@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
 import { fetchClan } from '$lib/api';
-import { isNumber } from '$lib/string-util';
+import { isNumber } from '$lib/string';
 import { fetchClanInvites, fetchClanJoinRequests } from '$lib/db';
 
 export const load = async ({ cookies, params, locals }) => {

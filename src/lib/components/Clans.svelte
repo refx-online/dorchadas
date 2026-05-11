@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { avatarUrl } from '$lib/env';
 	import { userLanguage } from '$lib/storage';
-	import { numberHumanReadable } from '$lib/string-util';
+	import { numberHumanReadable } from '$lib/string';
 	import type { DBClan } from '$lib/types';
 	import { scale } from 'svelte/transition';
 
@@ -38,7 +38,7 @@
 					<div
 						class="h-10 bg-surface-800 rounded-lg overflow-hidden shadow inline-flex items-center justify-center px-2"
 					>
-						<img src="/api/clan/{clan.id}/flag" class="h-full w-auto" alt="flag" />
+						<img src="/api/v1/clans/{clan.id}/flag" class="h-full w-auto" alt="flag" />
 					</div>
 					<div
 						class="min-w-56 text-primary-400 hover:text-primary-200 font-semibold transition-colors cursor-pointer"

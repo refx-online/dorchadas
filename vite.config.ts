@@ -1,8 +1,7 @@
 import { purgeCss } from 'vite-plugin-tailwind-purgecss';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig, type Plugin } from 'vite';
-import { prettytime } from './vite/timeUtil';
-import progress from './vite/buildProgress';
+import { prettytime } from './vite/time';
 
 const devMiddleware: Plugin = {
 	name: 'log-request-middleware',
@@ -28,7 +27,6 @@ const devMiddleware: Plugin = {
 
 export default defineConfig({
 	plugins: [
-		progress(),
 		devMiddleware,
 		sveltekit(),
 		purgeCss({

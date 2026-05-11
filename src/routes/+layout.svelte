@@ -144,9 +144,11 @@
 				const csrfToken = getCsrfToken();
 				if (csrfToken) {
 					if (input instanceof Request) {
-						if (!input.headers.has('X-CSRF-Token')) {
-							input.headers.set('X-CSRF-Token', csrfToken);
+						const headers = new Headers(input.headers);
+						if (!headers.has('X-CSRF-Token')) {
+							headers.set('X-CSRF-Token', csrfToken);
 						}
+						input = new Request(input, { headers });
 					} else {
 						init = init || {};
 						init.headers = init.headers || {};

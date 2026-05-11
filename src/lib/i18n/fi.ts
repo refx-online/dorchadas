@@ -141,14 +141,14 @@ const language: Language = {
 		'More Options': 'Lisää vaihtoehtoja',
 		'Unpin Score': 'Poista tuloksen kiinnitys',
 		'Pin Score': 'Kiinnitä tulos',
-		'BBCode': 'BBCode',
+		BBCode: 'BBCode',
 		'How to connect': 'Miten yhdistää',
 		'show less': 'näytä vähemmän',
 		'Post Comment': 'Lähetä kommentti',
 		'Please sign in to leave a comment': 'Kirjaudu sisään jättääksesi kommentin',
 		'Loading comments...': 'Ladataan kommentteja...',
 		'No comments yet': 'Ei vielä kommentteja',
-		'edited': 'muokattu'
+		edited: 'muokattu'
 	}
 };
 

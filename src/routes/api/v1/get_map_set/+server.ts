@@ -1,9 +1,11 @@
 import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from '@sveltejs/kit';
-import { getMySQLDatabase } from '../../../../hooks.server';
+import { getMySQLDatabase } from '$lib/server/connections';
+import { withApiErrorHandling } from '$lib/server/http';
 
-export const GET: RequestHandler = async ({ url }) => {
-	try {
+export const GET: RequestHandler = withApiErrorHandling(
+	'Failed to fetch beatmap set',
+	async ({ url }) => {
 		const mysqlDB = await getMySQLDatabase();
 		if (!mysqlDB) {
 			throw error(500, 'Database connection failed');
@@ -34,10 +36,5 @@ export const GET: RequestHandler = async ({ url }) => {
 				md5: map.md5
 			}))
 		});
-	} catch (err) {
-		if (err && typeof err === 'object' && 'status' in err) {
-			throw err;
-		}
-		throw error(500, 'Failed to fetch beatmap set');
 	}
-};
+);

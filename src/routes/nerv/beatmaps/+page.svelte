@@ -4,11 +4,8 @@
 	import { scale } from 'svelte/transition';
 	import { Music, AlertTriangle, CheckCircle } from 'svelte-feathers';
 	import { RankedStatus, statusIntToString } from '$lib/beatmap-status';
-	import type { PageData } from './$types';
 	import { fetchBeatmap } from '$lib/api';
 	import { invalidateAll } from '$app/navigation';
-
-	export let data: PageData;
 
 	let beatmapId: string = '';
 	let beatmapIdError: string = '';

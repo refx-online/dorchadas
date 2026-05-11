@@ -1,12 +1,13 @@
 import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from '@sveltejs/kit';
-import { getMySQLDatabase, getRedisClient } from '../../../../../hooks.server';
+import { getMySQLDatabase, getRedisClient } from '$lib/server/connections';
 import { getUserFromSession } from '$lib/user';
 import { isStaff } from '$lib/privs';
 import { RankedStatus, statusStringToId } from '$lib/beatmap-status';
 import { fetchPlayerStatus } from '$lib/api';
 import { env } from '$env/dynamic/private';
 import { env as pubEnv } from '$env/dynamic/public';
+import { withApiErrorHandling } from '$lib/server/http';
 
 const REFX_REFRESH_CHANNEL = 'refx:refresh_bmap_cache';
 const FORLORN_REFRESH_CHANNEL = 'forlorn:refresh_map';
@@ -110,8 +111,9 @@ const sendDiscordWebhookRank = async (beatmap: any, user: any, newStatus: Ranked
 	} catch {}
 };
 
-export const POST: RequestHandler = async ({ request, cookies }) => {
-	try {
+export const POST: RequestHandler = withApiErrorHandling(
+	'Failed to update beatmap status',
+	async ({ request, cookies }) => {
 		const sessionUser = await getUserFromSession(cookies.get('sessionToken'));
 		if (!sessionUser || !isStaff(sessionUser.priv)) {
 			throw error(403, 'Unauthorized: Staff permission required');
@@ -227,10 +229,5 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 				status: updatedBeatmap.status
 			}
 		});
-	} catch (err) {
-		if (err && typeof err === 'object' && 'status' in err) {
-			throw err;
-		}
-		throw error(500, 'Failed to update beatmap status');
 	}
-};
+);

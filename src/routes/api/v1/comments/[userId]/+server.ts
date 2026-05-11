@@ -1,9 +1,11 @@
 import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from '@sveltejs/kit';
-import { getMySQLDatabase } from '../../../../../hooks.server';
+import { getMySQLDatabase } from '$lib/server/connections';
+import { withApiErrorHandling } from '$lib/server/http';
 
-export const GET: RequestHandler = async ({ params }) => {
-	try {
+export const GET: RequestHandler = withApiErrorHandling(
+	'Failed to fetch comments',
+	async ({ params }) => {
 		const mysqlDatabase = await getMySQLDatabase();
 		if (!mysqlDatabase) {
 			throw error(500, 'Database connection failed');
@@ -16,10 +18,5 @@ export const GET: RequestHandler = async ({ params }) => {
 			.orderBy('profile_comments.created_at', 'desc');
 
 		return json(comments);
-	} catch (err) {
-		if (err && typeof err === 'object' && 'status' in err) {
-			throw err;
-		}
-		throw error(500, 'Failed to fetch comments');
 	}
-};
+);

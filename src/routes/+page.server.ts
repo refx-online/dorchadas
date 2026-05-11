@@ -1,5 +1,5 @@
 import { fetchPlayerCounts } from '$lib/api';
-import { getMySQLDatabase } from '../hooks.server';
+import { getMySQLDatabase } from '$lib/server/connections';
 import type { DBUser } from '$lib/types';
 
 export const load = async () => {

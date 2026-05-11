@@ -9,11 +9,11 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { queryParam } from 'sveltekit-search-params';
 	import Edit2 from 'svelte-feathers/Edit2.svelte';
-	import type { Clan, PlayerStatus } from '$lib/types';
+	import type { Clan, PlayerStatus, ppProfileHistory } from '$lib/types';
 	import { fetchClan, fetchPlayerStatus } from '$lib/api';
 	import { userData, userLanguage } from '$lib/storage';
 	import { getCountryName } from '$lib/country';
-	import { numberHumanReadable } from '$lib/string-util';
+	import { numberHumanReadable } from '$lib/string';
 	import { secondsToDHM, secondsToHours } from '$lib/time';
 	import UserScores from '$lib/components/UserScores.svelte';
 	import { removeTrailingZeroes } from '$lib/regex';
@@ -47,6 +47,7 @@
 	let currentType = 'vanilla';
 	let currentModeInt: number = 0;
 	let playerStatus: PlayerStatus | undefined;
+	let ppHistoryData: (ppProfileHistory | null)[] = data.ppHistoryData ?? Array(21).fill(null);
 
 	// NOTE: this is so cursed, please kill me
 	let level = tweened(0, {
@@ -216,6 +217,22 @@
 			shGrade.set(data.user.stats[currentModeInt].sh_count);
 			sGrade.set(data.user.stats[currentModeInt].s_count);
 			aGrade.set(data.user.stats[currentModeInt].a_count);
+
+			if (!ppHistoryData[currentModeInt]) {
+				const history = await fetch(
+					`/api/v1/users/${data.user.info.id}/history?scope=pp&mode=${currentModeInt}`
+				)
+					.then((response) => (response.ok ? response.json() : null))
+					.catch(() => null);
+
+				if (history) {
+					ppHistoryData = [
+						...ppHistoryData.slice(0, currentModeInt),
+						history as ppProfileHistory,
+						...ppHistoryData.slice(currentModeInt + 1)
+					];
+				}
+			}
 		}
 		loading = false;
 	};
@@ -563,7 +580,7 @@
 							{#if clan}
 								<a class="h-8" href="/clan/{clan.id}">
 									<img
-										src="/api/clan/{clan.id}/flag"
+										src="/api/v1/clans/{clan.id}/flag"
 										alt={clan.tag}
 										class="h-full aspect-[3/2] rounded-md object-cover"
 										on:error={handleImageError}
@@ -655,7 +672,7 @@
 								</div>
 							</div>
 							{#if data.user?.info.id && typeof currentModeInt === 'number' && currentModeInt >= 0 && currentModeInt <= 20}
-								<UserGraph ppHistory={data.ppHistoryData?.[currentModeInt] ?? undefined} />
+								<UserGraph ppHistory={ppHistoryData[currentModeInt] ?? undefined} />
 							{:else}
 								<div class="flex items-center justify-center h-16 text-surface-400">No result</div>
 							{/if}

@@ -86,30 +86,26 @@
 	};
 
 	const handlePinScore = async (score: PlayerScore) => {
-		try {
-			const response = await fetch('/api/v1/pin_score', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					score_id: score.id,
-					pinned: score.pinned === 1,
-					current_user_id: currentUserId,
-					user_id: userId
-				})
-			});
+		const response = await fetch('/api/v1/pin_score', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				score_id: score.id,
+				pinned: score.pinned === 1,
+				current_user_id: currentUserId,
+				user_id: userId
+			})
+		});
 
-			if (!response.ok) {
-				throw new Error('Failed to pin/unpin score');
-			}
-
-			// TODO: we should not reload the page, but rather update the scores list
-			location.reload();
-			openMenuIndex = null;
-		} catch (error) {
-			throw error;
+		if (!response.ok) {
+			throw new Error('Failed to pin/unpin score');
 		}
+
+		// TODO: we should not reload the page, but rather update the scores list
+		location.reload();
+		openMenuIndex = null;
 	};
 
 	// pasted from soemwhere

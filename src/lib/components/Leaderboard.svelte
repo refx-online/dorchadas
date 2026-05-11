@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { numberHumanReadable } from '$lib/string-util';
+	import { numberHumanReadable } from '$lib/string';
 	import type { LBUser } from '$lib/types';
 	import { fade } from 'svelte/transition';
 	import { removeTrailingZeroes } from '$lib/regex';
@@ -83,7 +83,7 @@
 									{#if user.clan_tag}
 										<a class="!text-xs p-1.5 py-0.5 min-w-7 !h-6" href="/clan/{user.clan_id}">
 											<img
-												src="/api/clan/{user.clan_id}/flag"
+												src="/api/v1/clans/{user.clan_id}/flag"
 												alt={user.clan_tag}
 												class="h-full aspect-[3/2] rounded-md object-cover"
 												on:error={handleImageError}

@@ -16,8 +16,6 @@
 	import { Turnstile } from 'svelte-turnstile';
 	import { fly, scale } from 'svelte/transition';
 
-	export let data;
-
 	const turnstileSiteKey = env.PUBLIC_TURNSTILE_SITE_KEY;
 
 	const toastStore = getToastStore();

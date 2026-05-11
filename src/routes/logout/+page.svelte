@@ -5,8 +5,6 @@
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
 
-	export let data;
-
 	const toastStore = getToastStore();
 
 	onMount(async () => {

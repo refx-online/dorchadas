@@ -41,7 +41,7 @@
 					</li>
 					<li>
 						<a
-							href={`${githubUrl}/bpy-web`}
+							href={githubUrl}
 							target="_blank"
 							rel="noopener noreferrer"
 							class="hover:text-primary-400 transition-colors">Source Code</a

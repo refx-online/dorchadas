@@ -1,4 +1,4 @@
-import { getMySQLDatabase, getRedisClient } from '../../../../hooks.server';
+import { getMySQLDatabase, getRedisClient } from '$lib/server/connections';
 import type { DBUser } from '$lib/types';
 import type { Actions } from '../../$types';
 import { getUserFromSession } from '$lib/user';

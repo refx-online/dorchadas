@@ -1,7 +1,7 @@
 import { fetchClan } from '$lib/api';
-import { isNumber } from '$lib/string-util.js';
+import { isNumber } from '$lib/string.js';
 import { getUserFromSession } from '$lib/user';
-import { getMySQLDatabase } from '../../../hooks.server.js';
+import { getMySQLDatabase } from '$lib/server/connections';
 import { fetchClanMembersWithPriv } from '$lib/db.js';
 
 export async function load({ params, cookies, locals }) {

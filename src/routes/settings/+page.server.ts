@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
 import { fail, error } from '@sveltejs/kit';
-import { getMySQLDatabase } from '../../hooks.server';
+import { getMySQLDatabase } from '$lib/server/connections';
 import { usernameRegex } from '$lib/regex';
 import { env } from '$env/dynamic/private';
 import { logger } from '$lib/logger';

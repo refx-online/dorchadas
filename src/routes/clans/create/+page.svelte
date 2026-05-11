@@ -4,7 +4,6 @@
 	import { appName } from '$lib/env';
 	import { enhance } from '$app/forms';
 
-	export let data;
 	export let form;
 
 	let isLoading = false;

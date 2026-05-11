@@ -17,8 +17,6 @@
 	import { fly, scale } from 'svelte/transition';
 	import { usernameRegex } from '$lib/regex';
 
-	export let data;
-
 	const turnstileSiteKey = env.PUBLIC_TURNSTILE_SITE_KEY;
 
 	const toastStore = getToastStore();

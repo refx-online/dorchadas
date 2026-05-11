@@ -1,5 +1,5 @@
 import { getUserFromSession } from '$lib/user';
-import { getRedisClient } from '../hooks.server';
+import { getRedisClient } from '$lib/server/connections';
 import dayjs from 'dayjs';
 
 export async function load({ url, cookies, locals }) {

@@ -290,7 +290,7 @@
 							{#if data.clanData}
 								<a class="h-6" href="/clan/{data.clanData.id}">
 									<img
-										src="/api/clan/{data.clanData.id}/flag"
+										src="/api/v1/clans/{data.clanData.id}/flag"
 										alt={data.clanData.tag}
 										class="h-full aspect-[3/2] rounded-md object-cover"
 										on:error={(e) => {

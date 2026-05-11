@@ -1,5 +1,5 @@
 import { fetchPlayerCounts } from '$lib/api';
-import { getMySQLDatabase } from '../../hooks.server';
+import { getMySQLDatabase } from '$lib/server/connections';
 import { redirect } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
 import { isStaff, Privileges } from '$lib/privs';
