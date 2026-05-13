@@ -92,7 +92,10 @@
 		urlParams.set('offset', ((currentPage - 1) * clansPerPage).toFixed(0));
 
 		try {
-			const leaderboard = await fetch('?' + urlParams.toString(), { method: 'POST' });
+			const leaderboard = await fetch('/api/v1/clans?' + urlParams.toString(), {
+				method: 'POST'
+			});
+			if (!leaderboard.ok) throw new Error('Failed to load clan leaderboard');
 			const leaderboardJSON = await leaderboard.json();
 			hasNextPage = leaderboardJSON.length >= clansPerPage;
 			currentLeaderboard = leaderboardJSON;

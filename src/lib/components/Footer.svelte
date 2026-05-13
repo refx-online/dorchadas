@@ -10,7 +10,7 @@
 	import { userLanguage } from '$lib/storage';
 </script>
 
-<footer class="backdrop-blur-md bg-black/10 border-t border-white/5">
+<footer class="glass-depth backdrop-blur-md bg-black/10 border-t border-white/5">
 	<div class="p-3">
 		<div class="container mx-auto grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
 			<div>

@@ -57,8 +57,8 @@
 
 <div class="container mx-auto w-full p-3 sm:p-5 relative z-0">
 	{#if data.score && data.beatmap}
-		<div class="mx-auto max-w-6xl relative z-10">
-			<div class="relative bg-gray-900 rounded-t-lg overflow-hidden">
+		<div class="mx-auto max-w-6xl relative z-10 glass-depth rounded-lg overflow-hidden">
+			<div class="relative bg-black/45 rounded-t-lg overflow-hidden">
 				<div class="relative z-10 p-4 sm:p-6">
 					<div class="text-xs text-gray-300 mb-1">performance</div>
 					<h1
@@ -66,7 +66,7 @@
 					>
 						<a
 							href="/beatmaps/{data.beatmap.id}"
-							class="hover:text-blue-400 transition-colors cursor-pointer break-words"
+							class="hover:text-white transition-colors cursor-pointer break-words"
 						>
 							{data.beatmap.title} by {data.beatmap.artist}
 						</a>
@@ -199,7 +199,7 @@
 										<span class="text-gray-300">Played by</span>
 										<a
 											href="/u/{data.score.userid}"
-											class="text-blue-400 hover:text-blue-300 font-semibold transition-colors cursor-pointer break-all"
+											class="text-gray-100 hover:text-white font-semibold transition-colors cursor-pointer break-all"
 										>
 											{data.player?.name}
 										</a>
@@ -272,7 +272,7 @@
 				</div>
 			</div>
 
-			<div class="relative bg-gray-700 rounded-b-lg overflow-hidden">
+			<div class="relative bg-white/[0.04] rounded-b-lg overflow-hidden">
 				<div
 					class="relative z-10 p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4"
 				>
@@ -314,7 +314,7 @@
 							{/if}
 							<a
 								href="/u/{data.score.userid}"
-								class="text-white font-semibold text-base sm:text-lg hover:text-blue-400 transition-colors cursor-pointer break-all"
+								class="text-white font-semibold text-base sm:text-lg hover:text-gray-200 transition-colors cursor-pointer break-all"
 							>
 								{data.player?.name}
 							</a>

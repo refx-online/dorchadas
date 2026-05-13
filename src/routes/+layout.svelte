@@ -172,7 +172,7 @@
 			return originalFetch(input, init);
 		};
 
-		window.addEventListener('submit', (event) => {
+		const handleSubmit = (event: SubmitEvent) => {
 			const form = event.target as HTMLFormElement;
 			const method = form.method.toUpperCase();
 			const action = form.getAttribute('action') || '';
@@ -188,20 +188,32 @@
 					form.appendChild(input);
 				}
 			}
-		});
+		};
+		window.addEventListener('submit', handleSubmit);
 
 		const pageMain = document.getElementById('page');
+		let handlePageScroll: (() => void) | undefined;
+		let handleResize: (() => void) | undefined;
 		if (pageMain) {
 			showStickyNav = pageMain.scrollTop > 100;
-			pageMain.addEventListener('scroll', () => {
+			handlePageScroll = () => {
 				showStickyNav = pageMain.scrollTop > 100;
-			});
+			};
+			pageMain.addEventListener('scroll', handlePageScroll);
 
-			window.addEventListener('resize', () => {
+			handleResize = () => {
 				showStickyNav = pageMain.scrollTop > 100;
 				drawerStore.close();
-			});
+			};
+			window.addEventListener('resize', handleResize);
 		}
+
+		return () => {
+			window.removeEventListener('submit', handleSubmit);
+			window.fetch = originalFetch;
+			if (pageMain && handlePageScroll) pageMain.removeEventListener('scroll', handlePageScroll);
+			if (handleResize) window.removeEventListener('resize', handleResize);
+		};
 	});
 </script>
 
@@ -329,6 +341,12 @@
 	</div>
 {/if}
 
+<div class="site-atmosphere" aria-hidden="true">
+	<div class="atmosphere-glow glow-a"></div>
+	<div class="atmosphere-grid"></div>
+	<div class="atmosphere-noise"></div>
+</div>
+
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-missing-attribute -->
@@ -341,9 +359,9 @@
 				out:fly={{ y: -15, duration: 200 }}
 			>
 				<div
-					class="mx-auto border {showStickyNav
-						? 'mt-2 w-[85%] bg-surface-700/95 rounded-lg border-surface-500'
-						: 'w-[100%] bg-surface-700 border-surface-700'}  transition-all duration-700 z-[9999]"
+					class="neo-navbar mx-auto border {showStickyNav
+						? 'mt-2 w-[85%] rounded-lg'
+						: 'w-[100%]'}  transition-all duration-700 z-[9999]"
 				>
 					<div class="flex p-2 px-4 flex-row justify-between items-center gap-2">
 						<a

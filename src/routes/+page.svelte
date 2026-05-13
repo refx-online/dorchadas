@@ -132,6 +132,7 @@
 	</video>
 
 	<div class="video-blur-overlay"></div>
+	<div class="home-hud" aria-hidden="true"></div>
 
 	<div class="overlay">
 		<div
@@ -139,12 +140,14 @@
 		>
 			<!-- Minimal Centered Hero -->
 			<div
-				class="w-full max-w-3xl text-center mb-10"
+				class="hero-core w-full max-w-3xl text-center mb-10"
 				in:scale={{ duration: 1000, start: 0.95, delay: 100 }}
 			>
-				<h1 class="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">{appName}</h1>
+				<h1 class="hero-title text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">
+					{appName}
+				</h1>
 				<p
-					class="text-lg md:text-xl text-white/80 leading-relaxed"
+					class="hero-copy text-lg md:text-xl text-white/80 leading-relaxed"
 					in:fly={{ y: 20, duration: 800, delay: 300 }}
 				>
 					a rich-feature osu! private server. we serve stable - our custom client - aeris - even
@@ -155,16 +158,16 @@
 			<!-- Stats Row -->
 			{#if data.userCounts?.counts}
 				<div
-					class="grid grid-cols-2 gap-6 w-full max-w-2xl mx-auto mb-6"
+					class="depth-near grid grid-cols-2 gap-6 w-full max-w-2xl mx-auto mb-6"
 					in:fly={{ y: 30, duration: 800, delay: 500 }}
 				>
-					<div class="variant-glass-surface rounded-xl p-6 text-center hover-lift">
+					<div class="variant-glass-surface glass-hover rounded-xl p-6 text-center hover-lift">
 						<h3 class="text-lg font-bold text-primary-400 mb-2">{__('Online', $userLanguage)}</h3>
 						<p class="text-2xl font-semibold text-white">
 							{animatedOnline.toLocaleString()}
 						</p>
 					</div>
-					<div class="variant-glass-surface rounded-xl p-6 text-center hover-lift">
+					<div class="variant-glass-surface glass-hover rounded-xl p-6 text-center hover-lift">
 						<h3 class="text-lg font-bold text-secondary-400 mb-2">
 							{__('Registered', $userLanguage)}
 						</h3>
@@ -177,7 +180,7 @@
 
 			<!-- Auth Buttons -->
 			<div
-				class="grid grid-cols-2 gap-6 w-full max-w-2xl mx-auto mb-16"
+				class="depth-mid grid grid-cols-2 gap-6 w-full max-w-2xl mx-auto mb-16"
 				in:fly={{ y: 30, duration: 800, delay: 700 }}
 			>
 				{#if $userData}
@@ -211,11 +214,13 @@
 
 			<!-- Lower Balanced Section (Discord + Stats stack) -->
 			<div
-				class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl mx-auto opacity-90 hover:opacity-100 transition-opacity"
+				class="depth-far grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl mx-auto opacity-90 hover:opacity-100 transition-opacity"
 				in:fly={{ y: 40, duration: 1000, delay: 900 }}
 			>
 				<!-- Discord Widget -->
-				<div class="variant-glass-surface rounded-xl p-4 h-full min-h-[300px] flex flex-col">
+				<div
+					class="variant-glass-surface glass-hover rounded-xl p-4 h-full min-h-[300px] flex flex-col"
+				>
 					<h3 class="text-sm font-semibold text-white/60 mb-3 ml-1">
 						{__('Community Server', $userLanguage)}
 					</h3>
@@ -236,12 +241,14 @@
 				<div class="flex flex-col gap-6 h-full justify-between">
 					<!-- Ranked Maps -->
 					{#if data.rankedMapsCount}
-						<div class="variant-glass-surface rounded-xl p-4 flex flex-col justify-center flex-1">
+						<div
+							class="variant-glass-surface glass-hover rounded-xl p-4 flex flex-col justify-center flex-1"
+						>
 							<div class="flex justify-between items-center">
 								<h3 class="text-sm font-semibold text-white/60">
 									{__('Maps Ranked', $userLanguage)}
 								</h3>
-								<ChevronsUp class="text-blue-400/50 w-5 h-5" />
+								<ChevronsUp class="text-white/40 w-5 h-5" />
 							</div>
 							<p class="text-xl font-bold text-tertiary-400 mt-1">
 								{data.rankedMapsCount.toLocaleString()}
@@ -251,7 +258,9 @@
 
 					<!-- PP Records Mini -->
 					{#if data.ppRecords && data.ppRecords.length}
-						<div class="variant-glass-surface rounded-xl p-4 flex flex-col justify-center flex-1">
+						<div
+							class="variant-glass-surface glass-hover rounded-xl p-4 flex flex-col justify-center flex-1"
+						>
 							<div class="flex justify-between items-center mb-2">
 								<h3 class="text-sm font-semibold text-white/60">
 									{__('PP Record', $userLanguage)}
@@ -289,7 +298,9 @@
 
 					<!-- Recent Accounts Mini -->
 					{#if data.recentAccounts && data.recentAccounts.length}
-						<div class="variant-glass-surface rounded-xl p-4 flex flex-col justify-center flex-1">
+						<div
+							class="variant-glass-surface glass-hover rounded-xl p-4 flex flex-col justify-center flex-1"
+						>
 							<div class="flex justify-between items-center mb-2">
 								<h3 class="text-sm font-semibold text-white/60">
 									{__('New Player', $userLanguage)}
