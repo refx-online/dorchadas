@@ -7,6 +7,11 @@
 	import { fetchBeatmap } from '$lib/api';
 	import { invalidateAll } from '$app/navigation';
 
+	import type { PageData } from './$types';
+
+	export let data: PageData;
+
+	let queue = data.queue;
 	let beatmapId: string = '';
 	let beatmapIdError: string = '';
 	let beatmapInfo: any = null;
@@ -44,18 +49,32 @@
 		return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 	};
 
+	const parseBeatmapId = (input: string): number | null => {
+		const s = input.trim();
+		// beatmapsets/xxx#osu/yyy  → difficulty id (yyy)
+		const setHash = s.match(/beatmapsets\/\d+#\w+\/(\d+)/);
+		if (setHash) return parseInt(setHash[1]);
+		// /b/xxx or /beatmaps/xxx → difficulty id
+		const bSlash = s.match(/\/(?:b|beatmaps)\/(\d+)/);
+		if (bSlash) return parseInt(bSlash[1]);
+		// /s/xxx or /beatmapsets/xxx → set id (we'll treat as map id; server resolves)
+		const sSlash = s.match(/\/(?:s|beatmapsets)\/(\d+)/);
+		if (sSlash) return parseInt(sSlash[1]);
+		// plain number
+		const n = parseInt(s);
+		return isNaN(n) || n <= 0 ? null : n;
+	};
+
 	const validateBeatmapId = () => {
+		const id = parseBeatmapId(beatmapId);
 		if (!beatmapId.trim()) {
 			beatmapIdError = 'Beatmap ID is required';
 			return false;
 		}
-
-		const numericId = parseInt(beatmapId.trim());
-		if (isNaN(numericId) || numericId <= 0) {
-			beatmapIdError = 'Beatmap ID must be a positive number';
+		if (!id) {
+			beatmapIdError = 'Enter a valid beatmap ID or osu! URL';
 			return false;
 		}
-
 		beatmapIdError = '';
 		return true;
 	};
@@ -68,7 +87,7 @@
 		actionMessage = '';
 
 		try {
-			const result = await fetchBeatmap(Number(beatmapId));
+			const result = await fetchBeatmap(parseBeatmapId(beatmapId)!);
 
 			if (!result.ok || !result.value.map) {
 				throw new Error('Beatmap not found');
@@ -219,6 +238,20 @@
 		}
 	};
 
+	const loadFromQueue = (mapId: number) => {
+		beatmapId = mapId.toString();
+		fetchBeatmapInfo();
+	};
+
+	const dismissRequest = async (id: number) => {
+		await fetch('/api/v1/beatmaps/queue/dismiss', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ id })
+		});
+		queue = queue.filter((r) => r.id !== id);
+	};
+
 	onMount(() => {
 		const urlBeatmapId = new URLSearchParams(window.location.search).get('id');
 		if (urlBeatmapId && /^\d+$/.test(urlBeatmapId)) {
@@ -254,7 +287,7 @@
 						id="beatmap-id"
 						bind:value={beatmapId}
 						on:input={() => (beatmapIdError = '')}
-						placeholder="Enter beatmap ID..."
+						placeholder="Beatmap ID or osu! URL..."
 						class:error={beatmapIdError}
 					/>
 					<button class="lookup-btn" on:click={fetchBeatmapInfo} disabled={isLoading}>
@@ -411,6 +444,41 @@
 			</div>
 		</div>
 	{/if}
+
+	<div class="ranking-queue">
+		<h3>Ranking Queue ({queue.length})</h3>
+		{#if queue.length === 0}
+			<div class="queue-empty">// No pending requests //</div>
+		{:else}
+			<div class="actions-list">
+				{#each queue as req (req.id)}
+					<div class="action-item action-pending" transition:scale={{ start: 0.98, duration: 200 }}>
+						<div class="action-header">
+							<div class="action-id">#{req.map_id}</div>
+							<div class="queue-meta">
+								requested by <strong>{req.requester}</strong> ·
+								{new Date(req.datetime).toLocaleDateString()}
+							</div>
+						</div>
+						<div class="action-content">
+							<div class="action-title">{req.artist} - {req.title}</div>
+							<div class="action-artist">[{req.version}]</div>
+						</div>
+						<div class="queue-actions">
+							<!-- svelte-ignore a11y-click-events-have-key-events -->
+							<!-- svelte-ignore a11y-no-static-element-interactions -->
+							<button class="scope-btn active" on:click={() => loadFromQueue(req.map_id)}>
+								LOAD
+							</button>
+							<!-- svelte-ignore a11y-click-events-have-key-events -->
+							<!-- svelte-ignore a11y-no-static-element-interactions -->
+							<button class="scope-btn" on:click={() => dismissRequest(req.id)}>DISMISS</button>
+						</div>
+					</div>
+				{/each}
+			</div>
+		{/if}
+	</div>
 
 	<div class="recent-actions">
 		<h3>Recent Actions</h3>

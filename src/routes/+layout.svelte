@@ -352,7 +352,7 @@
 <!-- svelte-ignore a11y-missing-attribute -->
 <AppShell>
 	<svelte:fragment slot="header">
-		{#if ($page.data.url != '/signin' && $page.data.url != '/signup' && $page.data.url != '/nerv') || $page.status != 200}
+		{#if (($page.data.url != '/signin' && $page.data.url != '/signup' && $page.data.url != '/nerv') || $page.status != 200) && !isNervPath}
 			<div
 				class="fixed w-full"
 				in:fly={{ y: -15, duration: 200, delay: 200 }}
