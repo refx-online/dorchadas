@@ -381,7 +381,7 @@ export const actions: Actions = {
 			});
 
 			await trx('scores').whereIn('mode', modes).where('userid', userId).del();
-			await trx('users_log').where('userid', userId).del();
+			await trx('users_log').where('user_id', userId).del();
 		});
 
 		for (const mode of modes) {
