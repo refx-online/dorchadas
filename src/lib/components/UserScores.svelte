@@ -201,7 +201,7 @@
 								class="flex flex-col md:flex-row gap-1 md:justify-start items-center mt-2 md:mt-0 md:items-center"
 							>
 								<div class="flex flex-row gap-1 md:gap-0 items-center">
-									{#each parseModsInt(score.mods, score.mods_json) as mod}
+									{#each parseModsInt(score.mods, score.mods_json, score.clock_rate) as mod}
 										<Mod {mod} size={20} tooltip={true} showSettings={true}></Mod>
 									{/each}
 								</div>

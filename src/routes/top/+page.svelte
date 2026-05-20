@@ -298,8 +298,8 @@
 								>
 									{score.grade.replaceAll('XH', 'SS').replaceAll('X', 'SS').replaceAll('SH', 'S')}
 								</span>
-								<div class="flex flex-row gap-0.5">
-									{#each parseModsInt(score.mods, score.mods_json) as mod}
+								<div class="flex flex-row gap-0.5 items-center">
+									{#each parseModsInt(score.mods, score.mods_json, score.clock_rate) as mod}
 										<Mod {mod} size={16} tooltip={true} showSettings={true} />
 									{/each}
 								</div>

@@ -43,7 +43,8 @@ export const modNames: { [mod_short: string]: string } = {
 
 export const parseModsInt = (
 	modsInt: number | null,
-	mods_json?: { acronym: string; settings: Record<string, any> }[]
+	mods_json?: { acronym: string; settings: Record<string, any> }[],
+	clock_rate?: number | null
 ) => {
 	const activatedMods: Mod[] = [];
 
@@ -62,6 +63,7 @@ export const parseModsInt = (
 	// Check if either DT or SD is present, and if NC or PF is also present
 	const hasNC = modsInt! & mods.NC;
 	const hasPF = modsInt! & mods.PF;
+	const speedMod = hasNC ? 'NC' : modsInt! & mods.DT ? 'DT' : modsInt! & mods.HT ? 'HT' : null;
 
 	for (const mod in mods) {
 		// Exclude DT or SD if NC or PF is present
@@ -73,9 +75,14 @@ export const parseModsInt = (
 		}
 
 		if (modsInt! & mods[mod]) {
+			const settings =
+				clock_rate != null && clock_rate !== -1 && mod === speedMod
+					? { clock_rate }
+					: undefined;
 			activatedMods.push({
 				name: modNames[mod],
-				short_name: mod
+				short_name: mod,
+				settings
 			});
 		}
 	}

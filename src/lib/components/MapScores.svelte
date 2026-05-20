@@ -155,8 +155,8 @@
 								</Popup>
 							</td>
 							<td class="w-[1%] whitespace-nowrap !rounded-e-lg content-center text-start">
-								<div class="flex flex-row gap-0.5">
-									{#each parseModsInt(score.mods, score.mods_json) as mod}
+								<div class="flex flex-row gap-0.5 items-center">
+									{#each parseModsInt(score.mods, score.mods_json, score.clock_rate) as mod}
 										<Mod {mod} size={18} tooltip={true}></Mod>
 									{/each}
 								</div>
