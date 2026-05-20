@@ -273,16 +273,18 @@
 					<div class="privileges-grid">
 						{#each WIPE_MODES as m}
 							<label class="privilege-checkbox">
-								<input
-									type="checkbox"
-									bind:group={wipeSelectedModes}
-									value={m.value}
-								/>
+								<input type="checkbox" bind:group={wipeSelectedModes} value={m.value} />
 								<span class="privilege-label">{m.label}</span>
 							</label>
 						{/each}
 					</div>
-					<button class="cancel-button mt-2" on:click={() => { showWipeConfirm = false; wipeSelectedModes = []; }}>
+					<button
+						class="cancel-button mt-2"
+						on:click={() => {
+							showWipeConfirm = false;
+							wipeSelectedModes = [];
+						}}
+					>
 						Cancel
 					</button>
 				</div>

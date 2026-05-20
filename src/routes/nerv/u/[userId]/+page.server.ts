@@ -330,7 +330,12 @@ export const actions: Actions = {
 		const data = await request.formData();
 		const userId = Number(data.get('userId'));
 		const modesParam = data.get('modes')?.toString();
-		const modes = modesParam ? modesParam.split(',').map(Number).filter((n) => !isNaN(n)) : [];
+		const modes = modesParam
+			? modesParam
+					.split(',')
+					.map(Number)
+					.filter((n) => !isNaN(n))
+			: [];
 
 		const sessionUser = await getUserFromSession(cookies.get('sessionToken'));
 		if (!isAdmin(sessionUser?.priv)) {
