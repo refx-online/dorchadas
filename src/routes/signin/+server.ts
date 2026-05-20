@@ -52,8 +52,11 @@ export const POST = async ({ cookies, request, getClientAddress }) => {
 
 	cookies.set('sessionToken', sessionToken, {
 		path: '/',
+		httpOnly: true,
+		secure: process.env.NODE_ENV === 'production',
+		sameSite: 'strict',
 		priority: 'high',
-		maxAge: sessionExpiry.toDate().getTime()
+		maxAge: 60 * 60 * 24 * 30 // 30 days in seconds
 	});
 
 	return json({

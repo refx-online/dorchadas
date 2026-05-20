@@ -2,7 +2,12 @@ import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
 import { withApiErrorHandling } from '$lib/server/http';
+import { getRedisClient } from '$lib/server/connections';
+import { logger } from '$lib/logger';
 import sharp from 'sharp';
+
+const RATE_LIMIT_WINDOW = 60; // seconds
+const RATE_LIMIT_MAX = 10; // requests per window
 
 export const POST: RequestHandler = withApiErrorHandling(
 	'Something went wrong while talking to your AI girlfriend.',
@@ -12,6 +17,16 @@ export const POST: RequestHandler = withApiErrorHandling(
 
 		if (!user) {
 			throw error(401, 'Unauthorized: You must be logged in to talk to your AI girlfriend.');
+		}
+
+		const redisClient = await getRedisClient();
+		if (redisClient) {
+			const key = `rate:ai-girlfriend:${user.id}`;
+			const count = await redisClient.incr(key);
+			if (count === 1) await redisClient.expire(key, RATE_LIMIT_WINDOW);
+			if (count > RATE_LIMIT_MAX) {
+				throw error(429, 'Too many requests. Calm down, she needs a break too.');
+			}
 		}
 
 		const { messages, search, image } = await request.json();
@@ -36,7 +51,7 @@ export const POST: RequestHandler = withApiErrorHandling(
 					imageContext = `[SYSTEM NOTE: The user sent an image. It is ${metadata.width}x${metadata.height} pixels, format ${metadata.format}. Its dominant color is roughly ${colorDesc}. Use this to be suspicious or annoyed, e.g., "Why are you showing me this ${metadata.format} file? Do you think I'm a computer??" or "This image is so ${avgColor[0] > 150 ? 'bright' : 'dark'}, just like your future without me!"]`;
 				}
 			} catch (err) {
-				console.error('Image processing error:', err);
+				logger.error('Image processing error', err);
 				imageContext = `[SYSTEM NOTE: The user sent an image but it failed to process. Accuse them of sending a broken file to avoid talking to you.]`;
 			}
 		}
@@ -56,7 +71,7 @@ export const POST: RequestHandler = withApiErrorHandling(
 						}
 					}
 				} catch (err) {
-					console.error('Search error:', err);
+					logger.error('Search error', err);
 				}
 			}
 		}
@@ -87,7 +102,7 @@ ${searchResults}`;
 
 		if (!response.ok) {
 			const errorText = await response.text();
-			console.error('Pollinations AI error:', errorText);
+			logger.error('Pollinations AI error', errorText);
 			throw error(500, 'Failed to get a response from your AI girlfriend.');
 		}
 

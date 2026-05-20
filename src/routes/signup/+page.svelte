@@ -139,7 +139,7 @@
 								passwordMask = true;
 							}
 						}}
-						class="border border-surface-700 bg-surface-900 rounded-lg !ring-pink-700 focus:!border-pink-700 p-4 text-[17px] mb-2 w-full transition-colors {errored
+						class="border border-surface-700 bg-surface-900 rounded-lg !ring-surface-500 focus:!border-surface-500 p-4 text-[17px] mb-2 w-full transition-colors {errored
 							? 'input-error'
 							: ''}"
 						bind:value={registerData.username}
@@ -150,7 +150,7 @@
 							on:click={() => goto('/signin')}>{__('Login', $userLanguage)}</button
 						>
 						<button
-							class="btn bg-pink-700"
+							class="btn variant-filled-surface"
 							on:click={() => {
 								if (!usernameRegex.test(registerData.username)) {
 									errored = true;
@@ -187,7 +187,7 @@
 						id="password"
 						type="password"
 						placeholder={__('password', $userLanguage)}
-						class="border border-surface-700 !ring-pink-700 focus:!border-pink-700 bg-surface-900 rounded-lg p-4 text-[17px] w-full mb-2"
+						class="border border-surface-700 !ring-surface-500 focus:!border-surface-500 bg-surface-900 rounded-lg p-4 text-[17px] w-full mb-2"
 						bind:value={registerData.password}
 						disabled={loading}
 					/>
@@ -195,7 +195,7 @@
 						id="password"
 						type="password"
 						placeholder={__('repeat password', $userLanguage)}
-						class="border border-surface-700 !ring-pink-700 focus:!border-pink-700 bg-surface-900 rounded-lg p-4 text-[17px] w-full mb-2"
+						class="border border-surface-700 !ring-surface-500 focus:!border-surface-500 bg-surface-900 rounded-lg p-4 text-[17px] w-full mb-2"
 						bind:value={registerData.passwordConfirm}
 						disabled={loading}
 						on:keypress={(e) => {
@@ -223,7 +223,7 @@
 						>
 							{__('Back', $userLanguage)}
 						</button>
-						<button class="btn bg-pink-700" on:click={performLogin} disabled={loading}>
+						<button class="btn variant-filled-surface" on:click={performLogin} disabled={loading}>
 							{#if loading}
 								<ProgressRadial class="h-5 w-5" />
 							{:else}

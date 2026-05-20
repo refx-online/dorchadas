@@ -27,7 +27,7 @@ const devMiddleware: Plugin = {
 
 export default defineConfig({
 	plugins: [
-		devMiddleware,
+		...(process.env.NODE_ENV !== 'production' ? [devMiddleware] : []),
 		sveltekit(),
 		purgeCss({
 			content: ['src/**/*.html', 'src/**/*.svelte'],

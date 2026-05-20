@@ -113,12 +113,12 @@
 								passwordMask = true;
 							}
 						}}
-						class="border border-surface-700 bg-surface-900 rounded-lg !ring-pink-700 focus:!border-pink-700 p-4 text-[17px] mb-2 w-full transition-colors {errored
+						class="border border-surface-700 bg-surface-900 rounded-lg !ring-surface-500 focus:!border-surface-500 p-4 text-[17px] mb-2 w-full transition-colors {errored
 							? 'input-error'
 							: ''}"
 						bind:value={loginData.username}
 					/>
-					<a href={discordUrl} class="text-pink-700 me-auto mb-7"
+					<a href={discordUrl} class="text-surface-300 me-auto mb-7"
 						>{__('Forgot username?', $userLanguage)}</a
 					>
 					<div class="w-full flex flex-row justify-between mt-auto mb-14">
@@ -127,7 +127,7 @@
 							on:click={() => goto('/signup')}>{__('Create account', $userLanguage)}</button
 						>
 						<button
-							class="btn bg-pink-700"
+							class="btn variant-filled-surface"
 							on:click={() => {
 								passwordMask = true;
 							}}>{__('Next', $userLanguage)}</button
@@ -155,7 +155,7 @@
 						id="password"
 						type="password"
 						placeholder={__('Password', $userLanguage)}
-						class="border border-surface-700 !ring-pink-700 focus:!border-pink-700 bg-surface-900 rounded-lg p-4 text-[17px] w-full mb-2"
+						class="border border-surface-700 !ring-surface-500 focus:!border-surface-500 bg-surface-900 rounded-lg p-4 text-[17px] w-full mb-2"
 						bind:value={loginData.password}
 						disabled={loading}
 						on:keypress={(e) => {
@@ -175,7 +175,7 @@
 							bind:reset={resetCaptcha}
 						/>
 					{/if}
-					<a href="https://discord.gg/jAByKzy8Mq" class="text-pink-700 me-auto mb-7"
+					<a href="https://discord.gg/jAByKzy8Mq" class="text-surface-300 me-auto mb-7"
 						>{__('Forgot password?', $userLanguage)}</a
 					>
 					<div class="w-full flex flex-row justify-between mt-auto mb-14">
@@ -186,7 +186,7 @@
 						>
 							{__('Back', $userLanguage)}
 						</button>
-						<button class="btn bg-pink-700" on:click={performLogin} disabled={loading}>
+						<button class="btn variant-filled-surface" on:click={performLogin} disabled={loading}>
 							{#if loading}
 								<ProgressRadial class="h-5 w-5" />
 							{:else}

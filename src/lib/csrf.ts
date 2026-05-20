@@ -1,7 +1,6 @@
 import { randomBytes } from 'crypto';
 
 const CSRF_TOKEN_LENGTH = 32;
-const CSRF_TOKEN_TTL = 60 * 2;
 const CSRF_REDIS_KEY_PREFIX = 'csrf:token:';
 
 type RedisClient = {
@@ -22,14 +21,14 @@ export function generateCsrfToken(): string {
  * @param redisClient - Redis client instance
  * @param token - The CSRF token to store
  * @param sessionToken - The CSRF ID or session-like value to bind this token to
- * @param ttl - Time to live in seconds (default: 2 minutes)
+ * @param ttl - Time to live in seconds
  * @returns true if stored successfully, false otherwise
  */
 export async function storeCsrfToken(
 	redisClient: RedisClient,
 	token: string,
 	sessionToken: string | undefined,
-	ttl: number = CSRF_TOKEN_TTL
+	ttl: number
 ): Promise<boolean> {
 	try {
 		const key = `${CSRF_REDIS_KEY_PREFIX}${token}`;

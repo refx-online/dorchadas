@@ -76,9 +76,7 @@ export const parseModsInt = (
 
 		if (modsInt! & mods[mod]) {
 			const settings =
-				clock_rate != null && clock_rate !== -1 && mod === speedMod
-					? { clock_rate }
-					: undefined;
+				clock_rate != null && clock_rate !== -1 && mod === speedMod ? { clock_rate } : undefined;
 			activatedMods.push({
 				name: modNames[mod],
 				short_name: mod,

@@ -16,8 +16,11 @@ export async function load({ url, cookies, locals }) {
 				});
 				cookies.set('sessionToken', sessionToken, {
 					path: '/',
+					httpOnly: true,
+					secure: process.env.NODE_ENV === 'production',
+					sameSite: 'strict',
 					priority: 'high',
-					maxAge: sessionExpiry.toDate().getTime()
+					maxAge: 60 * 60 * 24 * 30 // 30 days in seconds
 				});
 			}
 			return {

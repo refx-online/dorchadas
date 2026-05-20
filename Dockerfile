@@ -14,9 +14,8 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile
+RUN bun install --frozen-lockfile --production
 
 COPY --from=build /app/build ./build
-COPY --from=build /app/static ./static
 
 CMD ["bun", "run", "start"]
