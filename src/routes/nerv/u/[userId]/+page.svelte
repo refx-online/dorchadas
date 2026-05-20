@@ -16,6 +16,21 @@
 
 	let showChangePassword = false;
 	let showWipeConfirm = false;
+	let wipeSelectedModes: number[] = [];
+
+	const WIPE_MODES = [
+		{ label: 'Standard', value: 0 },
+		{ label: 'Taiko', value: 1 },
+		{ label: 'Catch', value: 2 },
+		{ label: 'Mania', value: 3 },
+		{ label: 'Standard (Relax)', value: 4 },
+		{ label: 'Taiko (Relax)', value: 5 },
+		{ label: 'Catch (Relax)', value: 6 },
+		{ label: 'Standard (Autopilot)', value: 8 },
+		{ label: 'Cheat', value: 12 },
+		{ label: 'Cheatcheat', value: 16 },
+		{ label: 'Touch Device', value: 20 }
+	];
 	let showSilenceModal = false;
 	let silenceDuration = 1; // Default 1 hour
 	let silenceReason = '';
@@ -166,17 +181,20 @@
 			showWipeConfirm = true;
 			return;
 		}
+		if (wipeSelectedModes.length === 0) {
+			addNotification('Select at least one mode to wipe', 'error');
+			return;
+		}
 
 		const form = new FormData();
 		form.append('userId', data.user.id.toString());
+		form.append('modes', wipeSelectedModes.join(','));
 
-		await fetch('?/wipeUser', {
-			method: 'POST',
-			body: form
-		});
+		await fetch('?/wipeUser', { method: 'POST', body: form });
 
 		addNotification('User data wiped successfully');
 		showWipeConfirm = false;
+		wipeSelectedModes = [];
 		await invalidateAll();
 	};
 
@@ -248,6 +266,27 @@
 					{showWipeConfirm ? 'Confirm Wipe' : 'Wipe User'}
 				</button>
 			</div>
+
+			{#if showWipeConfirm}
+				<div class="wipe-mode-select" transition:slide>
+					<p class="wipe-label">Select modes to wipe:</p>
+					<div class="privileges-grid">
+						{#each WIPE_MODES as m}
+							<label class="privilege-checkbox">
+								<input
+									type="checkbox"
+									bind:group={wipeSelectedModes}
+									value={m.value}
+								/>
+								<span class="privilege-label">{m.label}</span>
+							</label>
+						{/each}
+					</div>
+					<button class="cancel-button mt-2" on:click={() => { showWipeConfirm = false; wipeSelectedModes = []; }}>
+						Cancel
+					</button>
+				</div>
+			{/if}
 		</div>
 
 		{#if showSilenceModal}

@@ -329,10 +329,16 @@ export const actions: Actions = {
 	wipeUser: async ({ request, cookies }) => {
 		const data = await request.formData();
 		const userId = Number(data.get('userId'));
+		const modesParam = data.get('modes')?.toString();
+		const modes = modesParam ? modesParam.split(',').map(Number).filter((n) => !isNaN(n)) : [];
 
 		const sessionUser = await getUserFromSession(cookies.get('sessionToken'));
 		if (!isAdmin(sessionUser?.priv)) {
 			return { success: false, error: 'Insufficient privileges' };
+		}
+
+		if (modes.length === 0) {
+			return { success: false, error: 'No modes selected' };
 		}
 
 		const mysqlDatabase = await getMySQLDatabase();
@@ -350,13 +356,12 @@ export const actions: Actions = {
 			return { success: false, error: 'Asuka said no.' };
 		}
 
-		/// TODO: selective mode restriction
 		await mysqlDatabase.transaction(async (trx) => {
-			await trx('stats').where('id', userId).update({
+			await trx('stats').whereIn('mode', modes).where('id', userId).update({
 				tscore: 0,
 				rscore: 0,
 				pp: 0,
-				plays: 0, // should playcount resets?
+				plays: 0,
 				playtime: 0,
 				acc: 0.0,
 				max_combo: 0,
@@ -370,10 +375,9 @@ export const actions: Actions = {
 				xp: 0
 			});
 
-			await trx('scores').where('userid', userId).del();
+			await trx('scores').whereIn('mode', modes).where('userid', userId).del();
 			await trx('users_log').where('userid', userId).del();
 		});
-		const modes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 20];
 
 		for (const mode of modes) {
 			await redis.zRem(`bancho:leaderboard:${mode}`, String(userId));
@@ -385,7 +389,7 @@ export const actions: Actions = {
 
 		await sendDiscordWebhookLog(
 			'Nerv',
-			`${sessionUser?.name} (${sessionUser?.id}) wipes ${user?.name} (${user?.id})!`,
+			`${sessionUser?.name} (${sessionUser?.id}) wiped ${user?.name} (${user?.id}) on modes: ${modes.join(', ')}!`,
 			`${appUrl}/nerv.png`
 		);
 
