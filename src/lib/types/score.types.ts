@@ -33,6 +33,7 @@ export type MapScore = {
 	clan_name: string;
 	clan_tag: string;
 	id: number;
+	clock_rate: number;
 };
 
 export type PlayerScore = {
@@ -56,6 +57,7 @@ export type PlayerScore = {
 	time_elapsed: number;
 	perfect: number;
 	pinned: number;
+	clock_rate: number;
 	beatmap: {
 		md5: string;
 		id: number;
@@ -112,6 +114,7 @@ export type TopScore = {
 	country: string;
 	username: string;
 	map_id: number;
+	clock_rate: number;
 	mods_json: ModJsonEntry[];
 };
 
@@ -150,12 +153,14 @@ export type ScoreInfoResponse = {
 		twval: number;
 		hdr: number;
 		pinned: number;
+		clock_rate: number;
 		mods_json?: ModJsonEntry[];
 	};
 };
 
 export type ScoreInfo = {
 	id: number;
+	clock_rate: number;
 	map_md5: string;
 	score: number;
 	xp_gained: number;
