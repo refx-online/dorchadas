@@ -41,7 +41,7 @@
 					</li>
 					<li>
 						<a
-							href={githubUrl}
+							href={githubUrl + "/dorchadas"}
 							target="_blank"
 							rel="noopener noreferrer"
 							class="hover:text-primary-400 transition-colors">Source Code</a
