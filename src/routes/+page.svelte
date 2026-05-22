@@ -6,7 +6,7 @@
 	import { onMount } from 'svelte';
 	import { avatarUrl } from '$lib/env';
 	import type { DBUser, PlayerCounts } from '$lib/types';
-	import { ChevronsUp, ChevronLeft, ChevronRight } from 'svelte-feathers';
+	import { ChevronsUp, ChevronLeft, ChevronRight, Zap, Award, Users, Music } from 'svelte-feathers';
 	import { env } from '$env/dynamic/public';
 	import { fade, fly, scale } from 'svelte/transition';
 
@@ -86,7 +86,6 @@
 	onMount(() => {
 		const animateCounter = (target: number, setter: (val: number) => void) => {
 			const duration = 1500;
-			const start = 0;
 			const startTime = performance.now();
 
 			const updateCounter = (currentTime: number) => {
@@ -135,209 +134,245 @@
 	<div class="home-hud" aria-hidden="true"></div>
 
 	<div class="overlay">
-		<div
-			class="container mx-auto px-4 py-8 relative z-[2] min-h-screen flex flex-col items-center justify-center"
-		>
-			<!-- Minimal Centered Hero -->
-			<div
-				class="hero-core w-full max-w-3xl text-center mb-10"
-				in:scale={{ duration: 1000, start: 0.95, delay: 100 }}
-			>
-				<h1 class="hero-title text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">
-					{appName}
-				</h1>
-				<p
-					class="hero-copy text-lg md:text-xl text-white/80 leading-relaxed"
-					in:fly={{ y: 20, duration: 800, delay: 300 }}
-				>
-					a rich-feature osu! private server. we serve stable - our custom client - aeris - even
-					lazer. as of today; 12-01-2026. refx-stack has become stable!
-				</p>
-			</div>
+		<section class="hero-shell">
+			<svg class="deco-line deco-line-1" viewBox="0 0 800 800" preserveAspectRatio="none" aria-hidden="true">
+				<path
+					d="M -50 200 Q 200 100 400 300 T 850 250"
+					fill="none"
+					stroke="url(#gradLine1)"
+					stroke-width="1.2"
+				/>
+				<defs>
+					<linearGradient id="gradLine1" x1="0%" y1="0%" x2="100%" y2="0%">
+						<stop offset="0%" stop-color="rgba(255,255,255,0)" />
+						<stop offset="50%" stop-color="rgba(255,255,255,0.35)" />
+						<stop offset="100%" stop-color="rgba(255,255,255,0)" />
+					</linearGradient>
+				</defs>
+			</svg>
+			<svg class="deco-line deco-line-2" viewBox="0 0 800 800" preserveAspectRatio="none" aria-hidden="true">
+				<circle cx="650" cy="500" r="380" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="3 8" />
+				<circle cx="650" cy="500" r="240" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1" />
+			</svg>
 
-			<!-- Stats Row -->
-			{#if data.userCounts?.counts}
-				<div
-					class="depth-near grid grid-cols-2 gap-6 w-full max-w-2xl mx-auto mb-6"
-					in:fly={{ y: 30, duration: 800, delay: 500 }}
-				>
-					<div class="variant-glass-surface glass-hover rounded-xl p-6 text-center hover-lift">
-						<h3 class="text-lg font-bold text-primary-400 mb-2">{__('Online', $userLanguage)}</h3>
-						<p class="text-2xl font-semibold text-white">
-							{animatedOnline.toLocaleString()}
-						</p>
+			<div class="watermark watermark-top" aria-hidden="true">refx</div>
+
+			<div class="hero-grid">
+				<div class="hero-copy-col" in:fly={{ y: 20, duration: 800, delay: 100 }}>
+					<h1 class="hero-title-xxl">
+						<span class="hero-title-accent">{appName}.</span>
+					</h1>
+					<p class="hero-subcopy">
+						{__('A rich-feature osu! server. Stable client and Custom client.', $userLanguage)}
+					</p>
+
+					<div class="hero-cta-row">
+						{#if $userData}
+							<a href="/u/{$userData.id}" class="cta cta-primary">
+								<span>{__('Profile', $userLanguage)}</span>
+								<span class="cta-arrow">→</span>
+							</a>
+							<a href="/settings" class="cta cta-ghost">
+								{__('Settings', $userLanguage)}
+							</a>
+						{:else}
+							<a href="/signup" class="cta cta-primary">
+								<span>{__('Register', $userLanguage)}</span>
+								<span class="cta-arrow">→</span>
+							</a>
+							<a href="/signin" class="cta cta-ghost">
+								{__('Login', $userLanguage)}
+							</a>
+						{/if}
 					</div>
-					<div class="variant-glass-surface glass-hover rounded-xl p-6 text-center hover-lift">
-						<h3 class="text-lg font-bold text-secondary-400 mb-2">
-							{__('Registered', $userLanguage)}
-						</h3>
-						<p class="text-2xl font-semibold text-white">
-							{animatedTotal.toLocaleString()}
-						</p>
-					</div>
-				</div>
-			{/if}
 
-			<!-- Auth Buttons -->
-			<div
-				class="depth-mid grid grid-cols-2 gap-6 w-full max-w-2xl mx-auto mb-16"
-				in:fly={{ y: 30, duration: 800, delay: 700 }}
-			>
-				{#if $userData}
-					<a
-						href="/u/{$userData.id}"
-						class="btn bg-surface-500/50 hover:bg-surface-500/70 text-white font-medium py-3 rounded-lg hover-button backdrop-blur-sm border border-white/10"
-					>
-						{__('Profile', $userLanguage)}
-					</a>
-					<a
-						href="/settings"
-						class="btn bg-primary-500/80 hover:bg-primary-500 text-white font-medium py-3 rounded-lg hover-button backdrop-blur-sm shadow-lg"
-					>
-						{__('Settings', $userLanguage)}
-					</a>
-				{:else}
-					<a
-						href="/signup"
-						class="btn bg-surface-500/50 hover:bg-surface-500/70 text-white font-medium py-3 rounded-lg hover-button backdrop-blur-sm border border-white/10"
-					>
-						{__('Register', $userLanguage)}
-					</a>
-					<a
-						href="/signin"
-						class="btn bg-primary-400/80 hover:bg-primary-400 text-white font-medium py-3 rounded-lg hover-button backdrop-blur-sm shadow-lg"
-					>
-						{__('Login', $userLanguage)}
-					</a>
-				{/if}
-			</div>
-
-			<!-- Lower Balanced Section (Discord + Stats stack) -->
-			<div
-				class="depth-far grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl mx-auto opacity-90 hover:opacity-100 transition-opacity"
-				in:fly={{ y: 40, duration: 1000, delay: 900 }}
-			>
-				<!-- Discord Widget -->
-				<div
-					class="variant-glass-surface glass-hover rounded-xl p-4 h-full min-h-[300px] flex flex-col"
-				>
-					<h3 class="text-sm font-semibold text-white/60 mb-3 ml-1">
-						{__('Community Server', $userLanguage)}
-					</h3>
-					<iframe
-						src="https://discord.com/widget?id={env.PUBLIC_DISCORD_SERVER_ID}&theme=dark"
-						width="100%"
-						height="100%"
-						class="rounded-lg flex-grow"
-						frameborder="0"
-						title="disc"
-						sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
-						style="background-color: transparent;"
-					>
-					</iframe>
-				</div>
-
-				<!-- Stats Stack -->
-				<div class="flex flex-col gap-6 h-full justify-between">
-					<!-- Ranked Maps -->
-					{#if data.rankedMapsCount}
-						<div
-							class="variant-glass-surface glass-hover rounded-xl p-4 flex flex-col justify-center flex-1"
-						>
-							<div class="flex justify-between items-center">
-								<h3 class="text-sm font-semibold text-white/60">
-									{__('Maps Ranked', $userLanguage)}
-								</h3>
-								<ChevronsUp class="text-white/40 w-5 h-5" />
+					{#if data.userCounts?.counts}
+						<div class="hero-stats-inline" in:fade={{ duration: 700, delay: 600 }}>
+							<div class="stat-pill">
+								<span class="stat-pill-dot online"></span>
+								<span class="stat-pill-num">{animatedOnline.toLocaleString()}</span>
+								<span class="stat-pill-label">{__('Online', $userLanguage)}</span>
 							</div>
-							<p class="text-xl font-bold text-tertiary-400 mt-1">
-								{data.rankedMapsCount.toLocaleString()}
-							</p>
-						</div>
-					{/if}
-
-					<!-- PP Records Mini -->
-					{#if data.ppRecords && data.ppRecords.length}
-						<div
-							class="variant-glass-surface glass-hover rounded-xl p-4 flex flex-col justify-center flex-1"
-						>
-							<div class="flex justify-between items-center mb-2">
-								<h3 class="text-sm font-semibold text-white/60">
-									{__('PP Record', $userLanguage)}
-								</h3>
-								<div class="flex gap-1">
-									<button class="btn btn-sm variant-soft-primary p-1 rounded" on:click={prevPP}
-										><ChevronLeft class="w-3 h-3" /></button
-									>
-									<button class="btn btn-sm variant-soft-primary p-1 rounded" on:click={nextPP}
-										><ChevronRight class="w-3 h-3" /></button
-									>
-								</div>
+							<div class="stat-pill">
+								<span class="stat-pill-num">{animatedTotal.toLocaleString()}</span>
+								<span class="stat-pill-label">{__('Registered', $userLanguage)}</span>
 							</div>
-							{#if data.ppRecords[currentPPIndex]}
-								{@const score = data.ppRecords[currentPPIndex]}
-								<div class="flex items-center gap-3">
-									<img
-										src={`${avatarUrl}/${score.id}`}
-										alt="{score.name}'s avatar"
-										class="w-8 h-8 rounded-full object-cover"
-									/>
-									<div class="flex-col overflow-hidden">
-										<a
-											href={`/scores/${score.score_id}`}
-											class="text-sm font-bold text-white hover:text-primary-400 truncate block"
-											>{score.name}</a
-										>
-										<span class="text-xs text-secondary-400 font-bold">{score.pp.toFixed(0)}pp</span
-										>
-									</div>
-								</div>
-							{/if}
-						</div>
-					{/if}
-
-					<!-- Recent Accounts Mini -->
-					{#if data.recentAccounts && data.recentAccounts.length}
-						<div
-							class="variant-glass-surface glass-hover rounded-xl p-4 flex flex-col justify-center flex-1"
-						>
-							<div class="flex justify-between items-center mb-2">
-								<h3 class="text-sm font-semibold text-white/60">
-									{__('New Player', $userLanguage)}
-								</h3>
-								<div class="flex gap-1">
-									<button class="btn btn-sm variant-soft-primary p-1 rounded" on:click={prevAccount}
-										><ChevronLeft class="w-3 h-3" /></button
-									>
-									<button class="btn btn-sm variant-soft-primary p-1 rounded" on:click={nextAccount}
-										><ChevronRight class="w-3 h-3" /></button
-									>
-								</div>
-							</div>
-							{#if data.recentAccounts[currentAccountIndex]}
-								{@const account = data.recentAccounts[currentAccountIndex]}
-								<div class="flex items-center gap-3">
-									<img
-										src={`${avatarUrl}/${account.id}`}
-										alt="{account.name}'s avatar"
-										class="w-8 h-8 rounded-full object-cover"
-									/>
-									<div class="flex-col overflow-hidden">
-										<a
-											href={`/u/${account.id}`}
-											class="text-sm font-bold text-white hover:text-primary-400 truncate block"
-											>{account.name}</a
-										>
-										<span class="text-xs text-white/40"
-											>{new Date(account.creation_time * 1000).toLocaleDateString()}</span
-										>
-									</div>
+							{#if data.rankedMapsCount}
+								<div class="stat-pill">
+									<span class="stat-pill-num">{data.rankedMapsCount.toLocaleString()}</span>
+									<span class="stat-pill-label">{__('Maps Ranked', $userLanguage)}</span>
 								</div>
 							{/if}
 						</div>
 					{/if}
 				</div>
+
+				<div class="hero-visual-col" in:fly={{ x: 30, duration: 900, delay: 300 }}>
+					<div class="float-stack">
+						{#if data.ppRecords && data.ppRecords.length}
+							{@const score = data.ppRecords[currentPPIndex]}
+							<div class="float-card float-card-pp">
+								<div class="float-card-head">
+									<div class="float-card-tag">
+										<Zap class="w-3 h-3" />
+										<span>{__('PP Record', $userLanguage)}</span>
+									</div>
+									<div class="float-card-nav">
+										<button class="nav-btn" on:click={prevPP} aria-label="Previous">
+											<ChevronLeft class="w-3 h-3" />
+										</button>
+										<button class="nav-btn" on:click={nextPP} aria-label="Next">
+											<ChevronRight class="w-3 h-3" />
+										</button>
+									</div>
+								</div>
+								{#if score}
+									<div class="float-card-body">
+										<img
+											src={`${avatarUrl}/${score.id}`}
+											alt={score.name}
+											class="pp-avatar"
+										/>
+										<div class="pp-meta">
+											<a href={`/scores/${score.score_id}`} class="pp-name">{score.name}</a>
+											<span class="pp-mode">{modeNames[score.mode] ?? '—'}</span>
+										</div>
+										<div class="pp-value">
+											<span class="pp-num">{score.pp.toFixed(0)}</span>
+											<span class="pp-unit">pp</span>
+										</div>
+									</div>
+								{/if}
+							</div>
+						{/if}
+
+						<div class="saturn-ring saturn-ring-back" aria-hidden="true"></div>
+						<div class="orb-core" aria-hidden="true">
+							<div class="orb-ring orb-ring-1"></div>
+							<div class="orb-ring orb-ring-2"></div>
+							<div class="orb-glyph"> </div>
+						</div>
+						<div class="saturn-ring saturn-ring-front" aria-hidden="true"></div>
+
+						{#if data.recentAccounts && data.recentAccounts.length}
+							{@const account = data.recentAccounts[currentAccountIndex]}
+							<div class="float-card float-card-new">
+								<div class="float-card-head">
+									<div class="float-card-tag">
+										<Users class="w-3 h-3" />
+										<span>{__('New Player', $userLanguage)}</span>
+									</div>
+									<div class="float-card-nav">
+										<button class="nav-btn" on:click={prevAccount} aria-label="Previous">
+											<ChevronLeft class="w-3 h-3" />
+										</button>
+										<button class="nav-btn" on:click={nextAccount} aria-label="Next">
+											<ChevronRight class="w-3 h-3" />
+										</button>
+									</div>
+								</div>
+								{#if account}
+									<div class="float-card-body">
+										<img
+											src={`${avatarUrl}/${account.id}`}
+											alt={account.name}
+											class="pp-avatar"
+										/>
+										<div class="pp-meta">
+											<a href={`/u/${account.id}`} class="pp-name">{account.name}</a>
+											<span class="pp-mode">
+												{new Date(account.creation_time * 1000).toLocaleDateString()}
+											</span>
+										</div>
+									</div>
+								{/if}
+							</div>
+						{/if}
+					</div>
+				</div>
 			</div>
-		</div>
+		</section>
+
+		<section class="band-shell">
+			<svg class="deco-line deco-line-band" viewBox="0 0 1200 200" preserveAspectRatio="none" aria-hidden="true">
+				<path
+					d="M 0 100 Q 300 30 600 100 T 1200 100"
+					fill="none"
+					stroke="rgba(255,255,255,0.1)"
+					stroke-width="1"
+				/>
+			</svg>
+
+			<h2 class="band-title">
+				{__('What it looks like', $userLanguage)}
+			</h2>
+
+			<div class="feature-row">
+				<div class="feature-card" in:fly={{ y: 30, duration: 700, delay: 100 }}>
+					<div class="feature-icon">
+						<Zap />
+					</div>
+					<h3 class="feature-title">{__('Our custom client', $userLanguage)}</h3>
+					<p class="feature-desc">
+						{__('Custom-built client with many cheat features.', $userLanguage)}
+					</p>
+				</div>
+				<div class="feature-card feature-card-offset" in:fly={{ y: 30, duration: 700, delay: 200 }}>
+					<div class="feature-icon">
+						<Award />
+					</div>
+					<h3 class="feature-title">{__('Stable', $userLanguage)}</h3>
+					<p class="feature-desc">
+						{__('Fully support with score submission, leaderboards, and PP recalc.', $userLanguage)}
+					</p>
+				</div>
+				<div class="feature-card" in:fly={{ y: 30, duration: 700, delay: 300 }}>
+					<div class="feature-icon">
+						<Music />
+					</div>
+					<h3 class="feature-title">{__('All modes', $userLanguage)}</h3>
+					<p class="feature-desc">
+						{__('Vanilla, Relax, Autopilot - every mode tracked, ranked, and recalculated.', $userLanguage)}
+					</p>
+				</div>
+			</div>
+
+			<div class="band-watermark" aria-hidden="true">{appName}</div>
+		</section>
+
+		<section class="community-shell">
+			<div class="community-grid">
+				<div class="community-copy-col" in:fly={{ y: 30, duration: 700, delay: 100 }}>
+					<div class="hero-eyebrow">
+						<span class="eyebrow-dot"></span>
+						<span>{__('Community', $userLanguage)}</span>
+					</div>
+					<h2 class="community-title">
+						{__('Drop into the', $userLanguage)}<br />
+						<span class="band-title-accent">{__('Discord.', $userLanguage)}</span>
+					</h2>
+					<p class="community-copy">
+						{__('Patch notes, scorepost, and the occasional argument over which mod is broken.', $userLanguage)}
+					</p>
+					<a href={env.PUBLIC_DISCORD_SERVER_URL} target="_blank" rel="noopener noreferrer" class="cta cta-primary">
+						<span>{__('Join Discord', $userLanguage)}</span>
+						<span class="cta-arrow">→</span>
+					</a>
+				</div>
+				<div class="community-widget-col" in:fly={{ y: 30, duration: 700, delay: 250 }}>
+					<div class="widget-frame">
+						<iframe
+							src="https://discord.com/widget?id={env.PUBLIC_DISCORD_SERVER_ID}&theme=dark"
+							width="100%"
+							height="420"
+							class="widget-iframe"
+							frameborder="0"
+							title="discord"
+							sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+						></iframe>
+					</div>
+				</div>
+			</div>
+		</section>
 	</div>
 </div>
