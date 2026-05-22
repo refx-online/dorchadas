@@ -163,7 +163,7 @@
 						<span class="hero-title-accent">{appName}.</span>
 					</h1>
 					<p class="hero-subcopy">
-						{__('A rich-feature osu! server. Stable client and Custom client.', $userLanguage)}
+						{__('A feature-rich osu! server. Stable client and Custom client.', $userLanguage)}
 					</p>
 
 					<div class="hero-cta-row">
