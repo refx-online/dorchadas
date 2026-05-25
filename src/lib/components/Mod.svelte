@@ -8,20 +8,24 @@
 	export let size: number = 20;
 	export let showSettings: boolean = false;
 
+	function isDefaultClockRate(speed: number): boolean {
+		return speed === 0.0 || speed === 1.5;
+	}
+
 	function shouldShowSpeedMultiplier(mod: Mod): boolean {
 		if (!mod.settings) return false;
 
 		const isSpeedMod = ['DT', 'NC', 'HT'].includes(mod.short_name.toUpperCase());
-		const hasSpeedSetting = mod.settings.speed_change || mod.settings.clock_rate;
+		const speed = mod.settings.speed_change || mod.settings.clock_rate;
 
-		return isSpeedMod && hasSpeedSetting;
+		return isSpeedMod && !!speed && !isDefaultClockRate(speed);
 	}
 
 	function getSpeedMultiplier(mod: Mod): string {
 		if (!mod.settings) return '';
 
 		const speed = mod.settings.speed_change || mod.settings.clock_rate;
-		if (!speed) return '';
+		if (!speed || isDefaultClockRate(speed)) return '';
 
 		return `${speed}x`;
 	}
@@ -58,7 +62,7 @@
 		const settingsArray = [];
 		for (const [key, value] of Object.entries(settings)) {
 			if (key === 'speed_change' || key === 'clock_rate') {
-				settingsArray.push(`${value}x rate`);
+				if (!isDefaultClockRate(value)) settingsArray.push(`${value}x rate`);
 			} else if (key === 'circle_size' || key === 'cs') {
 				settingsArray.push(`CS${value}`);
 			} else if (key === 'approach_rate' || key === 'ar') {
@@ -81,7 +85,7 @@
 		const settingsArray = [];
 		for (const [key, value] of Object.entries(settings)) {
 			if (key === 'speed_change' || key === 'clock_rate') {
-				settingsArray.push(`${value}x rate`);
+				if (!isDefaultClockRate(value)) settingsArray.push(`${value}x rate`);
 			} else if (key === 'circle_size' || key === 'cs') {
 				settingsArray.push(`Circle Size: ${value}`);
 			} else if (key === 'approach_rate' || key === 'ar') {
