@@ -85,6 +85,43 @@
 		openMenuIndex = openMenuIndex === index ? null : index;
 	};
 
+	const calculateMode = (): number => {
+		let mode = 0;
+		switch (currentMode) {
+			case 'taiko':
+				mode += 1;
+				break;
+			case 'catch':
+				mode += 2;
+				break;
+			case 'mania':
+				mode += 3;
+				break;
+		}
+
+		switch (currentType) {
+			case 'relax':
+				mode += 4;
+				break;
+			case 'autopilot':
+				mode += 8;
+				break;
+			case 'cheat':
+				mode = 12;
+				break;
+			case 'cheatcheat':
+				mode = 16;
+				break;
+			case 'touch':
+				mode = 20;
+				break;
+		}
+
+		return mode;
+	};
+
+	$: isCheatMode = calculateMode() === 12 || calculateMode() === 16;
+
 	const handlePinScore = async (score: PlayerScore) => {
 		const response = await fetch('/api/v1/pin_score', {
 			method: 'POST',
@@ -229,6 +266,31 @@
 								>
 									{Math.round(score.pp)}<span class="text-primary-300 text-xs">pp</span>
 								</div>
+								{#if isCheatMode}
+									<div
+										class="flex flex-row gap-2 text-xs font-semibold bg-black/50 rounded-lg p-2"
+									>
+										{#if calculateMode() === 16}
+											<span class="text-yellow-400" title="Timewarp Value"
+												>TW: {score.twval === -1.0 ? 'Not Used' : score.twval ?? 'N/A'}</span
+											>
+										{/if}
+										<span class="text-green-400" title="Approach Rate Value"
+											>AR: {score.ar_value === -1.0 ? 'Not Used' : score.ar_value?.toFixed(1) ?? 'N/A'}</span
+										>
+										<span class="text-red-400" title="Aim Correction Value"
+											>AC: {score.aim_value === -1.0 ? 'Not Used' : score.aim_value ?? 'N/A'}</span
+										>
+										<span class="text-purple-400" title="Hidden Remover"
+											>HD: {score.hdr ? 'Yes' : 'No'}</span
+										>
+										{#if calculateMode() === 16}
+											<span class="text-blue-400" title="CS Changer"
+												>CS: {score.cs ? 'Yes' : 'No'}</span
+											>
+										{/if}
+									</div>
+								{/if}
 								<!-- ts pmo -->
 								<div
 									class="flex flex-col md:flex-row gap-1 md:justify-start items-center mt-2 md:mt-0 md:items-center"

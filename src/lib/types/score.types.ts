@@ -34,6 +34,11 @@ export type MapScore = {
 	clan_tag: string;
 	id: number;
 	clock_rate: number;
+	twval?: number;
+	ar_value?: number;
+	aim_value?: number;
+	hdr?: number;
+	cs?: number;
 };
 
 export type PlayerScore = {
@@ -58,6 +63,11 @@ export type PlayerScore = {
 	perfect: number;
 	pinned: number;
 	clock_rate: number;
+	twval?: number;
+	ar_value?: number;
+	aim_value?: number;
+	hdr?: number;
+	cs?: number;
 	beatmap: {
 		md5: string;
 		id: number;

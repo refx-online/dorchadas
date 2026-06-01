@@ -24,6 +24,43 @@
 		if (score.player_country) return score.player_country;
 		return 'xx';
 	};
+
+	const calculateMode = (): number => {
+		let mode = 0;
+		switch (currentMode) {
+			case 'taiko':
+				mode += 1;
+				break;
+			case 'catch':
+				mode += 2;
+				break;
+			case 'mania':
+				mode += 3;
+				break;
+		}
+
+		switch (currentType) {
+			case 'relax':
+				mode += 4;
+				break;
+			case 'autopilot':
+				mode += 8;
+				break;
+			case 'cheat':
+				mode = 12;
+				break;
+			case 'cheatcheat':
+				mode = 16;
+				break;
+			case 'touch':
+				mode = 20;
+				break;
+		}
+
+		return mode;
+	};
+
+	$: isCheatMode = calculateMode() === 12 || calculateMode() === 16;
 </script>
 
 {#if beatmapScores.length > 0}
@@ -65,6 +102,17 @@
 						<td class="text-2xs text-surface-300 font-bold uppercase !pb-0 pt-2"
 							>{__('PP', $userLanguage)}</td
 						>
+						{#if isCheatMode}
+							{#if calculateMode() === 16}
+								<td class="text-2xs text-surface-300 font-bold uppercase !pb-0 pt-2">TW</td>
+							{/if}
+							<td class="text-2xs text-surface-300 font-bold uppercase !pb-0 pt-2">AR</td>
+							<td class="text-2xs text-surface-300 font-bold uppercase !pb-0 pt-2">AC</td>
+							<td class="text-2xs text-surface-300 font-bold uppercase !pb-0 pt-2">HD</td>
+							{#if calculateMode() === 16}
+								<td class="text-2xs text-surface-300 font-bold uppercase !pb-0 pt-2">CS</td>
+							{/if}
+						{/if}
 						<td class="text-2xs text-surface-300 font-bold uppercase !pb-0 pt-2"
 							>{__('Time', $userLanguage)}</td
 						>
@@ -144,6 +192,62 @@
 									</svelte:fragment>
 								</Popup>
 							</td>
+							{#if isCheatMode}
+								{#if calculateMode() === 16}
+									<td class="w-[1%] whitespace-nowrap !text-xs !font-semibold content-center">
+										<Popup>
+											<span class="text-yellow-400">{score.twval === -1.0 ? 'Not Used' : score.twval ?? 'N/A'}</span>
+											<svelte:fragment slot="popup">
+												<div class="card variant-filled-surface p-2 rounded-lg text-xs">
+													Timewarp Value
+												</div>
+											</svelte:fragment>
+										</Popup>
+									</td>
+								{/if}
+								<td class="w-[1%] whitespace-nowrap !text-xs !font-semibold content-center">
+									<Popup>
+										<span class="text-green-400">{score.ar_value === -1.0 ? 'Not Used' : score.ar_value?.toFixed(1) ?? 'N/A'}</span>
+										<svelte:fragment slot="popup">
+											<div class="card variant-filled-surface p-2 rounded-lg text-xs">
+												Approach Rate Value
+											</div>
+										</svelte:fragment>
+									</Popup>
+								</td>
+								<td class="w-[1%] whitespace-nowrap !text-xs !font-semibold content-center">
+									<Popup>
+										<span class="text-red-400">{score.aim_value === -1.0 ? 'Not Used' : score.aim_value ?? 'N/A'}</span>
+										<svelte:fragment slot="popup">
+											<div class="card variant-filled-surface p-2 rounded-lg text-xs">
+												Aim Correction Value
+											</div>
+										</svelte:fragment>
+									</Popup>
+								</td>
+								<td class="w-[1%] whitespace-nowrap !text-xs !font-semibold content-center">
+									<Popup>
+										<span class="text-purple-400">{score.hdr ? 'Yes' : 'No'}</span>
+										<svelte:fragment slot="popup">
+											<div class="card variant-filled-surface p-2 rounded-lg text-xs">
+												Hidden Remover
+											</div>
+										</svelte:fragment>
+									</Popup>
+								</td>
+								{#if calculateMode() === 16}
+									<td class="w-[1%] whitespace-nowrap !text-xs !font-semibold content-center">
+										<Popup>
+											<span class="text-blue-400">{score.cs ? 'Yes' : 'No'}</span>
+											<svelte:fragment slot="popup">
+												<div class="card variant-filled-surface p-2 rounded-lg text-xs">
+													CS Changer
+												</div>
+											</svelte:fragment>
+										</Popup>
+									</td>
+								{/if}
+							{/if}
 							<td class="w-[1%] whitespace-nowrap !text-xs !font-semibold content-center">
 								<Popup>
 									{getTimeSince(new Date(score.play_time))}

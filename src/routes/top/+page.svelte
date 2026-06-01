@@ -298,10 +298,15 @@
 								>
 									{score.grade.replaceAll('XH', 'SS').replaceAll('X', 'SS').replaceAll('SH', 'S')}
 								</span>
-								<div class="flex flex-row gap-0.5 items-center">
-									{#each parseModsInt(score.mods, score.mods_json, score.clock_rate) as mod}
-										<Mod {mod} size={16} tooltip={true} showSettings={true} />
-									{/each}
+								<div class="flex flex-row gap-1 items-center">
+									<div class="flex flex-row gap-0.5 items-center">
+										{#each parseModsInt(score.mods, score.mods_json, score.clock_rate) as mod}
+											<Mod {mod} size={16} tooltip={true} showSettings={true} />
+										{/each}
+									</div>
+									{#if score.clock_rate && score.clock_rate !== 1.0 && score.clock_rate !== 1.5}
+										<span class="text-xs font-semibold text-gray-400">{score.clock_rate.toFixed(2)}x</span>
+									{/if}
 								</div>
 							</div>
 						</div>

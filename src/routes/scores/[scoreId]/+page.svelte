@@ -267,6 +267,57 @@
 									</div>
 								</div>
 							</div>
+
+							{#if data.score.mode === 12 || data.score.mode === 16}
+								<div
+									class="grid gap-4 mt-4 pt-4 border-t border-gray-600/20 {data.score.mode === 12 ? 'grid-cols-3' : 'grid-cols-2 sm:grid-cols-5'}"
+								>
+									{#if data.score.mode === 16}
+										<div class="transform hover:scale-105 transition-transform duration-200">
+											<div class="text-xs text-gray-400 uppercase tracking-wide mb-1">
+												Timewarp
+											</div>
+											<div class="text-lg sm:text-xl font-bold text-yellow-400 drop-shadow-md">
+												{data.score.twval === -1.0 ? 'Not Used' : data.score.twval ?? 'N/A'}
+											</div>
+										</div>
+									{/if}
+									<div class="transform hover:scale-105 transition-transform duration-200">
+										<div class="text-xs text-gray-400 uppercase tracking-wide mb-1">
+											Approach Rate
+										</div>
+										<div class="text-lg sm:text-xl font-bold text-green-400 drop-shadow-md">
+											{data.score.ar_value === -1.0 ? 'Not Used' : data.score.ar_value?.toFixed(1) ?? 'N/A'}
+										</div>
+									</div>
+									<div class="transform hover:scale-105 transition-transform duration-200">
+										<div class="text-xs text-gray-400 uppercase tracking-wide mb-1">
+											Aim Correction
+										</div>
+										<div class="text-lg sm:text-xl font-bold text-red-400 drop-shadow-md">
+											{data.score.aim_value === -1.0 ? 'Not Used' : data.score.aim_value ?? 'N/A'}
+										</div>
+									</div>
+									<div class="transform hover:scale-105 transition-transform duration-200">
+										<div class="text-xs text-gray-400 uppercase tracking-wide mb-1">
+											Hidden Remover
+										</div>
+										<div class="text-lg sm:text-xl font-bold text-purple-400 drop-shadow-md">
+											{data.score.hdr ? 'Yes' : 'No'}
+										</div>
+									</div>
+									{#if data.score.mode === 16}
+										<div class="transform hover:scale-105 transition-transform duration-200">
+											<div class="text-xs text-gray-400 uppercase tracking-wide mb-1">
+												CS Changer
+											</div>
+											<div class="text-lg sm:text-xl font-bold text-blue-400 drop-shadow-md">
+												{data.score.cs ? 'Yes' : 'No'}
+											</div>
+										</div>
+									{/if}
+								</div>
+							{/if}
 						</div>
 					</div>
 				</div>
