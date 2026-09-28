@@ -96,7 +96,7 @@ const sendDiscordWebhookRank = async (beatmap: any, user: any, newStatus: Ranked
 			text: `mapped by ${beatmap.creator} | nerv`
 		},
 		image: {
-			url: `https://b.refx.online/cover/${beatmap.set_id}`
+			url: `${pubEnv.PUBLIC_BEATMAP_URL}/cover/${beatmap.set_id}`
 		}
 	};
 

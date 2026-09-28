@@ -5,6 +5,7 @@
 	import { Music, AlertTriangle, CheckCircle } from 'svelte-feathers';
 	import { RankedStatus, statusIntToString } from '$lib/beatmap-status';
 	import { fetchBeatmap } from '$lib/api';
+import { beatmapUrl } from '$lib/env';
 	import { invalidateAll } from '$app/navigation';
 
 	import type { PageData } from './$types';
@@ -117,7 +118,7 @@
 				hp: map.hp,
 				md5: map.md5,
 				mode: map.mode,
-				thumbnail: `https://b.refx.online/thumb/${map.set_id}l.jpg`
+				thumbnail: `${beatmapUrl}/thumb/${map.set_id}l.jpg`
 			};
 
 			selectedDifficultyId = map.id;

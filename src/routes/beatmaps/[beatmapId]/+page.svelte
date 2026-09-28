@@ -1,7 +1,7 @@
 <script lang="ts">
 	import './style.postcss';
 	import Popup from '$lib/components/Popup.svelte';
-	import { appName, appUrl } from '$lib/env';
+	import { appName, appUrl, beatmapUrl } from '$lib/env';
 	import { getFormattedTimeFromSeconds } from '$lib/time';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
@@ -154,7 +154,7 @@
 				<div class="relative p-3 bg-surface-600 rounded-t-lg">
 					<div
 						class="absolute h-full w-full top-0 left-0 bg-no-repeat bg-top blur opacity-10"
-						style="background-image: url('https://b.remeliah.cyou/cover/{data.map.set_id}');"
+						style="background-image: url('{beatmapUrl}/cover/{data.map.set_id}');"
 					></div>
 
 					<div class="grid md:grid-cols-[auto_auto] gap-2">
@@ -530,7 +530,7 @@
 					<div class="ms-auto flex flex-row items-center gap-3 z-10">
 						<a
 							class="btn variant-soft-primary text-sm"
-							href="https://osu.remeliah.cyou/d/{data.map.set_id}"
+							href="{beatmapUrl}/d/{data.map.set_id}"
 						>
 							<Download class="pointer-events-none md:mr-2" size={18} />
 							<span class="hidden md:block">{__('Download', $userLanguage)}</span>
