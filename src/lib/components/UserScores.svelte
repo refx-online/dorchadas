@@ -30,6 +30,18 @@
 	let loading = false;
 	let amount = 0;
 	let openMenuIndex: number | null = null;
+	let sortBy: 'default' | 'pp' | 'date' | 'acc' = 'default';
+
+	// NOTE: backend scopes fix the base order (best = pp, recent = date).
+	// this only reorders the loaded rows client-side.
+	$: sortedScores = (() => {
+		const list = [...(scores?.scores ?? [])];
+		if (sortBy === 'pp') list.sort((a, b) => b.pp - a.pp);
+		else if (sortBy === 'acc') list.sort((a, b) => b.acc - a.acc);
+		else if (sortBy === 'date')
+			list.sort((a, b) => +new Date(b.play_time) - +new Date(a.play_time));
+		return list;
+	})();
 
 	const loadMoreScores = async () => {
 		if (loading) return;
@@ -169,10 +181,18 @@
 	>
 		{__(title, $userLanguage)}
 	</p>
+	<div class="flex justify-end">
+		<select class="select select-sm w-auto text-xs" bind:value={sortBy} aria-label="sort scores">
+			<option value="default">{__('Default', $userLanguage)}</option>
+			<option value="pp">{__('PP', $userLanguage)}</option>
+			<option value="date">{__('Date', $userLanguage)}</option>
+			<option value="acc">{__('Accuracy', $userLanguage)}</option>
+		</select>
+	</div>
 	<div class="flex flex-col gap-1 justify-center">
 		<div class="flex flex-col gap-1 transition-all{loading ? ' blur-sm' : ' blur-none'}">
 			{#if scores}
-				{#each scores.scores as score, idx}
+				{#each sortedScores as score, idx}
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div class="relative z-0 group" class:z-50={openMenuIndex === idx}>

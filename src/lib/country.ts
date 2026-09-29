@@ -248,3 +248,5 @@ const countryObject: { [key: string]: string } = {
 export function getCountryName(code: string) {
 	return countryObject[code.toUpperCase()] ?? 'Unknown';
 }
+
+export const countryCodes = Object.keys(countryObject);

@@ -19,6 +19,7 @@ import {
 	deleteComment
 } from '$lib/db';
 import { fail, redirect } from '@sveltejs/kit';
+import { VALID_MODES } from '$lib/modes';
 
 const modeTypes = ['vanilla', 'relax', 'autopilot', 'cheat', 'cheatcheat', 'touch'];
 const modeNames = ['osu', 'taiko', 'catch', 'mania'];
@@ -100,9 +101,19 @@ export async function load({ params, cookies, url }) {
 	const logTitles = logTitlesResult.ok ? logTitlesResult.value : {};
 
 	const initialMode = getModeIndex(url.searchParams.get('mode'), url.searchParams.get('type'));
-	const ppHistoryResult = await fetchPPProfileHistory('pp', player.info.id, initialMode);
+	const hasModeParams = url.searchParams.has('mode') || url.searchParams.has('type');
+	// NOTE: no explicit params — default to the player's main mode instead of osu/vanilla.
+	const preferredFallback =
+		!hasModeParams && VALID_MODES.includes(player.info.preferred_mode ?? 0)
+			? (player.info.preferred_mode as number)
+			: null;
+	const effectiveMode = preferredFallback ?? initialMode;
+	const ppHistoryResult = await fetchPPProfileHistory('pp', player.info.id, effectiveMode);
 	const ppHistoryData = Array(21).fill(null);
-	ppHistoryData[initialMode] = ppHistoryResult.ok ? ppHistoryResult.value : null;
+	ppHistoryData[effectiveMode] = ppHistoryResult.ok ? ppHistoryResult.value : null;
+	const peakRankResult = await fetchPPProfileHistory('peak', player.info.id, effectiveMode);
+	const peakRankData = Array(21).fill(null);
+	peakRankData[effectiveMode] = peakRankResult.ok ? peakRankResult.value : null;
 
 	const ourPriv = ourUser?.priv;
 
@@ -116,7 +127,8 @@ export async function load({ params, cookies, url }) {
 		ourPriv,
 		usersLog,
 		logTitles,
-		ppHistoryData
+		ppHistoryData,
+		peakRankData
 	};
 }
 

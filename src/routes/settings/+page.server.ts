@@ -1,8 +1,10 @@
 import { redirect } from '@sveltejs/kit';
 import { getUserFromSession } from '$lib/user';
 import { fail, error } from '@sveltejs/kit';
-import { getMySQLDatabase } from '$lib/server/connections';
+import { getMySQLDatabase, getRedisClient } from '$lib/server/connections';
 import { usernameRegex } from '$lib/regex';
+import { countryCodes } from '$lib/country';
+import { VALID_MODES } from '$lib/modes';
 import { env } from '$env/dynamic/private';
 import { logger } from '$lib/logger';
 
@@ -55,6 +57,8 @@ export const load = async ({ cookies }) => {
 			id: user.id,
 			username: user.name,
 			preferredMetric: user.preferred_metric,
+			preferredMode: user.preferred_mode ?? 0,
+			country: user.country,
 			clanId: user.clan_id
 		}
 	};
@@ -196,6 +200,126 @@ export const actions = {
 		} catch (err) {
 			logger.error('Failed to change metric', err);
 			return fail(500, { message: 'An error occurred while updating ranking metric' });
+		}
+	},
+	changeCountry: async ({ request, cookies }) => {
+		const sessionToken = cookies.get('sessionToken');
+		if (!sessionToken) {
+			throw redirect(302, '/signin');
+		}
+
+		const user = await getUserFromSession(sessionToken);
+		if (!user) {
+			throw redirect(302, '/signin');
+		}
+
+		const mysqlDatabase = await getMySQLDatabase();
+		if (!mysqlDatabase) {
+			return fail(500, { error: 'Database connection failed' });
+		}
+
+		const data = await request.formData();
+		const code = data.get('country')?.toString().trim().toUpperCase();
+
+		if (!code || !countryCodes.includes(code)) {
+			return fail(400, { message: 'Invalid country' });
+		}
+
+		const newCountry = code.toLowerCase();
+
+		try {
+			const row = await mysqlDatabase
+				.select('country', 'last_countrychange')
+				.from('users')
+				.where('id', user.id)
+				.first();
+
+			if (row.country === newCountry) {
+				return fail(400, { message: 'That is already your country' });
+			}
+
+			// flag changes are free but slow, same idea as the username timeout
+			const cd = 7 * 86400; // 7 days
+			const currentTime = Math.floor(Date.now() / 1000);
+
+			if (currentTime - cd < row.last_countrychange) {
+				const remainingSeconds = row.last_countrychange + cd - currentTime;
+				const days = Math.floor(remainingSeconds / 86400);
+				const hours = Math.floor((remainingSeconds % 86400) / 3600);
+				return fail(400, {
+					message: `You're on timeout. ${days} days ${hours.toString().padStart(2, '0')} hours left`
+				});
+			}
+
+			const oldCountry = row.country;
+
+			await mysqlDatabase('users').where('id', user.id).update({
+				country: newCountry,
+				last_countrychange: currentTime
+			});
+
+			// move leaderboard entries onto the new country keys
+			const stats = await mysqlDatabase
+				.select('mode', 'pp')
+				.from('stats')
+				.where('id', user.id)
+				.andWhere('pp', '>', 0);
+
+			const redis = await getRedisClient();
+			if (redis) {
+				for (const s of stats) {
+					await redis.zRem(
+						`bancho:leaderboard:${s.mode}:${oldCountry}`,
+						String(user.id)
+					);
+					await redis.zAdd(`bancho:leaderboard:${s.mode}:${newCountry}`, [
+						{ score: Number(s.pp), value: String(user.id) }
+					]);
+				}
+			}
+
+			sendDiscordWebhookLog(
+				'change country',
+				`${user.name} (${user.id}) ${oldCountry} -> ${newCountry}`
+			);
+
+			return { success: true };
+		} catch (err) {
+			logger.error('Failed to change country', err);
+			return fail(500, { message: 'An error occurred while updating country' });
+		}
+	},
+	changeMode: async ({ request, cookies }) => {
+		const sessionToken = cookies.get('sessionToken');
+		if (!sessionToken) {
+			throw redirect(302, '/signin');
+		}
+
+		const user = await getUserFromSession(sessionToken);
+		if (!user) {
+			throw redirect(302, '/signin');
+		}
+
+		const mysqlDatabase = await getMySQLDatabase();
+		if (!mysqlDatabase) {
+			return fail(500, { error: 'Database connection failed' });
+		}
+
+		const data = await request.formData();
+		const mode = Number(data.get('preferredMode'));
+
+		if (!VALID_MODES.includes(mode)) {
+			return fail(400, { message: 'Invalid mode' });
+		}
+
+		try {
+			await mysqlDatabase('users').where('id', user.id).update({
+				preferred_mode: mode
+			});
+			return { success: true };
+		} catch (err) {
+			logger.error('Failed to change main mode', err);
+			return fail(500, { message: 'An error occurred while updating main mode' });
 		}
 	}
 };

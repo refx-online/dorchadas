@@ -6,6 +6,8 @@
 	import { invalidateAll } from '$app/navigation';
 	import { avatarUrl, appName } from '$lib/env';
 	import { usernameRegex } from '$lib/regex';
+	import { countryCodes, getCountryName } from '$lib/country';
+	import { MODE_OPTIONS } from '$lib/modes';
 
 	export let data;
 
@@ -19,6 +21,8 @@
 	let messageType: 'success' | 'error' = 'success';
 	let isLoading = false;
 	let selectedMetric = data.user.preferredMetric;
+	let selectedCountry = (data.user.country ?? 'xx').toUpperCase();
+	let selectedMode = data.user.preferredMode ?? 0;
 
 	const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
 	const MAX_SIZE = 5 * 1024 * 1024; // 5MB
@@ -176,6 +180,42 @@
 			} else if (result.type === 'failure') {
 				showMessage(
 					result.data?.message || __('Failed to update ranking metric', $userLanguage),
+					'error'
+				);
+			}
+			isLoading = false;
+		};
+	};
+
+	const handleCountrySubmit: SubmitFunction = () => {
+		message = '';
+		isLoading = true;
+
+		return async ({ result }) => {
+			if (result.type === 'success') {
+				showMessage(__('Country updated successfully', $userLanguage), 'success');
+				await invalidateAll();
+			} else if (result.type === 'failure') {
+				showMessage(
+					result.data?.message || __('Failed to update country', $userLanguage),
+					'error'
+				);
+			}
+			isLoading = false;
+		};
+	};
+
+	const handleModeSubmit: SubmitFunction = () => {
+		message = '';
+		isLoading = true;
+
+		return async ({ result }) => {
+			if (result.type === 'success') {
+				showMessage(__('Main mode updated successfully', $userLanguage), 'success');
+				await invalidateAll();
+			} else if (result.type === 'failure') {
+				showMessage(
+					result.data?.message || __('Failed to update main mode', $userLanguage),
 					'error'
 				);
 			}
@@ -422,6 +462,87 @@
 								{isLoading
 									? __('Updating...', $userLanguage)
 									: __('Update Ranking Metric', $userLanguage)}
+							</button>
+						</form>
+					</div>
+
+					<!-- Country Flag -->
+					<div>
+						<h3 class="text-lg font-medium mb-4">{__('Country Flag', $userLanguage)}</h3>
+						<form
+							method="POST"
+							action="?/changeCountry"
+							use:enhance={handleCountrySubmit}
+							class="space-y-4"
+						>
+							<div class="space-y-2">
+								<label for="country" class="label font-medium">
+									{__('Country', $userLanguage)}
+								</label>
+								<div class="flex items-center gap-3">
+									<img
+										class="w-8"
+										src="/flags/{selectedCountry}.png"
+										alt="selected country flag"
+									/>
+									<select
+										id="country"
+										name="country"
+										class="select"
+										bind:value={selectedCountry}
+										disabled={isLoading}
+									>
+										{#each countryCodes as code}
+											<option value={code}>
+												{getCountryName(code)} ({code})
+											</option>
+										{/each}
+									</select>
+								</div>
+								<p class="text-sm opacity-75">
+									{__('You can change your flag once every 7 days', $userLanguage)}
+								</p>
+							</div>
+							<button type="submit" class="btn variant-filled-primary" disabled={isLoading}>
+								{isLoading
+									? __('Updating...', $userLanguage)
+									: __('Update Country', $userLanguage)}
+							</button>
+						</form>
+					</div>
+
+					<!-- Main Mode -->
+					<div>
+						<h3 class="text-lg font-medium mb-4">{__('Main Mode', $userLanguage)}</h3>
+						<form
+							method="POST"
+							action="?/changeMode"
+							use:enhance={handleModeSubmit}
+							class="space-y-4"
+						>
+							<div class="space-y-2">
+								<label for="preferred-mode" class="label font-medium">
+									{__('Main Mode', $userLanguage)}
+								</label>
+								<select
+									id="preferred-mode"
+									name="preferredMode"
+									class="select"
+									bind:value={selectedMode}
+									disabled={isLoading}
+								>
+									{#each MODE_OPTIONS as opt}
+										<option value={opt.value}>{opt.label}</option>
+									{/each}
+								</select>
+								<p class="text-sm opacity-75">
+									{__('Shown by default when someone opens your profile', $userLanguage)}
+								</p>
+							</div>
+							<button type="submit" class="btn variant-filled-primary" disabled={isLoading}>
+								{isLoading
+									? __('Updating...', $userLanguage)
+									: __('Update Main Mode', $userLanguage)}
 							</button>
 						</form>
 					</div>

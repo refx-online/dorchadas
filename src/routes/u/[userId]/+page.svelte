@@ -9,10 +9,11 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { queryParam } from 'sveltekit-search-params';
 	import Edit2 from 'svelte-feathers/Edit2.svelte';
-	import type { Clan, PlayerStatus, ppProfileHistory } from '$lib/types';
+	import type { Clan, PlayerStatus, ppProfileHistory, peakrankProfileHistory } from '$lib/types';
 	import { fetchClan, fetchPlayerStatus } from '$lib/api';
 	import { userData, userLanguage } from '$lib/storage';
 	import { getCountryName } from '$lib/country';
+import { decodePreferredMode } from '$lib/modes';
 	import { numberHumanReadable } from '$lib/string';
 	import { secondsToDHM, secondsToHours } from '$lib/time';
 	import UserScores from '$lib/components/UserScores.svelte';
@@ -48,6 +49,8 @@
 	let currentModeInt: number = 0;
 	let playerStatus: PlayerStatus | undefined;
 	let ppHistoryData: (ppProfileHistory | null)[] = data.ppHistoryData ?? Array(21).fill(null);
+	let peakRankData: (peakrankProfileHistory | null)[] =
+		data.peakRankData ?? Array(21).fill(null);
 
 	// NOTE: this is so cursed, please kill me
 	let level = tweened(0, {
@@ -233,6 +236,22 @@
 					];
 				}
 			}
+
+			if (!peakRankData[currentModeInt]) {
+				const peak = await fetch(
+					`/api/v1/users/${data.user.info.id}/history?scope=peak&mode=${currentModeInt}`
+				)
+					.then((response) => (response.ok ? response.json() : null))
+					.catch(() => null);
+
+				if (peak) {
+					peakRankData = [
+						...peakRankData.slice(0, currentModeInt),
+						peak as peakrankProfileHistory,
+						...peakRankData.slice(currentModeInt + 1)
+					];
+				}
+			}
 		}
 		loading = false;
 	};
@@ -305,6 +324,13 @@
 			const selectedType = $queryType;
 			if (modes.includes(selectedMode!)) currentMode = selectedMode!;
 			if (types.includes(selectedType!)) currentType = selectedType!;
+
+			// NOTE: no explicit params — show the player's main mode.
+			if (!selectedMode && !selectedType) {
+				const pref = decodePreferredMode(data.user.info.preferred_mode ?? 0);
+				currentMode = pref.mode;
+				currentType = pref.type;
+			}
 
 			await updateModeInt();
 
@@ -668,6 +694,16 @@
 									<span class="text-xs">{__('Country Ranking', $userLanguage)}</span>
 									<span class="text-xl md:text-3xl font-semibold text-primary-200"
 										>#{$countryRank <= 0 ? '-' : $countryRank}</span
+									>
+								</div>
+								<div class="flex flex-col w-[50%] md:w-fit">
+									<span class="text-xs">{__('Peak Rank', $userLanguage)}</span>
+									<span
+										class="text-xl md:text-3xl font-semibold text-primary-200"
+										title={peakRankData[currentModeInt]?.data?.captures?.[0]?.captured_at ??
+											''}
+										>#{peakRankData[currentModeInt]?.data?.captures?.[0]?.rank ??
+											'-'}</span
 									>
 								</div>
 							</div>
