@@ -135,7 +135,12 @@
 
 	<div class="overlay">
 		<section class="hero-shell">
-			<svg class="deco-line deco-line-1" viewBox="0 0 800 800" preserveAspectRatio="none" aria-hidden="true">
+			<svg
+				class="deco-line deco-line-1"
+				viewBox="0 0 800 800"
+				preserveAspectRatio="none"
+				aria-hidden="true"
+			>
 				<path
 					d="M -50 200 Q 200 100 400 300 T 850 250"
 					fill="none"
@@ -150,9 +155,29 @@
 					</linearGradient>
 				</defs>
 			</svg>
-			<svg class="deco-line deco-line-2" viewBox="0 0 800 800" preserveAspectRatio="none" aria-hidden="true">
-				<circle cx="650" cy="500" r="380" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="3 8" />
-				<circle cx="650" cy="500" r="240" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1" />
+			<svg
+				class="deco-line deco-line-2"
+				viewBox="0 0 800 800"
+				preserveAspectRatio="none"
+				aria-hidden="true"
+			>
+				<circle
+					cx="650"
+					cy="500"
+					r="380"
+					fill="none"
+					stroke="rgba(255,255,255,0.08)"
+					stroke-width="1"
+					stroke-dasharray="3 8"
+				/>
+				<circle
+					cx="650"
+					cy="500"
+					r="240"
+					fill="none"
+					stroke="rgba(255,255,255,0.06)"
+					stroke-width="1"
+				/>
 			</svg>
 
 			<div class="watermark watermark-top" aria-hidden="true">refx</div>
@@ -228,11 +253,7 @@
 								</div>
 								{#if score}
 									<div class="float-card-body">
-										<img
-											src={`${avatarUrl}/${score.id}`}
-											alt={score.name}
-											class="pp-avatar"
-										/>
+										<img src={`${avatarUrl}/${score.id}`} alt={score.name} class="pp-avatar" />
 										<div class="pp-meta">
 											<a href={`/scores/${score.score_id}`} class="pp-name">{score.name}</a>
 											<span class="pp-mode">{modeNames[score.mode] ?? '—'}</span>
@@ -250,7 +271,7 @@
 						<div class="orb-core" aria-hidden="true">
 							<div class="orb-ring orb-ring-1"></div>
 							<div class="orb-ring orb-ring-2"></div>
-							<div class="orb-glyph"> </div>
+							<div class="orb-glyph"></div>
 						</div>
 						<div class="saturn-ring saturn-ring-front" aria-hidden="true"></div>
 
@@ -273,11 +294,7 @@
 								</div>
 								{#if account}
 									<div class="float-card-body">
-										<img
-											src={`${avatarUrl}/${account.id}`}
-											alt={account.name}
-											class="pp-avatar"
-										/>
+										<img src={`${avatarUrl}/${account.id}`} alt={account.name} class="pp-avatar" />
 										<div class="pp-meta">
 											<a href={`/u/${account.id}`} class="pp-name">{account.name}</a>
 											<span class="pp-mode">
@@ -294,7 +311,12 @@
 		</section>
 
 		<section class="band-shell">
-			<svg class="deco-line deco-line-band" viewBox="0 0 1200 200" preserveAspectRatio="none" aria-hidden="true">
+			<svg
+				class="deco-line deco-line-band"
+				viewBox="0 0 1200 200"
+				preserveAspectRatio="none"
+				aria-hidden="true"
+			>
 				<path
 					d="M 0 100 Q 300 30 600 100 T 1200 100"
 					fill="none"
@@ -332,7 +354,10 @@
 					</div>
 					<h3 class="feature-title">{__('All modes', $userLanguage)}</h3>
 					<p class="feature-desc">
-						{__('Vanilla, Relax, Autopilot - every mode tracked, ranked, and recalculated.', $userLanguage)}
+						{__(
+							'Vanilla, Relax, Autopilot - every mode tracked, ranked, and recalculated.',
+							$userLanguage
+						)}
 					</p>
 				</div>
 			</div>
@@ -352,9 +377,17 @@
 						<span class="band-title-accent">{__('Discord.', $userLanguage)}</span>
 					</h2>
 					<p class="community-copy">
-						{__('Patch notes, scorepost, and the occasional argument over which mod is broken.', $userLanguage)}
+						{__(
+							'Patch notes, scorepost, and the occasional argument over which mod is broken.',
+							$userLanguage
+						)}
 					</p>
-					<a href={env.PUBLIC_DISCORD_SERVER_URL} target="_blank" rel="noopener noreferrer" class="cta cta-primary">
+					<a
+						href={env.PUBLIC_DISCORD_SERVER_URL}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="cta cta-primary"
+					>
 						<span>{__('Join Discord', $userLanguage)}</span>
 						<span class="cta-arrow">→</span>
 					</a>

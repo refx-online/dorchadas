@@ -196,10 +196,7 @@
 				showMessage(__('Country updated successfully', $userLanguage), 'success');
 				await invalidateAll();
 			} else if (result.type === 'failure') {
-				showMessage(
-					result.data?.message || __('Failed to update country', $userLanguage),
-					'error'
-				);
+				showMessage(result.data?.message || __('Failed to update country', $userLanguage), 'error');
 			}
 			isLoading = false;
 		};
@@ -480,11 +477,7 @@
 									{__('Country', $userLanguage)}
 								</label>
 								<div class="flex items-center gap-3">
-									<img
-										class="w-8"
-										src="/flags/{selectedCountry}.png"
-										alt="selected country flag"
-									/>
+									<img class="w-8" src="/flags/{selectedCountry}.png" alt="selected country flag" />
 									<select
 										id="country"
 										name="country"
@@ -504,9 +497,7 @@
 								</p>
 							</div>
 							<button type="submit" class="btn variant-filled-primary" disabled={isLoading}>
-								{isLoading
-									? __('Updating...', $userLanguage)
-									: __('Update Country', $userLanguage)}
+								{isLoading ? __('Updating...', $userLanguage) : __('Update Country', $userLanguage)}
 							</button>
 						</form>
 					</div>

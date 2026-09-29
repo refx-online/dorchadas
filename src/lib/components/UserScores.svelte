@@ -287,19 +287,21 @@
 									{Math.round(score.pp)}<span class="text-primary-300 text-xs">pp</span>
 								</div>
 								{#if isCheatMode}
-									<div
-										class="flex flex-row gap-2 text-xs font-semibold bg-black/50 rounded-lg p-2"
-									>
+									<div class="flex flex-row gap-2 text-xs font-semibold bg-black/50 rounded-lg p-2">
 										{#if calculateMode() === 16}
 											<span class="text-yellow-400" title="Timewarp Value"
-												>TW: {score.twval === -1.0 ? 'Not Used' : score.twval ?? 'N/A'}</span
+												>TW: {score.twval === -1.0 ? 'Not Used' : (score.twval ?? 'N/A')}</span
 											>
 										{/if}
 										<span class="text-green-400" title="Approach Rate Value"
-											>AR: {score.ar_value === -1.0 ? 'Not Used' : score.ar_value?.toFixed(1) ?? 'N/A'}</span
+											>AR: {score.ar_value === -1.0
+												? 'Not Used'
+												: (score.ar_value?.toFixed(1) ?? 'N/A')}</span
 										>
 										<span class="text-red-400" title="Aim Correction Value"
-											>AC: {score.aim_value === -1.0 ? 'Not Used' : score.aim_value ?? 'N/A'}</span
+											>AC: {score.aim_value === -1.0
+												? 'Not Used'
+												: (score.aim_value ?? 'N/A')}</span
 										>
 										<span class="text-purple-400" title="Hidden Remover"
 											>HD: {score.hdr ? 'Yes' : 'No'}</span

@@ -196,7 +196,9 @@
 								{#if calculateMode() === 16}
 									<td class="w-[1%] whitespace-nowrap !text-xs !font-semibold content-center">
 										<Popup>
-											<span class="text-yellow-400">{score.twval === -1.0 ? 'Not Used' : score.twval ?? 'N/A'}</span>
+											<span class="text-yellow-400"
+												>{score.twval === -1.0 ? 'Not Used' : (score.twval ?? 'N/A')}</span
+											>
 											<svelte:fragment slot="popup">
 												<div class="card variant-filled-surface p-2 rounded-lg text-xs">
 													Timewarp Value
@@ -207,7 +209,11 @@
 								{/if}
 								<td class="w-[1%] whitespace-nowrap !text-xs !font-semibold content-center">
 									<Popup>
-										<span class="text-green-400">{score.ar_value === -1.0 ? 'Not Used' : score.ar_value?.toFixed(1) ?? 'N/A'}</span>
+										<span class="text-green-400"
+											>{score.ar_value === -1.0
+												? 'Not Used'
+												: (score.ar_value?.toFixed(1) ?? 'N/A')}</span
+										>
 										<svelte:fragment slot="popup">
 											<div class="card variant-filled-surface p-2 rounded-lg text-xs">
 												Approach Rate Value
@@ -217,7 +223,9 @@
 								</td>
 								<td class="w-[1%] whitespace-nowrap !text-xs !font-semibold content-center">
 									<Popup>
-										<span class="text-red-400">{score.aim_value === -1.0 ? 'Not Used' : score.aim_value ?? 'N/A'}</span>
+										<span class="text-red-400"
+											>{score.aim_value === -1.0 ? 'Not Used' : (score.aim_value ?? 'N/A')}</span
+										>
 										<svelte:fragment slot="popup">
 											<div class="card variant-filled-surface p-2 rounded-lg text-xs">
 												Aim Correction Value
