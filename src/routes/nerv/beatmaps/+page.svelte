@@ -5,7 +5,7 @@
 	import { Music, AlertTriangle, CheckCircle } from 'svelte-feathers';
 	import { RankedStatus, statusIntToString } from '$lib/beatmap-status';
 	import { fetchBeatmap } from '$lib/api';
-import { beatmapUrl } from '$lib/env';
+	import { beatmapUrl } from '$lib/env';
 	import { invalidateAll } from '$app/navigation';
 
 	import type { PageData } from './$types';

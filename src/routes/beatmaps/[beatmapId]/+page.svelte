@@ -528,10 +528,7 @@
 						</div>
 					</div>
 					<div class="ms-auto flex flex-row items-center gap-3 z-10">
-						<a
-							class="btn variant-soft-primary text-sm"
-							href="{beatmapUrl}/d/{data.map.set_id}"
-						>
+						<a class="btn variant-soft-primary text-sm" href="{beatmapUrl}/d/{data.map.set_id}">
 							<Download class="pointer-events-none md:mr-2" size={18} />
 							<span class="hidden md:block">{__('Download', $userLanguage)}</span>
 						</a>

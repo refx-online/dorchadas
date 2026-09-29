@@ -268,10 +268,7 @@ export const actions = {
 			const redis = await getRedisClient();
 			if (redis) {
 				for (const s of stats) {
-					await redis.zRem(
-						`bancho:leaderboard:${s.mode}:${oldCountry}`,
-						String(user.id)
-					);
+					await redis.zRem(`bancho:leaderboard:${s.mode}:${oldCountry}`, String(user.id));
 					await redis.zAdd(`bancho:leaderboard:${s.mode}:${newCountry}`, [
 						{ score: Number(s.pp), value: String(user.id) }
 					]);

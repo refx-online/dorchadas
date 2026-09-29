@@ -305,7 +305,9 @@
 										{/each}
 									</div>
 									{#if score.clock_rate && score.clock_rate !== 1.0 && score.clock_rate !== 1.5}
-										<span class="text-xs font-semibold text-gray-400">{score.clock_rate.toFixed(2)}x</span>
+										<span class="text-xs font-semibold text-gray-400"
+											>{score.clock_rate.toFixed(2)}x</span
+										>
 									{/if}
 								</div>
 							</div>

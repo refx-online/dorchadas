@@ -13,7 +13,7 @@
 	import { fetchClan, fetchPlayerStatus } from '$lib/api';
 	import { userData, userLanguage } from '$lib/storage';
 	import { getCountryName } from '$lib/country';
-import { decodePreferredMode } from '$lib/modes';
+	import { decodePreferredMode } from '$lib/modes';
 	import { numberHumanReadable } from '$lib/string';
 	import { secondsToDHM, secondsToHours } from '$lib/time';
 	import UserScores from '$lib/components/UserScores.svelte';
@@ -49,8 +49,7 @@ import { decodePreferredMode } from '$lib/modes';
 	let currentModeInt: number = 0;
 	let playerStatus: PlayerStatus | undefined;
 	let ppHistoryData: (ppProfileHistory | null)[] = data.ppHistoryData ?? Array(21).fill(null);
-	let peakRankData: (peakrankProfileHistory | null)[] =
-		data.peakRankData ?? Array(21).fill(null);
+	let peakRankData: (peakrankProfileHistory | null)[] = data.peakRankData ?? Array(21).fill(null);
 
 	// NOTE: this is so cursed, please kill me
 	let level = tweened(0, {
@@ -700,10 +699,8 @@ import { decodePreferredMode } from '$lib/modes';
 									<span class="text-xs">{__('Peak Rank', $userLanguage)}</span>
 									<span
 										class="text-xl md:text-3xl font-semibold text-primary-200"
-										title={peakRankData[currentModeInt]?.data?.captures?.[0]?.captured_at ??
-											''}
-										>#{peakRankData[currentModeInt]?.data?.captures?.[0]?.rank ??
-											'-'}</span
+										title={peakRankData[currentModeInt]?.data?.captures?.[0]?.captured_at ?? ''}
+										>#{peakRankData[currentModeInt]?.data?.captures?.[0]?.rank ?? '-'}</span
 									>
 								</div>
 							</div>
