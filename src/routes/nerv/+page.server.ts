@@ -61,6 +61,23 @@ export const load = async ({ cookies }) => {
 		.first()
 		.then((result) => result?.total ?? 0);
 
+	const flagCount = await mysqlDatabase('scores_flag')
+		.count('* as count')
+		.first()
+		.then((result) => result?.count ?? 0);
+
+	const recentScores = await mysqlDatabase('scores as s')
+		.join('users as u', 'u.id', 's.userid')
+		.select('s.id', 's.pp', 's.mode', 's.play_time', 'u.id as user_id', 'u.name as username')
+		.orderBy('s.id', 'desc')
+		.limit(8);
+
+	const recentFlags = await mysqlDatabase('scores_flag as sf')
+		.join('users as u', 'u.id', 'sf.user_id')
+		.select('sf.score_id', 'sf.kind', 'sf.created_at', 'u.id as user_id', 'u.name as username')
+		.orderBy('sf.created_at', 'desc')
+		.limit(8);
+
 	return {
 		userCounts,
 		recentAccounts,
@@ -69,6 +86,9 @@ export const load = async ({ cookies }) => {
 		totalPP,
 		scoreCount,
 		totalPlays,
+		flagCount,
+		recentScores,
+		recentFlags,
 
 		OurUser
 	};

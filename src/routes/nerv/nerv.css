@@ -1,0 +1,226 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Display:wght@700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Shippori+Mincho+B1:wght@500;700;800&display=swap');
+
+/* NERV Operations Console — adapted from nerv-ui for the staff panel.
+   The screen is off until data demands it. Black void by default. */
+
+.nv-root {
+	--void: #000000;
+	--void-panel: #0c0c0a;
+	--nerv-orange: #ff9830;
+	--nerv-orange-dim: #c87020;
+	--data-green: #50ff50;
+	--data-green-dim: #30bb30;
+	--wire-cyan: #20f0ff;
+	--alert-red: #ff3030;
+	--steel: #d8d8d0;
+	--steel-dim: #888880;
+	--font-title: 'Noto Serif Display', 'Times New Roman', serif;
+	--font-mincho: 'Shippori Mincho B1', 'YuMincho', serif;
+	--font-sys: 'JetBrains Mono', 'Cascadia Mono', monospace;
+
+	background: var(--void);
+	color: var(--steel);
+	font-family: var(--font-sys);
+	border-radius: 0;
+}
+
+.nv-root :is(h1, h2, h3) {
+	font-family: var(--font-title);
+	font-weight: 900;
+	text-transform: uppercase;
+	letter-spacing: 0.2em;
+	transform: scaleX(0.92);
+	transform-origin: left center;
+	color: var(--nerv-orange);
+}
+
+.nv-root .nv-mincho {
+	font-family: var(--font-mincho);
+	color: var(--steel-dim);
+}
+
+.nv-root .nv-panel {
+	background: var(--void-panel);
+	border: 1px solid var(--nerv-orange-dim);
+	border-radius: 0;
+	padding: 1rem;
+}
+
+.nv-root .nv-panel-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	border-bottom: 1px solid var(--nerv-orange-dim);
+	padding-bottom: 0.5rem;
+	margin-bottom: 0.75rem;
+}
+
+.nv-root .nv-panel-header span:last-child {
+	color: var(--steel-dim);
+	font-size: 0.75rem;
+}
+
+.nv-root .nv-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+	gap: 1px;
+	background: var(--nerv-orange-dim);
+	border: 1px solid var(--nerv-orange-dim);
+}
+
+.nv-root .nv-metric {
+	background: var(--void);
+	padding: 0.6rem 0.8rem;
+}
+
+.nv-root .nv-metric .lbl {
+	display: block;
+	color: var(--nerv-orange);
+	font-size: 0.65rem;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+}
+
+.nv-root .nv-metric .val {
+	display: block;
+	color: var(--data-green);
+	font-size: 1.4rem;
+	font-weight: 700;
+}
+
+.nv-root .nv-metric.alert .val {
+	color: var(--alert-red);
+}
+
+.nv-root .nv-led {
+	display: inline-block;
+	width: 0.5rem;
+	height: 0.5rem;
+	border-radius: 9999px;
+	margin-right: 0.4rem;
+	vertical-align: baseline;
+}
+
+.nv-root .nv-led.green {
+	background: var(--data-green);
+	box-shadow: 0 0 6px var(--data-green);
+}
+
+.nv-root .nv-led.red {
+	background: var(--alert-red);
+	box-shadow: 0 0 6px var(--alert-red);
+}
+
+.nv-root .nv-log {
+	font-size: 0.8rem;
+	line-height: 1.7;
+	max-height: 24rem;
+	overflow-y: auto;
+}
+
+.nv-root .nv-log .ev {
+	display: flex;
+	gap: 0.75rem;
+	white-space: nowrap;
+}
+
+.nv-root .nv-log .ev-time {
+	color: var(--steel-dim);
+}
+
+.nv-root .nv-log .ev-type {
+	min-width: 7rem;
+	font-weight: 700;
+}
+
+.nv-root .nv-log .ev-type.score {
+	color: var(--data-green);
+}
+
+.nv-root .nv-log .ev-type.register {
+	color: var(--wire-cyan);
+}
+
+.nv-root .nv-log .ev-type.flag {
+	color: var(--alert-red);
+}
+
+.nv-root .nv-log .ev-detail {
+	color: var(--steel);
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.nv-root table.nv-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.8rem;
+}
+
+.nv-root table.nv-table th {
+	color: var(--nerv-orange);
+	text-transform: uppercase;
+	letter-spacing: 0.15em;
+	font-size: 0.65rem;
+	text-align: left;
+	border-bottom: 1px solid var(--nerv-orange-dim);
+	padding: 0.4rem 0.6rem;
+}
+
+.nv-root table.nv-table td {
+	border-bottom: 1px solid #1c1c18;
+	padding: 0.4rem 0.6rem;
+	color: var(--steel);
+}
+
+.nv-root table.nv-table tr:hover td {
+	background: #141410;
+}
+
+.nv-root table.nv-table a {
+	color: var(--data-green);
+}
+
+.nv-root .nv-badge {
+	display: inline-block;
+	border: 1px solid var(--nerv-orange-dim);
+	color: var(--nerv-orange);
+	font-size: 0.65rem;
+	letter-spacing: 0.1em;
+	padding: 0.1rem 0.4rem;
+	border-radius: 0;
+	text-transform: uppercase;
+}
+
+.nv-root .nv-badge.red {
+	border-color: var(--alert-red);
+	color: var(--alert-red);
+}
+
+.nv-root .nv-badge.green {
+	border-color: var(--data-green-dim);
+	color: var(--data-green);
+}
+
+.nv-root .nv-scanlines {
+	position: relative;
+}
+
+.nv-root .nv-scanlines::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background: repeating-linear-gradient(
+		to bottom,
+		transparent 0px,
+		transparent 2px,
+		rgba(0, 0, 0, 0.25) 3px
+	);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.nv-root .nv-scanlines::after {
+		display: none;
+	}
+}

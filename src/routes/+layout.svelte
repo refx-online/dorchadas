@@ -97,6 +97,8 @@
 	let hoveredIndex = -1;
 	const nervNavItems = [
 		{ title: 'Nerv', icon: '⏾', path: '/nerv', description: 'Dashboard' },
+		{ title: 'Flags', icon: '⚑', path: '/nerv/flags', description: 'Score Flags' },
+		{ title: 'Live', icon: '●', path: '/nerv/live', description: 'Live Ops' },
 		{ title: 'Ranking', icon: '🎵', path: '/nerv/beatmaps', description: 'Beatmap Ranking' },
 		{ title: 'Performance', icon: '📈', path: '/nerv/performance', description: 'Client Reports' }
 	];
