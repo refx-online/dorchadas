@@ -1,22 +1,24 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
-	import { __ } from '$lib/i18n';
-	import { userLanguage } from '$lib/storage';
 
 	export let data;
 </script>
 
 <div class="container mx-auto w-full p-5">
-	<div class="flex flex-col gap-4">
-		<h1 class="text-2xl font-bold">{__('Score Flags', $userLanguage)}</h1>
-		<p class="text-sm opacity-75">
-			Scores the server accepted but flagged as suspicious. Dismiss the noise, restrict from the
-			user page when it's real.
-		</p>
+	<div>
+		<h1>Score Flags</h1>
+		<div class="nv-mincho">不正スコア監視 // CHEAT WATCH</div>
+	</div>
 
+	<div class="nv-panel mt-4">
+		<div class="nv-panel-header">
+			<span>Review Queue ({data.flags.length})</span><span
+				>dismiss the noise, restrict what's real</span
+			>
+		</div>
 		<div class="table-container">
-			<table class="table table-hover">
+			<table class="nv-table">
 				<thead>
 					<tr>
 						<th>Score</th>
@@ -31,12 +33,12 @@
 				<tbody>
 					{#each data.flags as f}
 						<tr>
-							<td><a class="anchor" href="/scores/{f.score_id}">{f.score_id}</a></td>
+							<td><a href="/scores/{f.score_id}">{f.score_id}</a></td>
 							<td>
-								<a class="anchor" href="/u/{f.user_id}">{f.username}</a>
-								<a class="anchor opacity-60" href="/nerv/u/{f.user_id}">[nerv]</a>
+								<a href="/u/{f.user_id}">{f.username}</a>
+								<a href="/nerv/u/{f.user_id}">[nerv]</a>
 							</td>
-							<td><span class="badge variant-filled-warning">{f.kind}</span></td>
+							<td><span class="nv-badge red">{f.kind}</span></td>
 							<td class="truncate max-w-[24rem]" title={f.det}>{f.reason}</td>
 							<td>{Math.round(f.pp)}</td>
 							<td>{new Date(f.play_time).toLocaleString()}</td>
@@ -52,7 +54,7 @@
 								>
 									<input type="hidden" name="scoreId" value={f.score_id} />
 									<input type="hidden" name="kind" value={f.kind} />
-									<button class="btn btn-sm variant-ghost-surface" type="submit"> Dismiss </button>
+									<button class="nv-badge" type="submit"> Dismiss </button>
 								</form>
 							</td>
 						</tr>

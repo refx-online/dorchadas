@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { __ } from '$lib/i18n';
-	import { userLanguage } from '$lib/storage';
 
 	export let data;
 
@@ -24,9 +22,13 @@
 </script>
 
 <div class="container mx-auto w-full p-5">
-	<div class="flex flex-col gap-4">
+	<div>
+		<h1>Performance Reports</h1>
+		<div class="nv-mincho">端末性能報告 // CLIENT TELEMETRY</div>
+	</div>
+	<div class="flex flex-col gap-4 mt-4">
 		<div class="flex flex-row items-center justify-between">
-			<h1 class="text-2xl font-bold">{__('Performance Reports', $userLanguage)}</h1>
+			<div></div>
 			<div class="flex flex-row gap-2">
 				<input
 					class="input"
@@ -43,47 +45,55 @@
 			look, not verdicts.
 		</p>
 
-		<div class="table-container">
-			<table class="table table-hover">
-				<thead>
-					<tr>
-						<th>Score</th>
-						<th>Player</th>
-						<th>Mode</th>
-						<th>PP</th>
-						<th>OS</th>
-						<th>Full</th>
-						<th>FPS cap</th>
-						<th>Frames</th>
-						<th>Spikes</th>
-						<th>Avg ms</th>
-						<th>Aim Hz</th>
-						<th>Flags</th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each data.reports as r}
-						{@const flags = flagReport(r)}
-						<tr class:variant-filled-warning={flags.length > 0}>
-							<td><a class="anchor" href="/scores/{r.scoreid}">{r.scoreid}</a></td>
-							<td><a class="anchor" href="/u/{r.user_id}">{r.username}</a></td>
-							<td>{r.mod_mode} ({r.mode})</td>
-							<td>{Math.round(r.pp)}</td>
-							<td class="truncate max-w-[12rem]" title={r.os}>{r.os}</td>
-							<td>{r.fullscreen ? 'yes' : 'no'}</td>
-							<td>{r.fps_cap}</td>
-							<td>{r.frame_count}</td>
-							<td>{r.spike_frames}</td>
-							<td>{r.average_frametime}</td>
-							<td>{r.aim_rate || '-'}</td>
-							<td>{flags.join(', ') || '-'}</td>
+		<div class="nv-panel mt-4">
+			<div class="nv-panel-header">
+				<span>Reports</span><span>flagged rows are leads, not verdicts</span>
+			</div>
+			<div class="table-container">
+				<table class="nv-table">
+					<thead>
+						<tr>
+							<th>Score</th>
+							<th>Player</th>
+							<th>Mode</th>
+							<th>PP</th>
+							<th>OS</th>
+							<th>Full</th>
+							<th>FPS cap</th>
+							<th>Frames</th>
+							<th>Spikes</th>
+							<th>Avg ms</th>
+							<th>Aim Hz</th>
+							<th>Flags</th>
 						</tr>
-					{/each}
-				</tbody>
-			</table>
-			{#if !data.reports.length}
-				<p class="p-4 opacity-60">No reports yet — they land here as plays are submitted.</p>
-			{/if}
+					</thead>
+					<tbody>
+						{#each data.reports as r}
+							{@const flags = flagReport(r)}
+							<tr>
+								<td><a href="/scores/{r.scoreid}">{r.scoreid}</a></td>
+								<td><a href="/u/{r.user_id}">{r.username}</a></td>
+								<td>{r.mod_mode} ({r.mode})</td>
+								<td>{Math.round(r.pp)}</td>
+								<td class="truncate max-w-[12rem]" title={r.os}>{r.os}</td>
+								<td>{r.fullscreen ? 'yes' : 'no'}</td>
+								<td>{r.fps_cap}</td>
+								<td>{r.frame_count}</td>
+								<td>{r.spike_frames}</td>
+								<td>{r.average_frametime}</td>
+								<td>{r.aim_rate || '-'}</td>
+								<td
+									>{#if flags.length}<span class="nv-badge red">{flags.join(', ')}</span
+										>{:else}-{/if}</td
+								>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+				{#if !data.reports.length}
+					<p class="p-4 opacity-60">No reports yet — they land here as plays are submitted.</p>
+				{/if}
+			</div>
 		</div>
 	</div>
 </div>

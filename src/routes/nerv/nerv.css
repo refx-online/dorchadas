@@ -224,3 +224,45 @@
 		display: none;
 	}
 }
+
+/* skeleton compat: stock components inherit the console look
+   so older nerv pages match without rewrites. */
+.nv-root :is(.btn, .card, .input, .select, .badge, input, select, table) {
+	border-radius: 0;
+}
+
+.nv-root .table {
+	font-family: var(--font-sys);
+	font-size: 0.8rem;
+}
+
+.nv-root .table thead th {
+	color: var(--nerv-orange);
+	text-transform: uppercase;
+	letter-spacing: 0.15em;
+	font-size: 0.65rem;
+}
+
+.nv-root .table tbody td {
+	border-color: #1c1c18;
+}
+
+.nv-root .input,
+.nv-root .select {
+	background: var(--void);
+	border: 1px solid var(--nerv-orange-dim);
+	color: var(--steel);
+}
+
+.nv-root .btn {
+	border: 1px solid var(--nerv-orange-dim);
+}
+
+.nv-root .variant-filled-primary {
+	background: var(--nerv-orange);
+	color: #000;
+}
+
+.nv-root .badge {
+	border-radius: 0;
+}
