@@ -7,6 +7,7 @@
 	import ChevronDown from 'svelte-feathers/ChevronDown.svelte';
 	import Play from 'svelte-feathers/Play.svelte';
 	import { __ } from '$lib/i18n';
+	import { encodeCategory } from '$lib/modes';
 	import { userLanguage } from '$lib/storage';
 	import { scale } from 'svelte/transition';
 
@@ -26,34 +27,7 @@
 
 		amount += scoreAmount;
 
-		let mode = 0;
-		switch (currentMode) {
-			case 'taiko':
-				mode += 1;
-				break;
-			case 'catch':
-				mode += 2;
-				break;
-			case 'mania':
-				mode += 3;
-				break;
-		}
-
-		switch (currentType) {
-			case 'relax':
-				mode += 4;
-				break;
-			case 'autopilot':
-				mode += 8;
-				break;
-			case 'cheat':
-				mode = 12;
-				break;
-			case 'cheatcheat':
-				mode = 16;
-				break;
-		}
-
+		const mode = encodeCategory(currentMode, currentType) ?? 0;
 		const result = await fetchPlayerMostPlayed({
 			userId: userId,
 			limit: amount,
