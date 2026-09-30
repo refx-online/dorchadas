@@ -97,7 +97,8 @@
 	let hoveredIndex = -1;
 	const nervNavItems = [
 		{ title: 'Nerv', icon: '⏾', path: '/nerv', description: 'Dashboard' },
-		{ title: 'Ranking', icon: '🎵', path: '/nerv/beatmaps', description: 'Beatmap Ranking' }
+		{ title: 'Ranking', icon: '🎵', path: '/nerv/beatmaps', description: 'Beatmap Ranking' },
+		{ title: 'Performance', icon: '📈', path: '/nerv/performance', description: 'Client Reports' }
 	];
 
 	function getRandomOffset() {
