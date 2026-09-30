@@ -4,6 +4,7 @@
 	import ChevronLeft from 'svelte-feathers/ChevronLeft.svelte';
 	import ChevronRight from 'svelte-feathers/ChevronRight.svelte';
 	import { appName } from '$lib/env';
+	import { encodeCategory, normalizeLegacyType, TYPE_DESCRIPTIONS } from '$lib/modes';
 	import { queryParam } from 'sveltekit-search-params';
 	import { __ } from '$lib/i18n';
 	import { userLanguage } from '$lib/storage';
@@ -12,7 +13,7 @@
 	export let data;
 
 	const modes = ['osu', 'taiko', 'catch', 'mania'];
-	const types = ['vanilla', 'relax', 'autopilot', 'cheat', 'cheatcheat', 'touch'];
+	const types = ['vanilla', 'vanilla-rx', 'vanilla-ap', 'cheat', 'cheat-rx', 'cheat-ap'];
 
 	let currentLeaderboard: DBClan[] = [];
 	const clansPerPage = 50;
@@ -40,52 +41,22 @@
 	const selectedType = $queryType;
 	if (modes.includes(selectedMode!)) currentMode = selectedMode!;
 	if (types.includes(selectedType!)) currentType = selectedType!;
+	else currentType = normalizeLegacyType(selectedType);
 	if (/^\d+$/.test($queryPage!) && parseInt($queryPage!) > 0) currentPage = parseInt($queryPage!);
 
 	const refreshLeaderboard = async () => {
 		if (loading && !firstLoad) return;
 		loading = true;
 		currentLeaderboard = [];
-		let mode = 0;
 		const urlParams = new URLSearchParams();
 
-		if (currentType == 'relax' && currentMode == 'mania') currentMode = 'osu';
-		if (currentType == 'autopilot' && currentMode != 'osu') currentMode = 'osu';
-		if (currentType == 'touch' && currentMode != 'osu') currentMode = 'osu';
+		if (encodeCategory(currentMode, currentType) === null) currentMode = 'osu';
 
 		queryMode.set(currentMode);
 		queryType.set(currentType);
 		queryPage.set(currentPage.toFixed(0));
 
-		switch (currentMode) {
-			case 'taiko':
-				mode += 1;
-				break;
-			case 'catch':
-				mode += 2;
-				break;
-			case 'mania':
-				mode += 3;
-				break;
-		}
-
-		switch (currentType) {
-			case 'relax':
-				mode += 4;
-				break;
-			case 'autopilot':
-				mode += 8;
-				break;
-			case 'cheat':
-				mode = 12;
-				break;
-			case 'cheatcheat':
-				mode = 16;
-				break;
-			case 'touch':
-				mode = 20;
-				break;
-		}
+		const mode = encodeCategory(currentMode, currentType) ?? 0;
 
 		urlParams.set('mode', mode.toFixed(0));
 		urlParams.set('limit', '50');
@@ -163,54 +134,60 @@
 							? 'bg-surface-500'
 							: 'bg-surface-600'} rounded-lg md:rounded-r-none"
 						on:click={() => setType('vanilla')}
+						title={TYPE_DESCRIPTIONS.vanilla}
 						disabled={loading || failed}
 					>
 						Vanilla
 					</button>
 					<button
-						class="w-auto px-4 !scale-100 btn {currentType == 'relax'
+						class="w-auto px-4 !scale-100 btn {currentType == 'vanilla-rx'
 							? 'bg-surface-500'
 							: 'bg-surface-600'} rounded-lg md:rounded-none"
-						on:click={() => setType('relax')}
+						on:click={() => setType('vanilla-rx')}
+						title={TYPE_DESCRIPTIONS['vanilla-rx']}
 						disabled={currentMode == 'mania' || loading || failed}
 					>
-						Relax
+						Vanilla RX
 					</button>
 					<button
-						class="w-auto px-4 !scale-100 btn {currentType == 'autopilot'
+						class="w-auto px-4 !scale-100 btn {currentType == 'vanilla-ap'
 							? 'bg-surface-500'
 							: 'bg-surface-600'} rounded-lg md:rounded-none"
-						on:click={() => setType('autopilot')}
+						on:click={() => setType('vanilla-ap')}
+						title={TYPE_DESCRIPTIONS['vanilla-ap']}
 						disabled={currentMode != 'osu' || loading || failed}
 					>
-						Autopilot
+						Vanilla AP
 					</button>
 					<button
 						class="w-auto px-4 !scale-100 btn {currentType == 'cheat'
 							? 'bg-surface-500'
 							: 'bg-surface-600'} rounded-lg md:rounded-none"
 						on:click={() => setType('cheat')}
+						title={TYPE_DESCRIPTIONS.cheat}
 						disabled={loading || failed}
 					>
 						Cheat
 					</button>
 					<button
-						class="w-auto px-4 !scale-100 btn {currentType == 'cheatcheat'
+						class="w-auto px-4 !scale-100 btn {currentType == 'cheat-rx'
 							? 'bg-surface-500'
 							: 'bg-surface-600'} rounded-lg md:rounded-none"
-						on:click={() => setType('cheatcheat')}
-						disabled={loading || failed}
+						on:click={() => setType('cheat-rx')}
+						title={TYPE_DESCRIPTIONS['cheat-rx']}
+						disabled={currentMode == 'mania' || loading || failed}
 					>
-						CheatCheat
+						Cheat RX
 					</button>
 					<button
-						class="w-auto px-4 !scale-100 btn {currentType == 'touch'
+						class="w-auto px-4 !scale-100 btn {currentType == 'cheat-ap'
 							? 'bg-surface-500'
 							: 'bg-surface-600'} rounded-lg md:rounded-l-none"
-						on:click={() => setType('touch')}
+						on:click={() => setType('cheat-ap')}
+						title={TYPE_DESCRIPTIONS['cheat-ap']}
 						disabled={currentMode != 'osu' || loading || failed}
 					>
-						Touch
+						Cheat AP
 					</button>
 				</div>
 				<div class="w-full flex rounded-lg">

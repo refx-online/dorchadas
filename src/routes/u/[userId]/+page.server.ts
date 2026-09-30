@@ -19,44 +19,16 @@ import {
 	deleteComment
 } from '$lib/db';
 import { fail, redirect } from '@sveltejs/kit';
-import { VALID_MODES } from '$lib/modes';
+import { VALID_MODES, encodeCategory, normalizeLegacyType } from '$lib/modes';
 
-const modeTypes = ['vanilla', 'relax', 'autopilot', 'cheat', 'cheatcheat', 'touch'];
+const modeTypes = ['vanilla', 'vanilla-rx', 'vanilla-ap', 'cheat', 'cheat-rx', 'cheat-ap'];
 const modeNames = ['osu', 'taiko', 'catch', 'mania'];
 
 const getModeIndex = (modeName: string | null, typeName: string | null): number => {
-	let mode = 0;
-	const selectedMode = modeName && modeNames.includes(modeName) ? modeName : 'osu';
-	const selectedType = typeName && modeTypes.includes(typeName) ? typeName : 'vanilla';
-
-	switch (selectedMode) {
-		case 'taiko':
-			mode += 1;
-			break;
-		case 'catch':
-			mode += 2;
-			break;
-		case 'mania':
-			mode += 3;
-			break;
-	}
-
-	switch (selectedType) {
-		case 'relax':
-			mode += 4;
-			break;
-		case 'autopilot':
-			mode += 8;
-			break;
-		case 'cheat':
-			return 12;
-		case 'cheatcheat':
-			return 16;
-		case 'touch':
-			return 20;
-	}
-
-	return mode;
+	const type = modeTypes.includes(typeName ?? '')
+		? (typeName as string)
+		: normalizeLegacyType(typeName);
+	return encodeCategory(modeName ?? 'osu', type) ?? 0;
 };
 
 export async function load({ params, cookies, url }) {

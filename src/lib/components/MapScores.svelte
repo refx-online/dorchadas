@@ -8,6 +8,7 @@
 	import { getTimeSince } from '$lib/time';
 	import { parseModsInt } from '$lib/mods';
 	import { __ } from '$lib/i18n';
+	import { encodeCategory } from '$lib/modes';
 	import { userLanguage } from '$lib/storage';
 	import Flag from './Flag.svelte';
 	import Mod from './Mod.svelte';
@@ -26,41 +27,10 @@
 	};
 
 	const calculateMode = (): number => {
-		let mode = 0;
-		switch (currentMode) {
-			case 'taiko':
-				mode += 1;
-				break;
-			case 'catch':
-				mode += 2;
-				break;
-			case 'mania':
-				mode += 3;
-				break;
-		}
-
-		switch (currentType) {
-			case 'relax':
-				mode += 4;
-				break;
-			case 'autopilot':
-				mode += 8;
-				break;
-			case 'cheat':
-				mode = 12;
-				break;
-			case 'cheatcheat':
-				mode = 16;
-				break;
-			case 'touch':
-				mode = 20;
-				break;
-		}
-
-		return mode;
+		return encodeCategory(currentMode, currentType) ?? 0;
 	};
 
-	$: isCheatMode = calculateMode() === 12 || calculateMode() === 16;
+	$: isCheatMode = calculateMode() >= 12;
 </script>
 
 {#if beatmapScores.length > 0}

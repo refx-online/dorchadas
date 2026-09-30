@@ -2,6 +2,7 @@
 	import './style.postcss';
 	import Popup from '$lib/components/Popup.svelte';
 	import { appName, appUrl, beatmapUrl } from '$lib/env';
+	import { encodeCategory, normalizeLegacyType, TYPE_DESCRIPTIONS } from '$lib/modes';
 	import { getFormattedTimeFromSeconds } from '$lib/time';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
@@ -45,46 +46,16 @@
 	let currentType = 'vanilla';
 
 	const modes = ['osu', 'taiko', 'catch', 'mania'];
-	const types = ['vanilla', 'relax', 'autopilot', 'cheat', 'cheatcheat', 'touch'];
+	const types = ['vanilla', 'vanilla-rx', 'vanilla-ap', 'cheat', 'cheat-rx', 'cheat-ap'];
 
 	const refreshLeaderboard = async () => {
 		if (loading && !firstLoad) return;
 		loading = true;
 		currentLeaderboard = [];
-		let mode = 0;
-
+		const mode = encodeCategory(currentMode, currentType) ?? 0;
+		if (encodeCategory(currentMode, currentType) === null) currentMode = 'osu';
 		queryMode.set(currentMode);
 		queryType.set(currentType);
-
-		switch (currentMode) {
-			case 'taiko':
-				mode += 1;
-				break;
-			case 'catch':
-				mode += 2;
-				break;
-			case 'mania':
-				mode += 3;
-				break;
-		}
-
-		switch (currentType) {
-			case 'relax':
-				mode += 4;
-				break;
-			case 'autopilot':
-				mode += 8;
-				break;
-			case 'cheat':
-				mode = 12;
-				break;
-			case 'cheatcheat':
-				mode = 16;
-				break;
-			case 'touch':
-				mode = 20;
-				break;
-		}
 
 		try {
 			const result = await fetchBeatmapScores({
@@ -130,6 +101,7 @@
 			const selectedType = $queryType;
 			if (modes.includes(selectedMode!)) currentMode = selectedMode!;
 			if (types.includes(selectedType!)) currentType = selectedType!;
+			else currentType = normalizeLegacyType(selectedType);
 
 			refreshLeaderboard();
 		}
@@ -167,145 +139,142 @@
 										? 'bg-surface-500'
 										: 'bg-surface-600'} rounded-lg rounded-r-none"
 									on:click={() => setType('vanilla')}
+									title={TYPE_DESCRIPTIONS.vanilla}
 									disabled={loading || failed}
 								>
 									Vanilla
 								</button>
 								<button
-									class="flex-1 !scale-100 btn {currentType == 'relax'
+									class="flex-1 !scale-100 btn {currentType == 'vanilla-rx'
 										? 'bg-surface-500'
 										: 'bg-surface-600'} rounded-none"
-									on:click={() => setType('relax')}
+									on:click={() => setType('vanilla-rx')}
+									title={TYPE_DESCRIPTIONS['vanilla-rx']}
 									disabled={currentMode == 'mania' || loading || failed}
 								>
-									Relax
+									Vanilla RX
 								</button>
 								<button
-									class="flex-1 !scale-100 btn {currentType == 'autopilot'
+									class="flex-1 !scale-100 btn {currentType == 'vanilla-ap'
 										? 'bg-surface-500'
 										: 'bg-surface-600'} rounded-lg rounded-l-none"
-									on:click={() => setType('autopilot')}
+									on:click={() => setType('vanilla-ap')}
+									title={TYPE_DESCRIPTIONS['vanilla-ap']}
 									disabled={currentMode == 'taiko' ||
 										currentMode == 'catch' ||
 										currentMode == 'mania' ||
 										loading ||
 										failed}
 								>
-									Autopilot
+									Vanilla AP
 								</button>
 							</div>
+
 							<div class="flex w-full md:hidden">
-								<button
-									class="flex-1 !scale-100 btn {currentType == 'touch'
-										? 'bg-surface-500'
-										: 'bg-surface-600'} rounded-lg rounded-r-none"
-									on:click={() => setType('touch')}
-									disabled={currentMode == 'taiko' ||
-										currentMode == 'catch' ||
-										currentMode == 'mania' ||
-										loading ||
-										failed}
-								>
-									TouchScreen
-								</button>
 								<button
 									class="flex-1 !scale-100 btn {currentType == 'cheat'
 										? 'bg-surface-500'
 										: 'bg-surface-600'} rounded-lg rounded-r-none"
 									on:click={() => setType('cheat')}
-									disabled={currentMode == 'taiko' ||
-										currentMode == 'catch' ||
-										currentMode == 'mania' ||
-										loading ||
-										failed}
+									title={TYPE_DESCRIPTIONS.cheat}
+									disabled={loading || failed}
 								>
 									Cheat
 								</button>
 								<button
-									class="flex-1 !scale-100 btn {currentType == 'cheatcheat'
+									class="flex-1 !scale-100 btn {currentType == 'cheat-rx'
+										? 'bg-surface-500'
+										: 'bg-surface-600'} rounded-none"
+									on:click={() => setType('cheat-rx')}
+									title={TYPE_DESCRIPTIONS['cheat-rx']}
+									disabled={currentMode == 'mania' || loading || failed}
+								>
+									Cheat RX
+								</button>
+								<button
+									class="flex-1 !scale-100 btn {currentType == 'cheat-ap'
 										? 'bg-surface-500'
 										: 'bg-surface-600'} rounded-lg rounded-l-none"
-									on:click={() => setType('cheatcheat')}
+									on:click={() => setType('cheat-ap')}
+									title={TYPE_DESCRIPTIONS['cheat-ap']}
 									disabled={currentMode == 'taiko' ||
 										currentMode == 'catch' ||
 										currentMode == 'mania' ||
 										loading ||
 										failed}
 								>
-									CheatCheat
+									Cheat AP
 								</button>
 							</div>
 
 							<div class="hidden md:flex w-full">
 								<button
-									class="w-[20%] !scale-100 btn {currentType == 'vanilla'
+									class="flex-1 !scale-100 btn {currentType == 'vanilla'
 										? 'bg-surface-500'
 										: 'bg-surface-600'} rounded-lg rounded-r-none"
 									on:click={() => setType('vanilla')}
+									title={TYPE_DESCRIPTIONS.vanilla}
 									disabled={loading || failed}
 								>
 									Vanilla
 								</button>
 								<button
-									class="w-[20%] !scale-100 btn {currentType == 'relax'
+									class="flex-1 !scale-100 btn {currentType == 'vanilla-rx'
 										? 'bg-surface-500'
 										: 'bg-surface-600'} rounded-none"
-									on:click={() => setType('relax')}
+									on:click={() => setType('vanilla-rx')}
+									title={TYPE_DESCRIPTIONS['vanilla-rx']}
 									disabled={currentMode == 'mania' || loading || failed}
 								>
-									Relax
+									Vanilla RX
 								</button>
 								<button
-									class="w-[20%] !scale-100 btn {currentType == 'autopilot'
+									class="flex-1 !scale-100 btn {currentType == 'vanilla-ap'
 										? 'bg-surface-500'
 										: 'bg-surface-600'} rounded-none"
-									on:click={() => setType('autopilot')}
+									on:click={() => setType('vanilla-ap')}
+									title={TYPE_DESCRIPTIONS['vanilla-ap']}
 									disabled={currentMode == 'taiko' ||
 										currentMode == 'catch' ||
 										currentMode == 'mania' ||
 										loading ||
 										failed}
 								>
-									Autopilot
+									Vanilla AP
 								</button>
 								<button
-									class="w-[20%] !scale-100 btn {currentType == 'touch'
-										? 'bg-surface-500'
-										: 'bg-surface-600'} rounded-none"
-									on:click={() => setType('touch')}
-									disabled={currentMode == 'taiko' ||
-										currentMode == 'catch' ||
-										currentMode == 'mania' ||
-										loading ||
-										failed}
-								>
-									TouchScreen
-								</button>
-								<button
-									class="w-[20%] !scale-100 btn {currentType == 'cheat'
+									class="flex-1 !scale-100 btn {currentType == 'cheat'
 										? 'bg-surface-500'
 										: 'bg-surface-600'} rounded-none"
 									on:click={() => setType('cheat')}
-									disabled={currentMode == 'taiko' ||
-										currentMode == 'catch' ||
-										currentMode == 'mania' ||
-										loading ||
-										failed}
+									title={TYPE_DESCRIPTIONS.cheat}
+									disabled={loading || failed}
 								>
 									Cheat
 								</button>
 								<button
-									class="w-[20%] !scale-100 btn {currentType == 'cheatcheat'
+									class="flex-1 !scale-100 btn {currentType == 'cheat-rx'
+										? 'bg-surface-500'
+										: 'bg-surface-600'} rounded-none"
+									on:click={() => setType('cheat-rx')}
+									title={TYPE_DESCRIPTIONS['cheat-rx']}
+									disabled={currentMode == 'mania' || loading || failed}
+								>
+									Cheat RX
+								</button>
+								<button
+									class="flex-1 !scale-100 btn {currentType == 'cheat-ap'
 										? 'bg-surface-500'
 										: 'bg-surface-600'} rounded-lg rounded-l-none"
-									on:click={() => setType('cheatcheat')}
+									on:click={() => setType('cheat-ap')}
+									title={TYPE_DESCRIPTIONS['cheat-ap']}
 									disabled={currentMode == 'taiko' ||
 										currentMode == 'catch' ||
 										currentMode == 'mania' ||
 										loading ||
 										failed}
 								>
-									CheatCheat
+									Cheat AP
 								</button>
 							</div>
 						</div>
