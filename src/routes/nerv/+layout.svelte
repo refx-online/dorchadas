@@ -1,4 +1,5 @@
 <script lang="ts">
+	import './nerv.css';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { fly } from 'svelte/transition';

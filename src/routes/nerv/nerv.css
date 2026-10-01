@@ -1,6 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Display:wght@700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Saira+Extra+Condensed:wght@400;600;700;800&family=Shippori+Mincho+B1:wght@500;700;800&display=swap');
-
-/* adapted from nerv-ui (TheGreatGildo) — selectors namespaced under .nv-root */
+/* adapted from nerv-ui (TheGreatGildo) — selectors namespaced under .nv-root.
+   fonts load via <link> in app.html (!important must stay first in file,
+   so it lives there instead). */
 :root,
 .nv-root {
 	--void: #000000;
