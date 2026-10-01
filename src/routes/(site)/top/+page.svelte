@@ -2,9 +2,10 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { appName } from '$lib/env.js';
-	import { decodeCategory, encodeCategory, TYPE_DESCRIPTIONS } from '$lib/modes';
+	import { decodeCategory, encodeCategory } from '$lib/modes';
 	import { parseModsInt } from '$lib/mods';
 	import Mod from '$lib/components/Mod.svelte';
+	import ModeSelector from '$lib/components/ModeSelector.svelte';
 	import ChevronLeft from 'svelte-feathers/ChevronLeft.svelte';
 	import ChevronRight from 'svelte-feathers/ChevronRight.svelte';
 	import { __ } from '$lib/i18n';
@@ -36,15 +37,9 @@
 		return encodeCategory(mode, type) ?? 0;
 	}
 
-	function changeMode(newMode: string) {
-		const modeNum = getModeNumber(newMode, currentType);
-		goto(`/top?mode=${modeNum}&page=1`);
-	}
-
-	function changeType(newType: string) {
-		if (encodeCategory(currentMode, newType) === null) currentMode = 'osu';
-		const modeNum = getModeNumber(currentMode, newType);
-		goto(`/top?mode=${modeNum}&page=1`);
+	function onModeSelect(event: CustomEvent<{ type: string; mode: string }>) {
+		const { type, mode } = event.detail;
+		goto(`/top?mode=${encodeCategory(mode, type) ?? 0}&page=1`);
 	}
 
 	function fetchBeatmapCoverUrl(setId: number) {
@@ -60,166 +55,7 @@
 	<div class="flex flex-col justify-center">
 		<div class="bg-surface-700 rounded-t-lg">
 			<div class="grid md:grid-cols-[auto] gap-2 p-3">
-				<div class="w-full flex flex-col md:flex-row justify-center md:justify-start rounded-lg">
-					<div class="flex w-full md:hidden mb-1">
-						<button
-							class="flex-1 !scale-100 btn {currentType == 'vanilla'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-lg rounded-r-none"
-							on:click={() => changeType('vanilla')}
-							title={TYPE_DESCRIPTIONS.vanilla}
-						>
-							Vanilla
-						</button>
-						<button
-							class="flex-1 !scale-100 btn {currentType == 'vanilla-rx'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-none"
-							on:click={() => changeType('vanilla-rx')}
-							title={TYPE_DESCRIPTIONS['vanilla-rx']}
-							disabled={currentMode == 'mania'}
-						>
-							Vanilla RX
-						</button>
-						<button
-							class="flex-1 !scale-100 btn {currentType == 'vanilla-ap'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-lg rounded-l-none"
-							on:click={() => changeType('vanilla-ap')}
-							title={TYPE_DESCRIPTIONS['vanilla-ap']}
-							disabled={currentMode != 'osu'}
-						>
-							Vanilla AP
-						</button>
-					</div>
-
-					<div class="flex w-full md:hidden">
-						<button
-							class="flex-1 !scale-100 btn {currentType == 'cheat'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-lg rounded-r-none"
-							on:click={() => changeType('cheat')}
-							title={TYPE_DESCRIPTIONS.cheat}
-						>
-							Cheat
-						</button>
-						<button
-							class="flex-1 !scale-100 btn {currentType == 'cheat-rx'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-none"
-							on:click={() => changeType('cheat-rx')}
-							title={TYPE_DESCRIPTIONS['cheat-rx']}
-							disabled={currentMode == 'mania'}
-						>
-							Cheat RX
-						</button>
-						<button
-							class="flex-1 !scale-100 btn {currentType == 'cheat-ap'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-lg rounded-l-none"
-							on:click={() => changeType('cheat-ap')}
-							title={TYPE_DESCRIPTIONS['cheat-ap']}
-							disabled={currentMode != 'osu'}
-						>
-							Cheat AP
-						</button>
-					</div>
-
-					<div class="hidden md:flex w-full">
-						<button
-							class="flex-1 !scale-100 btn {currentType == 'vanilla'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-lg rounded-r-none"
-							on:click={() => changeType('vanilla')}
-							title={TYPE_DESCRIPTIONS.vanilla}
-						>
-							Vanilla
-						</button>
-						<button
-							class="flex-1 !scale-100 btn {currentType == 'vanilla-rx'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-none"
-							on:click={() => changeType('vanilla-rx')}
-							title={TYPE_DESCRIPTIONS['vanilla-rx']}
-							disabled={currentMode == 'mania'}
-						>
-							Vanilla RX
-						</button>
-						<button
-							class="flex-1 !scale-100 btn {currentType == 'vanilla-ap'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-none"
-							on:click={() => changeType('vanilla-ap')}
-							title={TYPE_DESCRIPTIONS['vanilla-ap']}
-							disabled={currentMode != 'osu'}
-						>
-							Vanilla AP
-						</button>
-						<button
-							class="flex-1 !scale-100 btn {currentType == 'cheat'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-none"
-							on:click={() => changeType('cheat')}
-							title={TYPE_DESCRIPTIONS.cheat}
-						>
-							Cheat
-						</button>
-						<button
-							class="flex-1 !scale-100 btn {currentType == 'cheat-rx'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-none"
-							on:click={() => changeType('cheat-rx')}
-							title={TYPE_DESCRIPTIONS['cheat-rx']}
-							disabled={currentMode == 'mania'}
-						>
-							Cheat RX
-						</button>
-						<button
-							class="flex-1 !scale-100 btn {currentType == 'cheat-ap'
-								? 'bg-surface-500'
-								: 'bg-surface-600'} rounded-lg rounded-l-none"
-							on:click={() => changeType('cheat-ap')}
-							title={TYPE_DESCRIPTIONS['cheat-ap']}
-							disabled={currentMode != 'osu'}
-						>
-							Cheat AP
-						</button>
-					</div>
-				</div>
-				<div class="w-full flex rounded-lg">
-					<button
-						class="w-[25%] !scale-100 btn {currentMode == 'osu'
-							? 'bg-surface-500'
-							: 'bg-surface-600'} rounded-lg rounded-r-none"
-						on:click={() => changeMode('osu')}
-					>
-						osu!
-					</button>
-					<button
-						class="w-[25%] !scale-100 btn {currentMode == 'taiko'
-							? 'bg-surface-500'
-							: 'bg-surface-600'} rounded-none"
-						on:click={() => changeMode('taiko')}
-					>
-						taiko
-					</button>
-					<button
-						class="w-[25%] !scale-100 btn {currentMode == 'catch'
-							? 'bg-surface-500'
-							: 'bg-surface-600'} rounded-none"
-						on:click={() => changeMode('catch')}
-					>
-						catch
-					</button>
-					<button
-						class="w-[25%] !scale-100 btn {currentMode == 'mania'
-							? 'bg-surface-500'
-							: 'bg-surface-600'} rounded-lg rounded-l-none"
-						on:click={() => changeMode('mania')}
-					>
-						mania
-					</button>
-				</div>
+				<ModeSelector {currentType} {currentMode} on:select={onModeSelect} />
 			</div>
 		</div>
 

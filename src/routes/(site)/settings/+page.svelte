@@ -17,6 +17,10 @@
 
 	let newUsername = '';
 	let usernameError = '';
+	let currentPassword = '';
+	let newPassword = '';
+	let confirmPassword = '';
+	let passwordError = '';
 	let message = '';
 	let messageType: 'success' | 'error' = 'success';
 	let isLoading = false;
@@ -47,8 +51,7 @@
 		return { valid: true };
 	}
 
-	function validateUsername(username: string): boolean {
-		if (!username.trim()) {
+	function validateUsername(username: string): boolean {		if (!username.trim()) {
 			usernameError = '';
 			return false;
 		}
@@ -57,6 +60,23 @@
 			return false;
 		}
 		usernameError = '';
+		return true;
+	}
+
+	function validatePassword(): boolean {
+		if (newPassword.length < 6) {
+			passwordError = __('Your password should have more than 6 characters!', $userLanguage);
+			return false;
+		}
+		if (newPassword !== confirmPassword) {
+			passwordError = __('New passwords do not match', $userLanguage);
+			return false;
+		}
+		if (newPassword === currentPassword) {
+			passwordError = __('New password must be different from the current one', $userLanguage);
+			return false;
+		}
+		passwordError = '';
 		return true;
 	}
 
@@ -217,6 +237,34 @@
 				);
 			}
 			isLoading = false;
+		};
+	};
+
+	const handlePasswordSubmit: SubmitFunction = () => {
+		if (!validatePassword()) {
+			return ({ result, update }) => {
+				result.type = 'failure';
+				update({ reset: false });
+			};
+		}
+
+		message = '';
+		isLoading = true;
+
+		return async ({ result, update }) => {
+			if (result.type === 'success') {
+				showMessage(__('Password updated successfully', $userLanguage), 'success');
+				currentPassword = '';
+				newPassword = '';
+				confirmPassword = '';
+			} else if (result.type === 'failure') {
+				showMessage(
+					result.data?.message || __('Failed to update password', $userLanguage),
+					'error'
+				);
+			}
+			isLoading = false;
+			await update({ reset: false });
 		};
 	};
 
@@ -530,14 +578,88 @@
 									{__('Shown by default when someone opens your profile', $userLanguage)}
 								</p>
 							</div>
-							<button type="submit" class="btn variant-filled-primary" disabled={isLoading}>
-								{isLoading
-									? __('Updating...', $userLanguage)
-									: __('Update Main Mode', $userLanguage)}
-							</button>
-						</form>
-					</div>
-				</section>
+						<button type="submit" class="btn variant-filled-primary" disabled={isLoading}>
+							{isLoading
+								? __('Updating...', $userLanguage)
+								: __('Update Main Mode', $userLanguage)}
+						</button>
+					</form>
+				</div>
+
+				<!-- Password Change -->
+				<div>
+					<h3 class="text-lg font-medium mb-4">{__('Change Password', $userLanguage)}</h3>
+					<form
+						method="POST"
+						action="?/changePassword"
+						use:enhance={handlePasswordSubmit}
+						class="space-y-4"
+					>
+						<div class="space-y-2">
+							<label for="current-password" class="label font-medium">
+								{__('Current Password', $userLanguage)}
+							</label>
+							<input
+								type="password"
+								id="current-password"
+								name="currentPassword"
+								class="input"
+								bind:value={currentPassword}
+								placeholder={__('Enter current password', $userLanguage)}
+								autocomplete="current-password"
+								disabled={isLoading}
+							/>
+						</div>
+						<div class="space-y-2">
+							<label for="new-password" class="label font-medium">
+								{__('New Password', $userLanguage)}
+							</label>
+							<input
+								type="password"
+								id="new-password"
+								name="newPassword"
+								class="input"
+								bind:value={newPassword}
+								on:input={validatePassword}
+								placeholder={__('Enter new password (min. 6 characters)', $userLanguage)}
+								autocomplete="new-password"
+								disabled={isLoading}
+							/>
+						</div>
+						<div class="space-y-2">
+							<label for="confirm-password" class="label font-medium">
+								{__('Confirm New Password', $userLanguage)}
+							</label>
+							<input
+								type="password"
+								id="confirm-password"
+								name="confirmPassword"
+								class="input"
+								bind:value={confirmPassword}
+								on:input={validatePassword}
+								placeholder={__('Repeat new password', $userLanguage)}
+								autocomplete="new-password"
+								disabled={isLoading}
+							/>
+							{#if passwordError}
+								<p class="text-error-500 text-sm mt-1">{passwordError}</p>
+							{/if}
+							<p class="text-sm opacity-75">
+								{__('Changing your password logs you out everywhere else', $userLanguage)}
+							</p>
+						</div>
+						<button
+							type="submit"
+							class="btn variant-filled-primary"
+							disabled={!!passwordError || !currentPassword || !newPassword || !confirmPassword || isLoading}
+						>
+							{isLoading
+								? __('Updating...', $userLanguage)
+								: __('Change Password', $userLanguage)}
+						</button>
+					</form>
+				</div>
+			</section>
 			{/if}
 		</div>
 	</div>

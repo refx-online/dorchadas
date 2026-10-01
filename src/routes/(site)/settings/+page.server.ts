@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import { getUserFromSession } from '$lib/user';
+import { getUserFromSession, createPassword, comparePasswords } from '$lib/user';
 import { fail, error } from '@sveltejs/kit';
 import { getMySQLDatabase, getRedisClient } from '$lib/server/connections';
 import { usernameRegex } from '$lib/regex';
@@ -317,6 +317,73 @@ export const actions = {
 		} catch (err) {
 			logger.error('Failed to change main mode', err);
 			return fail(500, { message: 'An error occurred while updating main mode' });
+		}
+	},
+	changePassword: async ({ request, cookies }) => {
+		const sessionToken = cookies.get('sessionToken');
+		if (!sessionToken) {
+			throw redirect(302, '/signin');
+		}
+
+		const user = await getUserFromSession(sessionToken);
+		if (!user) {
+			throw redirect(302, '/signin');
+		}
+
+		const mysqlDatabase = await getMySQLDatabase();
+		if (!mysqlDatabase) {
+			return fail(500, { error: 'Database connection failed' });
+		}
+
+		const data = await request.formData();
+		const currentPassword = data.get('currentPassword')?.toString() ?? '';
+		const newPassword = data.get('newPassword')?.toString() ?? '';
+
+		if (!currentPassword || !newPassword) {
+			return fail(400, { message: 'Current and new password are required' });
+		}
+
+		if (newPassword.length < 6) {
+			return fail(400, { message: 'Your password should have more than 6 characters!' });
+		}
+
+		if (newPassword === currentPassword) {
+			return fail(400, { message: 'New password must be different from the current one' });
+		}
+
+		try {
+			const row = await mysqlDatabase
+				.select('pw_bcrypt')
+				.from('users')
+				.where('id', user.id)
+				.first();
+
+			const isCurrentCorrect = await comparePasswords(currentPassword, row.pw_bcrypt);
+			if (!isCurrentCorrect) {
+				return fail(400, { message: 'Current password is incorrect' });
+			}
+
+			await mysqlDatabase('users')
+				.where('id', user.id)
+				.update({ pw_bcrypt: await createPassword(newPassword) });
+
+			// kill every other session so the change takes effect everywhere
+			const redis = await getRedisClient();
+			if (redis) {
+				for await (const key of redis.scanIterator({ MATCH: 'user:session:*' })) {
+					if (key === `user:session:${sessionToken}`) continue;
+					if ((await redis.get(key)) === String(user.id)) {
+						await redis.del(key);
+					}
+				}
+			}
+
+			sendDiscordWebhookLog('change password', `${user.name} (${user.id}) changed their password`);
+
+			return { success: true };
+		} catch (err) {
+			logger.error('Failed to change password', err);
+			return fail(500, { message: 'An error occurred while updating password' });
 		}
 	}
 };

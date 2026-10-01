@@ -4,7 +4,7 @@
 	import { userData, userLanguage } from '$lib/storage';
 	import { Avatar, type DrawerStore } from '@skeletonlabs/skeleton';
 	import Popup from './Popup.svelte';
-	import { avatarUrl } from '$lib/env';
+	import { avatarUrl, nervUrl } from '$lib/env';
 	import { goto } from '$app/navigation';
 	import { isStaff } from '$lib/privs';
 
@@ -221,10 +221,8 @@
 
 	{#if isUserStaff}
 		<a
-			href="/nerv"
-			class="btn {$page.data.url == '/nerv' || $page.data.url.startsWith('/nerv/')
-				? 'variant-ghost-surface '
-				: 'hover:variant-outline-surface '}rounded-lg"
+			href={nervUrl}
+			class="btn hover:variant-outline-surface rounded-lg"
 			on:click={() => drawerStore.close()}
 		>
 			NERV
