@@ -16,12 +16,12 @@
 	import {
 		decodePreferredMode,
 		encodeCategory,
-		normalizeLegacyType,
-		TYPE_DESCRIPTIONS
+		normalizeLegacyType
 	} from '$lib/modes';
 	import { numberHumanReadable } from '$lib/string';
 	import { secondsToDHM, secondsToHours } from '$lib/time';
 	import UserScores from '$lib/components/UserScores.svelte';
+	import ModeSelector from '$lib/components/ModeSelector.svelte';
 	import { removeTrailingZeroes } from '$lib/regex';
 	import { __ } from '$lib/i18n';
 	import UserRankBadges from '$lib/components/UserRankBadges.svelte';
@@ -231,15 +231,11 @@
 		loading = false;
 	};
 
-	const setMode = async (mode: string) => {
-		if (currentMode == mode) return;
-		currentMode = mode;
-		await updateModeInt();
-	};
-
-	const setType = async (type: string) => {
-		if (currentType == type) return;
+	const onModeSelect = async (event: CustomEvent<{ type: string; mode: string }>) => {
+		const { type, mode } = event.detail;
+		if (currentType == type && currentMode == mode) return;
 		currentType = type;
+		currentMode = mode;
 		await updateModeInt();
 	};
 
@@ -348,193 +344,14 @@
 							class="absolute h-full w-full top-0 left-0 bg-no-repeat bg-top blur opacity-10"
 							style="background-image: url('/u/{data.user.info.id}/cover');"
 						></div>
-						<div class="grid md:grid-cols-[auto_auto] gap-2">
-							<div
-								class="w-full flex flex-col md:flex-row justify-center md:justify-start rounded-lg"
-							>
-								<div class="flex w-full md:hidden mb-1">
-									<button
-										class="flex-1 !scale-100 btn {currentType == 'vanilla'
-											? 'bg-surface-500'
-											: 'bg-surface-600'} rounded-lg rounded-r-none"
-										on:click={() => setType('vanilla')}
-										title={TYPE_DESCRIPTIONS.vanilla}
-										disabled={loading || failed}
-									>
-										Vanilla
-									</button>
-									<button
-										class="flex-1 !scale-100 btn {currentType == 'vanilla-rx'
-											? 'bg-surface-500'
-											: 'bg-surface-600'} rounded-none"
-										on:click={() => setType('vanilla-rx')}
-										title={TYPE_DESCRIPTIONS['vanilla-rx']}
-										disabled={currentMode == 'mania' || loading || failed}
-									>
-										Vanilla RX
-									</button>
-									<button
-										class="flex-1 !scale-100 btn {currentType == 'vanilla-ap'
-											? 'bg-surface-500'
-											: 'bg-surface-600'} rounded-lg rounded-l-none"
-										on:click={() => setType('vanilla-ap')}
-										title={TYPE_DESCRIPTIONS['vanilla-ap']}
-										disabled={currentMode == 'taiko' ||
-											currentMode == 'catch' ||
-											currentMode == 'mania' ||
-											loading ||
-											failed}
-									>
-										Vanilla AP
-									</button>
-								</div>
-
-								<div class="flex w-full md:hidden">
-									<button
-										class="flex-1 !scale-100 btn {currentType == 'cheat'
-											? 'bg-surface-500'
-											: 'bg-surface-600'} rounded-lg rounded-r-none"
-										on:click={() => setType('cheat')}
-										title={TYPE_DESCRIPTIONS.cheat}
-										disabled={loading || failed}
-									>
-										Cheat
-									</button>
-									<button
-										class="flex-1 !scale-100 btn {currentType == 'cheat-rx'
-											? 'bg-surface-500'
-											: 'bg-surface-600'} rounded-none"
-										on:click={() => setType('cheat-rx')}
-										title={TYPE_DESCRIPTIONS['cheat-rx']}
-										disabled={currentMode == 'mania' || loading || failed}
-									>
-										Cheat RX
-									</button>
-									<button
-										class="flex-1 !scale-100 btn {currentType == 'cheat-ap'
-											? 'bg-surface-500'
-											: 'bg-surface-600'} rounded-lg rounded-l-none"
-										on:click={() => setType('cheat-ap')}
-										title={TYPE_DESCRIPTIONS['cheat-ap']}
-										disabled={currentMode == 'taiko' ||
-											currentMode == 'catch' ||
-											currentMode == 'mania' ||
-											loading ||
-											failed}
-									>
-										Cheat AP
-									</button>
-								</div>
-
-								<div class="hidden md:flex w-full">
-									<button
-										class="flex-1 !scale-100 btn {currentType == 'vanilla'
-											? 'bg-surface-500'
-											: 'bg-surface-600'} rounded-lg rounded-r-none"
-										on:click={() => setType('vanilla')}
-										title={TYPE_DESCRIPTIONS.vanilla}
-										disabled={loading || failed}
-									>
-										Vanilla
-									</button>
-									<button
-										class="flex-1 !scale-100 btn {currentType == 'vanilla-rx'
-											? 'bg-surface-500'
-											: 'bg-surface-600'} rounded-none"
-										on:click={() => setType('vanilla-rx')}
-										title={TYPE_DESCRIPTIONS['vanilla-rx']}
-										disabled={currentMode == 'mania' || loading || failed}
-									>
-										Vanilla RX
-									</button>
-									<button
-										class="flex-1 !scale-100 btn {currentType == 'vanilla-ap'
-											? 'bg-surface-500'
-											: 'bg-surface-600'} rounded-none"
-										on:click={() => setType('vanilla-ap')}
-										title={TYPE_DESCRIPTIONS['vanilla-ap']}
-										disabled={currentMode == 'taiko' ||
-											currentMode == 'catch' ||
-											currentMode == 'mania' ||
-											loading ||
-											failed}
-									>
-										Vanilla AP
-									</button>
-									<button
-										class="flex-1 !scale-100 btn {currentType == 'cheat'
-											? 'bg-surface-500'
-											: 'bg-surface-600'} rounded-none"
-										on:click={() => setType('cheat')}
-										title={TYPE_DESCRIPTIONS.cheat}
-										disabled={loading || failed}
-									>
-										Cheat
-									</button>
-									<button
-										class="flex-1 !scale-100 btn {currentType == 'cheat-rx'
-											? 'bg-surface-500'
-											: 'bg-surface-600'} rounded-none"
-										on:click={() => setType('cheat-rx')}
-										title={TYPE_DESCRIPTIONS['cheat-rx']}
-										disabled={currentMode == 'mania' || loading || failed}
-									>
-										Cheat RX
-									</button>
-									<button
-										class="flex-1 !scale-100 btn {currentType == 'cheat-ap'
-											? 'bg-surface-500'
-											: 'bg-surface-600'} rounded-lg rounded-l-none"
-										on:click={() => setType('cheat-ap')}
-										title={TYPE_DESCRIPTIONS['cheat-ap']}
-										disabled={currentMode == 'taiko' ||
-											currentMode == 'catch' ||
-											currentMode == 'mania' ||
-											loading ||
-											failed}
-									>
-										Cheat AP
-									</button>
-								</div>
-							</div>
-							<div class="w-full flex rounded-lg">
-								<button
-									class="w-[25%] !scale-100 btn {currentMode == 'osu'
-										? 'bg-surface-500'
-										: 'bg-surface-600'} rounded-lg rounded-r-none"
-									on:click={() => setMode('osu')}
-									disabled={loading || failed}
-								>
-									osu!
-								</button>
-								<button
-									class="w-[25%] !scale-100 btn {currentMode == 'taiko'
-										? 'bg-surface-500'
-										: 'bg-surface-600'} rounded-none"
-									on:click={() => setMode('taiko')}
-									disabled={loading || failed}
-								>
-									taiko
-								</button>
-								<button
-									class="w-[25%] !scale-100 btn {currentMode == 'catch'
-										? 'bg-surface-500'
-										: 'bg-surface-600'} rounded-none"
-									on:click={() => setMode('catch')}
-									disabled={loading || failed}
-								>
-									catch
-								</button>
-								<button
-									class="w-[25%] !scale-100 btn {currentMode == 'mania'
-										? 'bg-surface-500'
-										: 'bg-surface-600'} rounded-lg rounded-l-none"
-									on:click={() => setMode('mania')}
-									disabled={loading || failed}
-								>
-									mania
-								</button>
-							</div>
+						<div class="w-full">
+							<ModeSelector
+								{currentType}
+								{currentMode}
+								disabled={loading || failed}
+								singleLine
+								on:select={onModeSelect}
+							/>
 						</div>
 					</div>
 				</div>
