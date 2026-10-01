@@ -1,5 +1,4 @@
 <script lang="ts">
-	import './style.postcss';
 	import { appName, apiUrl, avatarUrl } from '$lib/env';
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
@@ -93,22 +92,18 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </svelte:head>
 
-<div class="nerv">
-	<div class="welcome-message">
-		Welcome aboard, {data.OurUser.name} (#{data.OurUser.id})!
-	</div>
+<div><span class="tag">Welcome aboard, {data.OurUser.name} (#{data.OurUser.id})</span></div>
 
-	<div class="search-section">
-		<div class="search-container">
-			<input
-				type="text"
-				bind:value={userSearchQuery}
-				on:input={searchUsers}
-				placeholder="Search players..."
-				class="search-input"
-			/>
-			<div class="search-icon">⌕</div>
-		</div>
+<div class="panel mt-4">
+	<div class="panel-header"><span>Find Player</span><span class="tag">⌕ search</span></div>
+	<div class="panel-body">
+		<input
+			type="text"
+			bind:value={userSearchQuery}
+			on:input={searchUsers}
+			placeholder="Search players..."
+			class="input w-full"
+		/>
 
 		{#if userSearchResults.length > 0}
 			<div class="search-results">
@@ -140,11 +135,11 @@
 	<div class="flex flex-row items-baseline justify-between flex-wrap gap-2">
 		<div>
 			<h1 class="!text-3xl">Nerv Operations Console</h1>
-			<div class="nv-mincho">特務機関NERV作戦部</div>
+			<div class="tag">特務機関NERV作戦部</div>
 		</div>
 		<div class="text-right">
-			<div class="current-time">{formattedTime}</div>
-			<div class="nv-mincho">内部専用 // INTERNAL USE ONLY</div>
+			<div class="m-value">{formattedTime}</div>
+			<div class="tag">内部専用 // INTERNAL USE ONLY</div>
 		</div>
 	</div>
 
@@ -214,21 +209,18 @@
 		</div>
 	</div>
 
-	<div class="recent-accounts mt-4">
-		<h3>Recent Accounts</h3>
-		<div class="accounts-list">
+	<div class="panel mt-4">
+		<div class="panel-header"><span>Recent Accounts</span><span class="tag">5 latest</span></div>
+		<div class="panel-body">
 			{#each data.recentAccounts.slice(0, 5) as account}
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<!-- svelte-ignore a11y-no-static-element-interactions -->
-				<div class="account-item" on:click={() => navigateToUser(account.id)}>
+				<div class="ev" on:click={() => navigateToUser(account.id)}>
 					<img src={`${avatarUrl}/${account.id}`} alt={account.name} class="user-avatar" />
-					<div class="account-info">
-						<div class="account-name">{account.name}</div>
-						<div class="account-time">
-							{new Date(account.creation_time * 1000).toLocaleDateString()}
-						</div>
-					</div>
-					<div class="account-id">#{account.id}</div>
+					<span class="ev-detail"
+						>{account.name} <span class="tag">#{account.id}</span>
+						{new Date(account.creation_time * 1000).toLocaleDateString()}</span
+					>
 				</div>
 			{/each}
 		</div>
