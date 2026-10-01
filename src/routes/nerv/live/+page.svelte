@@ -5,36 +5,34 @@
 <div class="container mx-auto w-full p-5">
 	<div>
 		<h1>Live Ops</h1>
-		<div class="nv-mincho">作戦監視 // OPERATIONS WATCH</div>
+		<div class="tag">作戦監視 // OPERATIONS WATCH</div>
 	</div>
 
-	<div class="nv-panel mt-4">
-		<div class="nv-panel-header">
+	<div class="panel mt-4">
+		<div class="panel-header">
 			<span>Services ({data.services.filter((s) => s.up).length}/{data.services.length} up)</span
 			><span>probed live</span>
 		</div>
 		<div class="flex flex-wrap gap-2">
 			{#each data.services as s}
 				<span
-					class="nv-badge {s.up ? 'green' : 'red'}"
+					class="tag {s.up ? 'green' : 'red'}"
 					title={s.ms >= 0 ? `${s.ms}ms` : 'no http endpoint / unreachable'}
 				>
-					<span class="nv-led {s.up ? 'green' : 'red'}"></span>{s.name}{s.ms > 0
-						? ` ${s.ms}ms`
-						: ''}
+					<span class="led {s.up ? 'green' : 'red'}"></span>{s.name}{s.ms > 0 ? ` ${s.ms}ms` : ''}
 				</span>
 			{/each}
 		</div>
 	</div>
 
-	<div class="nv-panel mt-4">
-		<div class="nv-panel-header">
+	<div class="panel mt-4">
+		<div class="panel-header">
 			<span>Online now ({data.online.length})</span><span>bancho</span>
 		</div>
 		{#if data.online.length}
 			<div class="flex flex-wrap gap-2">
 				{#each data.online as p}
-					<span class="nv-badge" title={p.match ? `in match: ${p.match}` : 'lobby'}>
+					<span class="tag" title={p.match ? `in match: ${p.match}` : 'lobby'}>
 						{p.name}{p.match ? ` ⚔ ${p.match}` : ''}
 					</span>
 				{/each}
@@ -44,10 +42,10 @@
 		{/if}
 	</div>
 
-	<div class="nv-panel mt-4">
-		<div class="nv-panel-header"><span>Latest scores</span><span>15 most recent</span></div>
+	<div class="panel mt-4">
+		<div class="panel-header"><span>Latest scores</span><span>15 most recent</span></div>
 		<div class="table-container">
-			<table class="nv-table">
+			<table class="nerv-table">
 				<thead>
 					<tr><th>Score</th><th>Player</th><th>Map</th><th>PP</th><th>Acc</th><th>Mode</th></tr>
 				</thead>
@@ -69,11 +67,11 @@
 		</div>
 	</div>
 
-	<div class="nv-panel mt-4">
-		<div class="nv-panel-header"><span>Newest accounts</span><span>10 most recent</span></div>
+	<div class="panel mt-4">
+		<div class="panel-header"><span>Newest accounts</span><span>10 most recent</span></div>
 		<div class="flex flex-wrap gap-2">
 			{#each data.recentUsers as u}
-				<a class="nv-badge" href="/u/{u.id}">{u.name} ({u.country})</a>
+				<a class="tag" href="/u/{u.id}">{u.name} ({u.country})</a>
 			{/each}
 		</div>
 	</div>

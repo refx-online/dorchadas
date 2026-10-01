@@ -148,62 +148,69 @@
 		</div>
 	</div>
 
-	<div class="nv-panel mt-4">
-		<div class="nv-panel-header"><span>System Metrics</span><span>live</span></div>
-		<div class="nv-grid">
-			<div class="nv-metric">
-				<span class="lbl">Online</span><span class="val">{data.userCounts?.counts.online ?? 0}</span
-				>
+	<div class="panel mt-4">
+		<div class="panel-header"><span>System Metrics</span><span class="tag">live</span></div>
+		<div class="metrics-grid">
+			<div class="metric-cell">
+				<div class="m-label">Online</div>
+				<div class="m-value">{data.userCounts?.counts.online ?? 0}</div>
 			</div>
-			<div class="nv-metric">
-				<span class="lbl">Registered</span><span class="val"
-					>{data.userCounts?.counts.total ?? 0}</span
-				>
+			<div class="metric-cell">
+				<div class="m-label">Registered</div>
+				<div class="m-value">{data.userCounts?.counts.total ?? 0}</div>
 			</div>
-			<div class="nv-metric">
-				<span class="lbl">Restricted</span><span class="val">{data.restrictedAccountsCount}</span>
+			<div class="metric-cell">
+				<div class="m-label">Restricted</div>
+				<div class="m-value">{data.restrictedAccountsCount}</div>
 			</div>
-			<div class="nv-metric {Number(data.flagCount) > 0 ? 'alert' : ''}">
-				<span class="lbl">Open Flags</span><span class="val">{data.flagCount}</span>
+			<div class="metric-cell {Number(data.flagCount) > 0 ? 'highlight' : ''}">
+				<div class="m-label">Open Flags</div>
+				<div class="m-value">{data.flagCount}</div>
 			</div>
-			<div class="nv-metric">
-				<span class="lbl">Scores</span><span class="val">{data.scoreCount}</span>
+			<div class="metric-cell">
+				<div class="m-label">Scores</div>
+				<div class="m-value">{data.scoreCount}</div>
 			</div>
-			<div class="nv-metric">
-				<span class="lbl">Plays</span><span class="val">{data.totalPlays}</span>
+			<div class="metric-cell">
+				<div class="m-label">Plays</div>
+				<div class="m-value">{data.totalPlays}</div>
 			</div>
-			<div class="nv-metric">
-				<span class="lbl">Ranked Maps</span><span class="val">{data.rankedMapsCount}</span>
+			<div class="metric-cell">
+				<div class="m-label">Ranked Maps</div>
+				<div class="m-value">{data.rankedMapsCount}</div>
 			</div>
-			<div class="nv-metric">
-				<span class="lbl">Total PP</span><span class="val">{Math.round(data.totalPP)}</span>
+			<div class="metric-cell">
+				<div class="m-label">Total PP</div>
+				<div class="m-value">{Math.round(data.totalPP)}</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="nv-panel mt-4">
-		<div class="nv-panel-header"><span>Event Log</span><span>{feed.length} events</span></div>
-		<div class="nv-log">
-			{#each feed as e}
-				<div class="ev">
-					<span class="ev-time">{new Date(e.at).toLocaleTimeString('en-GB')}</span>
-					<span class="ev-type {e.kind}">{e.label}</span>
-					<span class="ev-detail">{e.text}</span>
-				</div>
-			{/each}
-			{#if !feed.length}
-				<div class="ev"><span class="ev-detail">silence. nothing happened yet.</span></div>
-			{/if}
+	<div class="panel mt-4">
+		<div class="panel-header"><span>Event Log</span><span>{feed.length} events</span></div>
+		<div class="event-log">
+			<div class="el-body">
+				{#each feed as e}
+					<div class="ev">
+						<span class="ev-time">{new Date(e.at).toLocaleTimeString('en-GB')}</span>
+						<span class="ev-type {e.kind}">{e.label}</span>
+						<span class="ev-detail">{e.text}</span>
+					</div>
+				{/each}
+				{#if !feed.length}
+					<div class="ev"><span class="ev-detail">silence. nothing happened yet.</span></div>
+				{/if}
+			</div>
 		</div>
 	</div>
 
-	<div class="nv-panel mt-4">
-		<div class="nv-panel-header"><span>Sections</span><span>staff only</span></div>
+	<div class="panel mt-4">
+		<div class="panel-header"><span>Sections</span><span>staff only</span></div>
 		<div class="flex flex-wrap gap-2">
-			<a class="nv-badge" href="/nerv/flags">⚑ Flags ({data.flagCount})</a>
-			<a class="nv-badge" href="/nerv/live">● Live Ops</a>
-			<a class="nv-badge" href="/nerv/performance">📈 Performance</a>
-			<a class="nv-badge" href="/nerv/beatmaps">🎵 Ranking</a>
+			<a class="tag" href="/nerv/flags">⚑ Flags ({data.flagCount})</a>
+			<a class="tag" href="/nerv/live">● Live Ops</a>
+			<a class="tag" href="/nerv/performance">📈 Performance</a>
+			<a class="tag" href="/nerv/beatmaps">🎵 Ranking</a>
 		</div>
 	</div>
 

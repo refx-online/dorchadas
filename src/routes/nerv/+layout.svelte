@@ -19,6 +19,7 @@
 </script>
 
 <div class="nv-root nv-scanlines">
+	<div class="scan-line-overlay"></div>
 	<slot />
 	<div class="honeycomb-nav">
 		<div class="honeycomb-container">

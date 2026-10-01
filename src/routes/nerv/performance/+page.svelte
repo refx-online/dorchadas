@@ -24,7 +24,7 @@
 <div class="container mx-auto w-full p-5">
 	<div>
 		<h1>Performance Reports</h1>
-		<div class="nv-mincho">端末性能報告 // CLIENT TELEMETRY</div>
+		<div class="tag">端末性能報告 // CLIENT TELEMETRY</div>
 	</div>
 	<div class="flex flex-col gap-4 mt-4">
 		<div class="flex flex-row items-center justify-between">
@@ -45,12 +45,12 @@
 			look, not verdicts.
 		</p>
 
-		<div class="nv-panel mt-4">
-			<div class="nv-panel-header">
+		<div class="panel mt-4">
+			<div class="panel-header">
 				<span>Reports</span><span>flagged rows are leads, not verdicts</span>
 			</div>
 			<div class="table-container">
-				<table class="nv-table">
+				<table class="nerv-table">
 					<thead>
 						<tr>
 							<th>Score</th>
@@ -83,8 +83,7 @@
 								<td>{r.average_frametime}</td>
 								<td>{r.aim_rate || '-'}</td>
 								<td
-									>{#if flags.length}<span class="nv-badge red">{flags.join(', ')}</span
-										>{:else}-{/if}</td
+									>{#if flags.length}<span class="tag">{flags.join(', ')}</span>{:else}-{/if}</td
 								>
 							</tr>
 						{/each}
