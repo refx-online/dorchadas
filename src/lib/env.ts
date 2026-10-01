@@ -7,6 +7,7 @@ export const banchoUrl = env.PUBLIC_BANCHO_URL;
 export const avatarUrl = env.PUBLIC_AVATAR_URL;
 export const beatmapUrl = env.PUBLIC_BEATMAP_URL;
 export const getReplayUrl = env.PUBLIC_GET_REPLAY_URL;
+export const nervUrl = env.PUBLIC_NERV_URL;
 
 export const githubUrl = env.PUBLIC_GITHUB_URL;
 export const discordUrl = env.PUBLIC_DISCORD_SERVER_URL;
