@@ -25,15 +25,15 @@ export const MODE_OPTIONS: { value: number; label: string }[] = [
 	{ value: 4, label: 'vanilla-rx std' },
 	{ value: 5, label: 'vanilla-rx taiko' },
 	{ value: 6, label: 'vanilla-rx catch' },
-	{ value: 8, label: 'vanilla-ap std' },
-	{ value: 12, label: 'cheat std' },
-	{ value: 13, label: 'cheat taiko' },
-	{ value: 14, label: 'cheat catch' },
-	{ value: 15, label: 'cheat mania' },
-	{ value: 21, label: 'cheat-rx std' },
-	{ value: 22, label: 'cheat-rx taiko' },
-	{ value: 23, label: 'cheat-rx catch' },
-	{ value: 24, label: 'cheat-ap std' }
+	{ value: 7, label: 'vanilla-ap std' },
+	{ value: 8, label: 'cheat std' },
+	{ value: 9, label: 'cheat taiko' },
+	{ value: 10, label: 'cheat catch' },
+	{ value: 11, label: 'cheat mania' },
+	{ value: 12, label: 'cheat-rx std' },
+	{ value: 13, label: 'cheat-rx taiko' },
+	{ value: 14, label: 'cheat-rx catch' },
+	{ value: 15, label: 'cheat-ap std' }
 ];
 
 export const VALID_MODES = MODE_OPTIONS.map((o) => o.value);
@@ -50,13 +50,13 @@ export function encodeCategory(game: string, category: string): number | null {
 		case 'vanilla-rx':
 			return base === 3 ? null : base + 4;
 		case 'vanilla-ap':
-			return base === 0 ? 8 : null;
+			return base === 0 ? 7 : null;
 		case 'cheat':
-			return 12 + base;
+			return 8 + base;
 		case 'cheat-rx':
-			return base === 3 ? null : 21 + base;
+			return base === 3 ? null : 12 + base;
 		case 'cheat-ap':
-			return base === 0 ? 24 : null;
+			return base === 0 ? 15 : null;
 		default:
 			return null;
 	}
@@ -66,10 +66,10 @@ export function decodeCategory(id: number): { game: string; category: Category }
 	const games = ['osu', 'taiko', 'catch', 'mania'];
 	if (id >= 0 && id <= 3) return { game: games[id], category: 'vanilla' };
 	if (id >= 4 && id <= 6) return { game: games[id - 4], category: 'vanilla-rx' };
-	if (id === 8) return { game: 'osu', category: 'vanilla-ap' };
-	if (id >= 12 && id <= 15) return { game: games[id - 12], category: 'cheat' };
-	if (id >= 21 && id <= 23) return { game: games[id - 21], category: 'cheat-rx' };
-	if (id === 24) return { game: 'osu', category: 'cheat-ap' };
+	if (id === 7) return { game: 'osu', category: 'vanilla-ap' };
+	if (id >= 8 && id <= 11) return { game: games[id - 8], category: 'cheat' };
+	if (id >= 12 && id <= 14) return { game: games[id - 12], category: 'cheat-rx' };
+	if (id === 15) return { game: 'osu', category: 'cheat-ap' };
 	return null;
 }
 
@@ -109,3 +109,23 @@ export const TYPE_DESCRIPTIONS: Record<string, string> = {
 	'cheat-rx': 'Shaymi with relax on top, ranked separately from Cheat.',
 	'cheat-ap': 'Shaymi with autopilot on top, osu!std only.'
 };
+
+// per-mode rank status packed into one number: 3 bits per mode id (0-15).
+// statuses aren't contiguous (-2 unused): -3->0, -1->1, 0->2, 1->3,
+// 2->4, 3->5, 4->6, 5->7. mirrors forlorn.
+// (bigint: JS bitwise ops are 32-bit, masks are 48-bit.)
+const STATUS_CODES = [-3, -1, 0, 1, 2, 3, 4, 5];
+
+export function statusAt(mask: number | bigint, mode: number): number {
+	if (!Number.isInteger(mode) || mode < 0 || mode > 15) return 0; // Pending
+	return STATUS_CODES[Number((BigInt(mask) >> BigInt(mode * 3)) & BigInt(7))];
+}
+
+export function withStatus(mask: number | bigint, mode: number, status: number): number {
+	if (!Number.isInteger(mode) || mode < 0 || mode > 15) return Number(mask);
+	const m = BigInt(mask);
+	let code = STATUS_CODES.indexOf(status);
+	if (code < 0) code = 2; // Pending
+	const shift = BigInt(mode * 3);
+	return Number((m & ~(BigInt(7) << shift)) | (BigInt(code) << shift));
+}
