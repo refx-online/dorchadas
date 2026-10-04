@@ -191,6 +191,7 @@
 					{currentMode}
 					{currentType}
 					{currentSort}
+					{loading}
 				/>
 			{/if}
 

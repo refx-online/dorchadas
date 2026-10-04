@@ -13,6 +13,7 @@
 	export let currentMode: string;
 	export let currentType: string;
 	export let currentSort: 'acc' | 'pp' | 'plays' | 'tscore' | string;
+	export let loading: boolean = true;
 
 	function isInactive(latestActivity: number): boolean {
 		const month = 30 * 24 * 60 * 60;
@@ -145,7 +146,7 @@
 							</tr>
 						{/key}
 					{/each}
-				{:else}
+				{:else if loading}
 					{#each Array(50) as _, i}
 						{#key i}
 							<tr
@@ -196,6 +197,12 @@
 							</tr>
 						{/key}
 					{/each}
+				{:else}
+					<tr>
+						<td colspan="9" class="text-center py-10 text-slate-400">
+							{__('No players on this leaderboard yet. Go play!', $userLanguage)}
+						</td>
+					</tr>
 				{/if}
 			</tbody>
 		{/key}
